@@ -1,11 +1,13 @@
 package com.betacom.retrogames.model;
 
 import java.math.BigDecimal;
-
 import org.hibernate.annotations.Check;
-
+import com.betacom.retrogames.model.enums.Categoria;
+import com.betacom.retrogames.model.enums.Piattaforma;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,8 +28,13 @@ public class Prodotto {
 	@Column(length = 100, nullable = false)
 	private String nome;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "categoria", nullable = false)
-	private String categoria;
+	private Categoria categoria;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(length = 20, nullable = false)
+	private Piattaforma piattaforma;
 
 	@Column(columnDefinition = "TEXT", nullable = false)
 	private String descrizione;
