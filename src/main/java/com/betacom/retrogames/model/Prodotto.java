@@ -33,7 +33,7 @@ public class Prodotto {
 	private Categoria categoria;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(length = 20, nullable = false)
+	@Column(length = 20)
 	private Piattaforma piattaforma;
 
 	@Column(columnDefinition = "TEXT", nullable = false)
