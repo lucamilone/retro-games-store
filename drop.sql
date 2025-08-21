@@ -33,6 +33,8 @@
 
     drop table if exists credenziale cascade;
 
+    drop table if exists messaggi_sistema cascade;
+
     drop table if exists ordine cascade;
 
     drop table if exists ordine_riga cascade;

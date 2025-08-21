@@ -9,9 +9,11 @@ import com.betacom.retrogames.model.enums.Ruolo;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -36,24 +38,25 @@ public class Account {
 	@Column(length = 100, nullable = false)
 	private String cognome;
 
+	@Embedded
 	@Column(nullable = false)
-	private String indirizzo;
+	private Indirizzo indirizzo;
 
 	@Enumerated(EnumType.STRING)
 	@Column(length = 20, nullable = false)
 	private Ruolo ruolo;
 
-	@OneToOne(mappedBy = "account", cascade = CascadeType.REMOVE)
+	@OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Credenziale credenziale;
 
-	@OneToOne(mappedBy = "account", cascade = CascadeType.REMOVE)
+	@OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Carrello carrello;
 
 	@CreationTimestamp
-	@Column(name = "data_ora_creazione", nullable = false, updatable = false)
-	private LocalDateTime dataOraCreazione;
+	@Column(name = "creato_il", nullable = false, updatable = false)
+	private LocalDateTime creatoIl;
 
 	@UpdateTimestamp
-	@Column(name = "data_ora_aggiornamento")
-	private LocalDateTime dataOraAggiornamento;
+	@Column(name = "aggiornato_il")
+	private LocalDateTime aggiornatoIl;
 }

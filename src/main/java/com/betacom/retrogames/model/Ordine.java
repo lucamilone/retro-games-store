@@ -11,6 +11,7 @@ import com.betacom.retrogames.model.enums.StatoOrdine;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -40,24 +41,29 @@ public class Ordine {
 	private StatoOrdine statoOrdine = StatoOrdine.IN_ATTESA;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "account_id")
+	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
 
-	@OneToMany(mappedBy = "ordine", cascade = CascadeType.REMOVE)
-	private List<OrdineRiga> ordineRiga;
+	@OneToMany(mappedBy = "ordine", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	private List<OrdineRiga> righe;
 
-	@OneToOne(mappedBy = "ordine", cascade = CascadeType.REMOVE)
+	@Embedded
+	@Column(name = "indirizzo_spedizione", nullable = false)
+	private Indirizzo indirizzoSpedizione;
+
+	@OneToOne(mappedBy = "ordine", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private Pagamento pagamento;
 
 	@CreationTimestamp
-	@Column(name = "data_ora_creazione", nullable = false, updatable = false)
-	private LocalDateTime dataOraCreazione;
+	@Column(name = "creato_il", nullable = false, updatable = false)
+	private LocalDateTime creatoIl;
 
 	@UpdateTimestamp
-	@Column(name = "data_ora_aggiornamento")
-	private LocalDateTime dataOraAggiornamento;
+	@Column(name = "aggiornato_il")
+	private LocalDateTime aggiornatoIl;
 
 	public BigDecimal getTotale() {
-		return ordineRiga.stream().map(OrdineRiga::getTotale).reduce(BigDecimal.ZERO, BigDecimal::add);
+		return righe == null ? BigDecimal.ZERO
+				: righe.stream().map(OrdineRiga::getTotale).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 }

@@ -30,7 +30,7 @@ public class Credenziale {
 	@Column(length = 100, nullable = false, unique = true)
 	private String email;
 
-	@Column(name = "password_hash", nullable = false)
+	@Column(name = "password_hash", length = 255, nullable = false)
 	private String passwordHash;
 
 	@Column(name = "ultimo_login")

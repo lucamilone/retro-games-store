@@ -42,6 +42,6 @@ public class OrdineRiga {
 	private BigDecimal prezzoUnitario;
 
 	public BigDecimal getTotale() {
-		return prezzoUnitario.multiply(BigDecimal.valueOf(quantita));
+		return prezzoUnitario == null ? BigDecimal.ZERO : prezzoUnitario.multiply(BigDecimal.valueOf(quantita));
 	}
 }

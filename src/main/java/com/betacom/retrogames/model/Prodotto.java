@@ -2,6 +2,8 @@ package com.betacom.retrogames.model;
 
 import java.math.BigDecimal;
 
+import org.hibernate.annotations.Check;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,13 +26,14 @@ public class Prodotto {
 	@Column(length = 100, nullable = false)
 	private String nome;
 
-	@Column(name = "cateogoria_prodotto", nullable = false)
-	private String cateogoriaProdotto;
+	@Column(name = "categoria", nullable = false)
+	private String categoria;
 
-	@Column(nullable = false)
+	@Column(columnDefinition = "TEXT", nullable = false)
 	private String descrizione;
 
 	@Column(name = "anno_uscita")
+	@Check(constraints = "anno_uscita >= 1970 AND anno_uscita <= EXTRACT(YEAR FROM CURRENT_DATE)")
 	private Integer annoUscita;
 
 	@Column(precision = 10, scale = 2, nullable = false)

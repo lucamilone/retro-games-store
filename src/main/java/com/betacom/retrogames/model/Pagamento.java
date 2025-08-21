@@ -17,7 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +32,7 @@ public class Pagamento {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ordine_id", nullable = false)
 	private Ordine ordine;
 
@@ -48,6 +48,6 @@ public class Pagamento {
 	private StatoPagamento statoPagamento = StatoPagamento.IN_ATTESA;
 
 	@CreationTimestamp
-	@Column(name = "data_ora_creazione", nullable = false, updatable = false)
-	private LocalDateTime dataOraCreazione;
+	@Column(name = "creato_il", nullable = false, updatable = false)
+	private LocalDateTime creatoIl;
 }
