@@ -25,7 +25,7 @@ public class Prodotto {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(nullable = false, unique = true, length = 50)
+	@Column(length = 50, nullable = false, unique = true)
     private String sku;
 
 	@Column(length = 100, nullable = false)
