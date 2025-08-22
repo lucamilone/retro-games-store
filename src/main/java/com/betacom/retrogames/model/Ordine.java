@@ -2,6 +2,7 @@ package com.betacom.retrogames.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -44,14 +45,14 @@ public class Ordine {
 	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
 
-	@OneToMany(mappedBy = "ordine", cascade = CascadeType.REMOVE, orphanRemoval = true)
-	private List<OrdineRiga> righe;
+	@OneToMany(mappedBy = "ordine", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<OrdineRiga> righe = new ArrayList<>();
 
 	@Embedded
 	@Column(name = "indirizzo_spedizione", nullable = false)
 	private Indirizzo indirizzoSpedizione;
 
-	@OneToOne(mappedBy = "ordine", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	@OneToOne(mappedBy = "ordine", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Pagamento pagamento;
 
 	@CreationTimestamp
@@ -65,5 +66,15 @@ public class Ordine {
 	public BigDecimal getTotale() {
 		return righe == null ? BigDecimal.ZERO
 				: righe.stream().map(OrdineRiga::getTotale).reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public void addRiga(OrdineRiga riga) {
+		righe.add(riga);
+		riga.setOrdine(this);
+	}
+
+	public void removeRiga(OrdineRiga riga) {
+		righe.remove(riga);
+		riga.setOrdine(null);
 	}
 }

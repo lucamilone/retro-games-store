@@ -1,22 +1,23 @@
 package com.betacom.retrogames.model;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import com.betacom.retrogames.model.enums.Ruolo;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -39,11 +40,13 @@ public class Account {
 	private String cognome;
 
 	@Embedded
-	@Column(nullable = false)
 	private Indirizzo indirizzo;
 
-	@Enumerated(EnumType.STRING)
-	@Column(length = 20, nullable = false)
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	private Set<MetodoPagamento> metodiPagamento = new HashSet<>();
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ruolo_id", nullable = false)
 	private Ruolo ruolo;
 
 	@OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -59,4 +62,14 @@ public class Account {
 	@UpdateTimestamp
 	@Column(name = "aggiornato_il")
 	private LocalDateTime aggiornatoIl;
+
+	public void addMetodoPagamento(MetodoPagamento mp) {
+		metodiPagamento.add(mp);
+		mp.setAccount(this);
+	}
+
+	public void removeMetodoPagamento(MetodoPagamento mp) {
+		metodiPagamento.remove(mp);
+		mp.setAccount(null);
+	}
 }

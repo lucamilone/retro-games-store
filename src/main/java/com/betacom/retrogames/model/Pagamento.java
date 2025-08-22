@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import com.betacom.retrogames.model.enums.MetodoPagamento;
 import com.betacom.retrogames.model.enums.StatoPagamento;
 
 import jakarta.persistence.Column;
@@ -17,6 +17,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -39,8 +40,8 @@ public class Pagamento {
 	@Column(precision = 10, scale = 2, nullable = false)
 	private BigDecimal totale;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "metodo_pagamento", length = 20, nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "metodo_pagamento_id", nullable = false)
 	private MetodoPagamento metodoPagamento;
 
 	@Enumerated(EnumType.STRING)
@@ -50,4 +51,8 @@ public class Pagamento {
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)
 	private LocalDateTime creatoIl;
+
+	@UpdateTimestamp
+	@Column(name = "aggiornato_il")
+	private LocalDateTime aggiornatoIl;
 }

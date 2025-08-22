@@ -1,13 +1,10 @@
 package com.betacom.retrogames.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,8 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,19 +20,26 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "carrello")
-public class Carrello {
+@Table(name = "metodo_pagamento")
+public class MetodoPagamento {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "account_id", nullable = false, unique = true)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
 
-	@OneToMany(mappedBy = "carrello", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<CarrelloRiga> righe = new ArrayList<>();
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "tipo_metodo_pagamento_id", nullable = false)
+	private TipoMetodoPagamento tipo;
+
+	@Column(length = 255, nullable = false)
+	private String token; // Es. Numero carta criptato o PayPal ID
+
+	@Column(name = "metodo_default", nullable = false)
+	private boolean metodoDefault = false;
 
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)
@@ -45,14 +48,4 @@ public class Carrello {
 	@UpdateTimestamp
 	@Column(name = "aggiornato_il")
 	private LocalDateTime aggiornatoIl;
-
-	public void addRiga(CarrelloRiga riga) {
-		righe.add(riga);
-		riga.setCarrello(this);
-	}
-
-	public void removeRiga(CarrelloRiga riga) {
-		righe.remove(riga);
-		riga.setCarrello(null);
-	}
 }
