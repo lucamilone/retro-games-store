@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.betacom.retrogames.model.Categoria;
+import com.betacom.retrogames.model.Credenziale;
 
 @Repository
-public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
+public interface CredenzialeRepository extends JpaRepository<Credenziale, Integer> {
 
-	Optional<Categoria> findByNome(String nome);
+	Optional<Credenziale> findByEmail(String email);
 }

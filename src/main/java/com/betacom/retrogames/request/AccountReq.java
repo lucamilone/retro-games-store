@@ -1,25 +1,23 @@
-package com.betacom.retrogames.dto;
+package com.betacom.retrogames.request;
 
 import java.time.LocalDateTime;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
-@Builder
 @ToString
-public class AccountDTO {
+public class AccountReq {
 
 	private Integer id;
 	private String nome;
 	private String cognome;
-	private IndirizzoDTO indirizzo;
-	private String ruolo;
-	private CredenzialeDTO credenziale;
-	private CarrelloDTO carrello;
+	private IndirizzoReq indirizzo;
+	private Integer ruoloId;
+	private CredenzialeReq credenziale;
+	private CarrelloReq carrello;
 	private LocalDateTime creatoIl;
 	private LocalDateTime aggiornatoIl;
 }

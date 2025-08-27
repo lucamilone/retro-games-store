@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.betacom.retrogames.model.Categoria;
+import com.betacom.retrogames.model.Prodotto;
 
 @Repository
-public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
+public interface ProdottoRepository extends JpaRepository<Prodotto, Integer> {
 
-	Optional<Categoria> findByNome(String nome);
+	Optional<Prodotto> findBySku(String sku);
 }

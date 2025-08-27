@@ -7,6 +7,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class AccountCreateReq {
+public class CarrelloRigaReq {
 
+	private Integer id;
+	private Integer carrelloId;
+	private Integer prodottoId;
+	private Integer quantita;
 }

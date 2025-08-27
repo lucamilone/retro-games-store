@@ -1,5 +1,6 @@
 package com.betacom.retrogames.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import lombok.Builder;
@@ -11,15 +12,13 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
-public class AccountDTO {
+public class PagamentoDTO {
 
 	private Integer id;
-	private String nome;
-	private String cognome;
-	private IndirizzoDTO indirizzo;
-	private String ruolo;
-	private CredenzialeDTO credenziale;
-	private CarrelloDTO carrello;
+	private String ordine;
+	private BigDecimal totale;
+	private String metodoPagamento;
+	private String statoPagamento;
 	private LocalDateTime creatoIl;
 	private LocalDateTime aggiornatoIl;
 }
