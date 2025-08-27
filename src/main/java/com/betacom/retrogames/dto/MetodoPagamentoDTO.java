@@ -9,15 +9,13 @@ import lombok.ToString;
 @Setter @Getter
 @ToString
 @Builder
-public class AccountDTO 
+public class MetodoPagamentoDTO 
 {
     private Integer id;
-    private String nome;
-    private String cognome;
-    private IndirizzoDTO indirizzo;
-    private String ruolo;
-    private CredenzialeDTO credenziale;
-    private CarrelloDTO carrello;
+    private String account;
+    private String tipoMetodoPagamento;
+    private String token;
+    private Boolean metodoDefault;
     private LocalDateTime creatoIl;
     private LocalDateTime aggiornatoIl;
 }

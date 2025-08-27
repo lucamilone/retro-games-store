@@ -1,6 +1,7 @@
 package com.betacom.retrogames.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,15 +10,11 @@ import lombok.ToString;
 @Setter @Getter
 @ToString
 @Builder
-public class AccountDTO 
+public class CarrelloDTO
 {
     private Integer id;
-    private String nome;
-    private String cognome;
-    private IndirizzoDTO indirizzo;
-    private String ruolo;
-    private CredenzialeDTO credenziale;
-    private CarrelloDTO carrello;
+    private String account;
+    private List<CarrelloRigaDTO> righe;
     private LocalDateTime creatoIl;
     private LocalDateTime aggiornatoIl;
 }

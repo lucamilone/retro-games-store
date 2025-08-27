@@ -3,10 +3,10 @@ package com.betacom.retrogames.repository;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.betacom.retrogames.model.Account;
+import com.betacom.retrogames.model.Prodotto;
 
 @Repository
-public interface IAccountRepository extends JpaRepository<Account, Integer> 
+public interface IProdottoRepository extends JpaRepository<Prodotto, Integer> 
 {
-    Optional<Account> findByNomeAndCognome(String nome, String cognome);
+    Optional<Prodotto> findBySku(String sku);
 }
