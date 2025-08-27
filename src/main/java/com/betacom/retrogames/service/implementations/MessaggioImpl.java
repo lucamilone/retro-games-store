@@ -7,20 +7,20 @@ import org.springframework.stereotype.Service;
 
 import com.betacom.retrogames.model.Messaggio;
 import com.betacom.retrogames.model.MessaggioId;
-import com.betacom.retrogames.repository.IMessaggioRepository;
-import com.betacom.retrogames.service.interfaces.IMessaggioServices;
+import com.betacom.retrogames.repository.MessaggioRepository;
+import com.betacom.retrogames.service.interfaces.MessaggioService;
 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
-public class MessaggioImpl implements IMessaggioServices {
+public class MessaggioImpl implements MessaggioService {
 
 	@Value("${app.lang}")
 	private String lang;
-	private IMessaggioRepository msgR;
+	private MessaggioRepository msgR;
 
-	public MessaggioImpl(IMessaggioRepository msgR) {
+	public MessaggioImpl(MessaggioRepository msgR) {
 		this.msgR = msgR;
 	}
 

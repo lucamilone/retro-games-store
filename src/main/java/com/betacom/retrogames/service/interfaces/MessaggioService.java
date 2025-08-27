@@ -1,6 +1,6 @@
 package com.betacom.retrogames.service.interfaces;
 
-public interface IMessaggioServices {
+public interface MessaggioService {
 
 	String getMessaggio(String code);
 }
