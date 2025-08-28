@@ -53,7 +53,7 @@ public class Account {
 	private Credenziale credenziale;
 
 	@OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-	private Carrello carrello;
+	private Carrello carrello = new Carrello(this);
 
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)

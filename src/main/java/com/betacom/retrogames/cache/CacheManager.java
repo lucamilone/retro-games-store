@@ -83,7 +83,7 @@ public class CacheManager {
 		cache.put(TabellaCostante.TIPO_METODO_PAGAMENTO, buildCacheMapFromList(tipoMetodoPagamentoRepo.findAll(),
 				CachedTipoMetodoPagamento::new, CachedTipoMetodoPagamento::getNome));
 
-		log.debug("Cache caricata in memoria");
+		log.debug("Cache caricata in memoria: {}", cache);
 	}
 
 	/*
