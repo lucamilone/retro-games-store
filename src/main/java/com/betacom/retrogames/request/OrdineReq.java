@@ -4,6 +4,7 @@ import com.betacom.retrogames.request.validation.ValidationGroup.OnCreate;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnUpdate;
 import com.betacom.retrogames.model.enums.StatoOrdine;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,8 +32,10 @@ public class OrdineReq {
     private List<OrdineRigaReq> righe;
 
     @NotNull(groups = OnCreate.class, message = "Indirizzo di spedizione obbligatorio")
+    @Valid
     private IndirizzoReq indirizzoSpedizione;
 
     @NotNull(groups = OnCreate.class, message = "Pagamento obbligatorio")
+    @Valid
     private PagamentoReq pagamento;
 }
