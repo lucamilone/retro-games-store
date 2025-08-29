@@ -3,6 +3,7 @@ package com.betacom.retrogames.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.Check;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -38,6 +39,7 @@ public class Pagamento {
 	private Ordine ordine;
 
 	@Column(precision = 10, scale = 2, nullable = false)
+	@Check(constraints = "totale > 0")
 	private BigDecimal totale;
 
 	@ManyToOne(fetch = FetchType.LAZY)

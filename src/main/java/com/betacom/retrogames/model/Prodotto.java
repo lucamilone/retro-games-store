@@ -50,7 +50,7 @@ public class Prodotto {
 	private String descrizione;
 
 	@Column(name = "anno_uscita")
-	@Check(constraints = "anno_uscita >= 1970 AND anno_uscita <= EXTRACT(YEAR FROM CURRENT_DATE)")
+	@Check(constraints = "anno_uscita >= 1970 AND anno_uscita <= 2006")
 	private Integer annoUscita;
 
 	@Column(precision = 10, scale = 2, nullable = false)

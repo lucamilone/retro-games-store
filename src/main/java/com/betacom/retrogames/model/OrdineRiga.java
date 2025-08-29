@@ -36,6 +36,7 @@ public class OrdineRiga {
 	private Prodotto prodotto;
 
 	@Column(nullable = false)
+	@Check(constraints = "quantita > 0")
 	private Integer quantita;
 
 	@Column(name = "prezzo_unitario", precision = 10, scale = 2, nullable = false)

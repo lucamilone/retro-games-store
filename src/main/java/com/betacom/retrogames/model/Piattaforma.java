@@ -33,7 +33,7 @@ public class Piattaforma {
 	private String nome;
 
 	@Column(name = "anno_uscita_piattaforma", nullable = false)
-	@Check(constraints = "anno_uscita_piattaforma >= 1970 AND anno_uscita_piattaforma <= EXTRACT(YEAR FROM CURRENT_DATE)")
+	@Check(constraints = "anno_uscita_piattaforma >= 1970 AND anno_uscita_piattaforma <= 2006")
 	private Integer annoUscitaPiattaforma;
 
 	@ManyToMany(mappedBy = "piattaforme", fetch = FetchType.LAZY)
