@@ -1,7 +1,5 @@
 package com.betacom.retrogames.cache;
 
-import static com.betacom.retrogames.util.Utils.normalizza;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +36,7 @@ public class CacheManager {
 	 * Struttura della cache:
 	 *   - Chiave esterna: Identifica la tabella logica cacheata ({@link TabellaCostante})
 	 *   - Valore esterno: Mappa interna immutabile dei record della tabella che associa:
-	 *     - Chiave interna: Stringa normalizzata che identifica il record (Es. nome o codice)
+	 *     - Chiave interna: ID che identifica il record
 	 *     - Valore interno: Istanza di {@link CacheableEntry} (Es. {@link CachedCategoria})
 	 *
 	 * Note implementative:
@@ -49,11 +47,10 @@ public class CacheManager {
 	 * 
 	 * Convenzioni nei commenti dei metodi:
 	 * 	 - "Tabella" = la mappa esterna (TabellaCostante → mappa interna)
-	 *   - "Mappa interna" = Map<String, ? extends CacheableEntry>
+	 *   - "Mappa interna" = Map<Integer, ? extends CacheableEntry>
 	 *   - "Record / Oggetto" = istanza concreta che implementa CacheableEntry
-	 *   - "Chiave" = stringa normalizzata usata per accedere ad un record nella mappa interna
 	 */
-	private final Map<TabellaCostante, Map<String, ? extends CacheableEntry>> cache = new ConcurrentHashMap<>();
+	private final Map<TabellaCostante, Map<Integer, ? extends CacheableEntry>> cache = new ConcurrentHashMap<>();
 
 	private final CategoriaRepository categoriaRepo;
 	private final PiattaformaRepository piattaformaRepo;
@@ -74,14 +71,12 @@ public class CacheManager {
 	 */
 	@EventListener(ApplicationReadyEvent.class)
 	public void loadCacheOnStartup() {
-		cache.put(TabellaCostante.CATEGORIA,
-				buildCacheMapFromList(categoriaRepo.findAll(), CachedCategoria::new, CachedCategoria::getNome));
+		cache.put(TabellaCostante.CATEGORIA, buildCacheMapFromList(categoriaRepo.findAll(), CachedCategoria::new));
 		cache.put(TabellaCostante.PIATTAFORMA,
-				buildCacheMapFromList(piattaformaRepo.findAll(), CachedPiattaforma::new, CachedPiattaforma::getCodice));
-		cache.put(TabellaCostante.RUOLO,
-				buildCacheMapFromList(ruoloRepo.findAll(), CachedRuolo::new, CachedRuolo::getNome));
-		cache.put(TabellaCostante.TIPO_METODO_PAGAMENTO, buildCacheMapFromList(tipoMetodoPagamentoRepo.findAll(),
-				CachedTipoMetodoPagamento::new, CachedTipoMetodoPagamento::getNome));
+				buildCacheMapFromList(piattaformaRepo.findAll(), CachedPiattaforma::new));
+		cache.put(TabellaCostante.RUOLO, buildCacheMapFromList(ruoloRepo.findAll(), CachedRuolo::new));
+		cache.put(TabellaCostante.TIPO_METODO_PAGAMENTO,
+				buildCacheMapFromList(tipoMetodoPagamentoRepo.findAll(), CachedTipoMetodoPagamento::new));
 
 		log.debug("Cache caricata in memoria: {}", cache);
 	}
@@ -91,52 +86,62 @@ public class CacheManager {
 	 */
 
 	/**
-	 * Verifica se la chiave è presente nella mappa interna della tabella specificata.
+	 * Verifica se l'ID è presente nella mappa interna della tabella specificata.
 	 *
-	 * <p>Normalizza la chiave prima del controllo. Se la tabella non è presente in cache,
+	 * <p>Se la tabella non è presente nella cache,
 	 * viene lanciata un'eccezione {@link IllegalArgumentException} tramite
 	 * {@link #getCachedRecords(TabellaCostante)}.</p>
 	 *
 	 * @param nomeTabella 				Tabella logica di riferimento nella cache
-	 * @param chiave  					Chiave logica del record da verificare
+	 * @param id  						ID del record da verificare
 	 * @return {@code true} se il record esiste nella cache, {@code false} altrimenti
 	 * @throws IllegalArgumentException se la tabella non è presente in cache
 	 */
-	public boolean isRecordCached(TabellaCostante nomeTabella, String chiave) {
-		return getCachedRecords(nomeTabella).containsKey(normalizza(chiave));
+	public boolean isRecordCached(TabellaCostante nomeTabella, Integer id) {
+		return getCachedRecords(nomeTabella).containsKey(id);
 	}
 
 	/**
-	 * Restituisce l'oggetto cacheable corrispondente a una chiave nella tabella specificata.
+	 * Restituisce l'oggetto cacheable corrispondente all'ID nella tabella specificata.
 	 *
-	 * <p>Normalizza la chiave prima di accedere alla mappa interna. Se la tabella non è presente
-	 * nella cache, viene lanciata un'eccezione {@link IllegalArgumentException} tramite
+	 * <p>Se la tabella non è presente nella cache,
+	 * viene lanciata un'eccezione {@link IllegalArgumentException} tramite
 	 * {@link #getCachedRecords(TabellaCostante)}.</p>
 	 *
 	 * @param nomeTabella 				Tabella logica di riferimento nella cache
-	 * @param chiave  					Chiave logica dell'oggetto cacheable da recuperare
-	 * @return l'oggetto cacheable corrispondente alla chiave, o {@code null} se non presente
+	 * @param id  						ID dell'oggetto cacheable da recuperare
+	 * @return l'oggetto cacheable corrispondente all'ID, o {@code null} se non presente
 	 * @throws IllegalArgumentException se la tabella non è presente in cache
 	 */
-	public CacheableEntry getCachedEntryFromTable(TabellaCostante nomeTabella, String chiave) {
-		return getCachedRecords(nomeTabella).get(normalizza(chiave));
+	public CacheableEntry getCachedEntryFromTable(TabellaCostante nomeTabella, Integer id) {
+		return getCachedRecords(nomeTabella).get(id);
 	}
 
 	/**
-	 * Restituisce l'ID di un record corrispondente a una chiave nella tabella specificata.
-	 *
-	 * <p>Questo metodo cerca un record nella mappa interna usando la chiave fornita
-	 * (normalizzata) e, se presente, restituisce il suo ID.</p>
+	 * Restituisce il valore leggibile di un record da esporre al frontend:
+	 * - Di default il nome
+	 * - Se la tabella è PIATTAFORMA, restituisce il codice
 	 *
 	 * @param nomeTabella 				Tabella logica di riferimento nella cache
-	 * @param chiave 					Chiave logica del record della mappa interna
-	 * @return l'ID del record cacheato, o {@code null} se l'oggetto non esiste
+	 * @param id          				ID del record
+	 * @return stringa da esporre al frontend, o null se il record non esiste
 	 * @throws IllegalArgumentException se la tabella non è presente in cache
 	 */
-	public Integer getCachedRecordId(TabellaCostante nomeTabella, String chiave) {
-		CacheableEntry entry = getCachedRecords(nomeTabella).get(normalizza(chiave));
+	public String getCachedRecordDisplay(TabellaCostante nomeTabella, Integer id) {
+		CacheableEntry entry = getCachedRecords(nomeTabella).get(id);
 
-		return (entry != null) ? entry.getId() : null;
+		if (entry == null) {
+			return null;
+		}
+
+		switch (nomeTabella) {
+		case PIATTAFORMA:
+			// Restituisce il codice per la piattaforma
+			return ((CachedPiattaforma) entry).getCodice();
+		default:
+			// Restituisce il nome per tutte le altre tabelle
+			return entry.getNome();
+		}
 	}
 
 	/**
@@ -152,24 +157,19 @@ public class CacheManager {
 	 * @param <T>          Tipo del record da inserire (deve implementare {@link CacheableEntry})
 	 * @param nomeTabella  Tabella logica di riferimento nella cache
 	 * @param record       Record cacheabile da inserire o aggiornare
-	 * @param keyExtractor Funzione che estrae la chiave univoca (normalizzata) dal record,
-	 *                     usata come chiave nella mappa interna
+	 * @return 			   Mappa immutabile (chiave → record cacheabile)
 	 */
-	public <T extends CacheableEntry> void addOrUpdateRecordInCachedTable(TabellaCostante nomeTabella, T record,
-			Function<T, String> keyExtractor) {
+	public <T extends CacheableEntry> void addOrUpdateRecordInCachedTable(TabellaCostante nomeTabella, T record) {
 		cache.compute(nomeTabella, (k, mappaVecchia) -> {
-			Map<String, CacheableEntry> nuovaMappa = new HashMap<>();
+			Map<Integer, CacheableEntry> nuovaMappa = new HashMap<>();
 
 			if (mappaVecchia != null) {
 				// Copia gli elementi esistenti
 				nuovaMappa.putAll(mappaVecchia);
 			}
 
-			// Calcola la chiave univoca normalizzata
-			String key = normalizza(keyExtractor.apply(record));
-
 			// Inserisce o aggiorna l’elemento
-			nuovaMappa.put(key, record);
+			nuovaMappa.put(record.getId(), record);
 
 			// Rende la mappa immutabile per thread-safety
 			return Collections.unmodifiableMap(nuovaMappa);
@@ -188,15 +188,15 @@ public class CacheManager {
 	 * all'interno della mappa interna della tabella.</p>
 	 *
 	 * @param nomeTabella	Tabella logica di riferimento nella cache
-	 * @param chiave		Chiave logica del record da rimuovere (es. nome o codice)
+	 * @param id			ID del record da rimuovere
 	 */
-	public void removeRecordFromCachedTable(TabellaCostante nomeTabella, String chiave) {
+	public void removeRecordFromCachedTable(TabellaCostante nomeTabella, Integer id) {
 		cache.computeIfPresent(nomeTabella, (k, mappaVecchia) -> {
 			// Copia la mappa esistente
-			Map<String, CacheableEntry> nuovaMappa = new HashMap<>(mappaVecchia);
+			Map<Integer, CacheableEntry> nuovaMappa = new HashMap<>(mappaVecchia);
 
-			// Rimuove il record corrispondente alla chiave normalizzata
-			nuovaMappa.remove(normalizza(chiave));
+			// Rimuove il record corrispondente all'ID
+			nuovaMappa.remove(id);
 
 			// Restituisce la mappa aggiornata come immutabile
 			return Collections.unmodifiableMap(nuovaMappa);
@@ -210,29 +210,18 @@ public class CacheManager {
 	/**
 	 * Costruisce una mappa immutabile di record partendo da una lista di entità.
 	 *
-	 * <p>Ogni elemento della lista viene prima trasformato tramite il {@code mapper},
-	 * poi viene estratta una chiave univoca (normalizzata) con {@code keyExtractor}.
-	 * La mappa risultante è resa immutabile e, in caso di chiavi duplicate,
-	 * viene mantenuto il primo valore incontrato.</p>
+	 * <p>Ogni elemento della lista viene trasformato tramite il {@code mapper}.
+	 * La mappa risultante è resa immutabile e usa l'ID del record come chiave.</p>
 	 *
 	 * @param <E> 		   Tipo dell'entità JPA di origine
 	 * @param <T>		   Tipo della tabella cacheabile (deve implementare {@link CacheableEntry})
 	 * @param lista        Lista di entità JPA da trasformare
 	 * @param mapper       Funzione che converte {@code E} in {@code T} (es. da entity JPA a DTO cacheabile)
-	 * @param keyExtractor Funzione che estrae la chiave univoca (normalizzata) da {@code T}
-	 * @return 			   Mappa immutabile (chiave → record cacheabile)
+	 * @return        	   Mappa immutabile (ID → record cacheabile)
 	 */
-	private <E, T extends CacheableEntry> Map<String, T> buildCacheMapFromList(List<E> lista, Function<E, T> mapper,
-			Function<T, String> keyExtractor) {
-		/**
-		 * Colleziona la lista in una mappa immutabile:
-		 * - Normalizza la chiave
-		 * - Mantiene il primo valore in caso di chiave duplicata: (a, b) → a
-		 */
-		Map<String, T> map = lista.stream().map(mapper)
-				.collect(Collectors.toMap(t -> normalizza(keyExtractor.apply(t)), Function.identity(), (a, b) -> a));
-
-		return Collections.unmodifiableMap(map);
+	private <E, T extends CacheableEntry> Map<Integer, T> buildCacheMapFromList(List<E> lista, Function<E, T> mapper) {
+		return Collections
+				.unmodifiableMap(lista.stream().map(mapper).collect(Collectors.toMap(T::getId, Function.identity())));
 	}
 
 	/**
@@ -241,11 +230,11 @@ public class CacheManager {
 	 * <p>Lancia un'eccezione se la tabella non è presente nella cache.</p>
 	 *
 	 * @param nomeTabella 				Tabella logica di riferimento nella cache
-	 * @return mappa interna immutabile (chiave → record cacheabile)
+	 * @return mappa interna immutabile (ID → record cacheabile)
 	 * @throws IllegalArgumentException se la tabella non è presente in cache
 	 */
-	private Map<String, ? extends CacheableEntry> getCachedRecords(TabellaCostante nomeTabella) {
-		Map<String, ? extends CacheableEntry> map = cache.get(nomeTabella);
+	private Map<Integer, ? extends CacheableEntry> getCachedRecords(TabellaCostante nomeTabella) {
+		Map<Integer, ? extends CacheableEntry> map = cache.get(nomeTabella);
 
 		if (map == null) {
 			throw new IllegalArgumentException("Tipo di costante non trovato: " + nomeTabella);
