@@ -16,20 +16,20 @@ import lombok.ToString;
 @Embeddable
 public class Indirizzo {
 
-	@NotBlank(message = "La via è obbligatoria")
-	@Column(length = 100)
+	@NotBlank(message = "Via obbligatoria")
+	@Column(length = 100, nullable = false)
 	private String via;
 
-	@NotBlank(message = "La città è obbligatoria")
-	@Column(length = 50)
+	@NotBlank(message = "Città obbligatoria")
+	@Column(length = 50, nullable = false)
 	private String citta;
 
-	@NotBlank(message = "Il CAP è obbligatorio")
-	@Pattern(regexp = "\\d{5}", message = "Il CAP deve avere 5 cifre")
-	@Column(length = 5)
+	@NotBlank(message = "CAP obbligatorio")
+	@Pattern(regexp = "\\d{5}", message = "CAP deve essere un numero di 5 cifre")
+	@Column(length = 5, nullable = false)
 	private String cap;
 
-	@NotBlank(message = "Il paese è obbligatorio")
-	@Column(length = 50)
+	@NotBlank(message = "Paese obbligatorio")
+	@Column(length = 50, nullable = false)
 	private String paese;
 }

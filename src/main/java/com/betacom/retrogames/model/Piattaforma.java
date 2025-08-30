@@ -29,7 +29,7 @@ public class Piattaforma {
 	@Column(length = 20, nullable = false, unique = true)
 	private String codice;
 
-	@Column(length = 150, nullable = false, unique = true)
+	@Column(length = 200, nullable = false, unique = true)
 	private String nome;
 
 	@Column(name = "anno_uscita_piattaforma", nullable = false)

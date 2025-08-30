@@ -38,6 +38,7 @@ public class CarrelloRiga {
 	private Prodotto prodotto;
 
 	@Column(nullable = false)
+	@Check(constraints = "quantita > 0")
 	private Integer quantita;
 
 	@CreationTimestamp

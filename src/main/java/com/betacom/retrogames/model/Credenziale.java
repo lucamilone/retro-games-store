@@ -28,11 +28,11 @@ public class Credenziale {
 	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
 
-	@Column(length = 100, nullable = false, unique = true)
+	@Column(length = 255, nullable = false, unique = true)
 	private String email;
 
-	@Column(name = "password_hash", length = 255, nullable = false)
-	private String passwordHash;
+	@Column(length = 255, nullable = false)
+	private String password;
 
 	@Column(name = "ultimo_login")
 	private LocalDateTime ultimoLogin;

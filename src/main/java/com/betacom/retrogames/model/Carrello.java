@@ -46,10 +46,6 @@ public class Carrello {
 	@Column(name = "aggiornato_il")
 	private LocalDateTime aggiornatoIl;
 
-	public Carrello(Account account) {
-		this.account = account;
-	}
-
 	public void addRiga(CarrelloRiga riga) {
 		righe.add(riga);
 		riga.setCarrello(this);
