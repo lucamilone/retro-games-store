@@ -16,11 +16,11 @@ import lombok.ToString;
 @ToString
 public class RuoloReq {
 
-    @NotNull(groups = OnUpdate.class, message = "Id obbligatorio")
-    @Positive(groups = OnUpdate.class, message = "Id deve essere positivo")
-    private Integer id;
+	@NotNull(groups = OnUpdate.class, message = "Id obbligatorio")
+	@Positive(groups = OnUpdate.class, message = "Id deve essere positivo")
+	private Integer id;
 
-    @NotBlank(groups = OnCreate.class, message = "Nome obbligatorio")
-    @Size(max = 50, message = "Nome non può superare 50 caratteri")
-    private String nome;
+	@NotBlank(groups = OnCreate.class, message = "Nome obbligatorio")
+	@Size(max = 50, message = "Nome non può superare 50 caratteri")
+	private String nome;
 }
