@@ -16,20 +16,32 @@ import lombok.extern.log4j.Log4j2;
 public class AccountImpl implements AccountService {
 
 	@Override
-	public Integer create(AccountReq req) throws AcademyException {
+	public Integer crea(AccountReq req) throws AcademyException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void update(AccountReq req) throws AcademyException {
+	public void aggiorna(AccountReq req) throws AcademyException {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void delete(AccountReq req) throws AcademyException {
+	public void disattiva(AccountReq req) throws AcademyException {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public List<AccountDTO> listAll() {
+	public AccountDTO getById(Integer accountId) throws AcademyException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<AccountDTO> listActive() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

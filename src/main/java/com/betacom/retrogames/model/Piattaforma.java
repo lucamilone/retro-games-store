@@ -36,6 +36,9 @@ public class Piattaforma {
 	@Check(constraints = "anno_uscita_piattaforma >= 1970 AND anno_uscita_piattaforma <= 2006")
 	private Integer annoUscitaPiattaforma;
 
+	@Column(nullable = false)
+	private boolean attivo;
+
 	@ManyToMany(mappedBy = "piattaforme", fetch = FetchType.LAZY)
 	private Set<Prodotto> prodotti = new HashSet<>();
 }

@@ -2,7 +2,6 @@ package com.betacom.retrogames.request;
 
 import java.util.Set;
 
-import com.betacom.retrogames.model.Prodotto;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnCreate;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnUpdate;
 
@@ -27,5 +26,5 @@ public class CategoriaReq {
 	@Size(max = 100, message = "Nome non può superare 100 caratteri")
 	private String nome;
 
-	private Set<Prodotto> prodottiId;
+	private Set<Integer> prodottiId;
 }

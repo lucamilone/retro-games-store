@@ -43,7 +43,7 @@ public class ProdottoReq {
 
 	@NotEmpty(groups = OnCreate.class, message = "Almeno una piattaforma è richiesta")
 	@Valid
-	private Set<PiattaformaReq> piattaformaId;
+	private Set<Integer> piattaformaId;
 
 	@NotBlank(groups = OnCreate.class, message = "Descrizione obbligatoria")
 	private String descrizione;

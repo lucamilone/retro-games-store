@@ -56,4 +56,7 @@ public class Prodotto {
 	@Column(precision = 10, scale = 2, nullable = false)
 	@Check(constraints = "prezzo > 0")
 	private BigDecimal prezzo;
+
+	@Column(nullable = false)
+	private boolean attivo;
 }

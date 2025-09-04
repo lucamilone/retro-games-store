@@ -36,8 +36,4 @@ public class AccountReq {
 	@NotNull(groups = OnCreate.class, message = "Ruolo obbligatorio")
 	@Positive(message = "RuoloId deve essere positivo")
 	private Integer ruoloId;
-
-	@NotNull(groups = OnCreate.class, message = "Credenziale obbligatoria")
-	@Valid
-	private CredenzialeReq credenziale;
 }

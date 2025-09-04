@@ -21,4 +21,7 @@ public class TipoMetodoPagamento {
 
 	@Column(length = 50, nullable = false, unique = true)
 	private String nome;
+
+	@Column(nullable = false)
+	private boolean attivo;
 }

@@ -30,6 +30,9 @@ public class Categoria {
 	@OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
 	private Set<Prodotto> prodotti = new HashSet<>();
 
+	@Column(nullable = false)
+	private boolean attivo;
+
 	public void addProdotto(Prodotto prodotto) {
 		prodotti.add(prodotto);
 		prodotto.setCategoria(this);

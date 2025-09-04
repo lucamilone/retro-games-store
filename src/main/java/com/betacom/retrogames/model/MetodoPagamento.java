@@ -41,6 +41,9 @@ public class MetodoPagamento {
 	@Column(name = "metodo_default", nullable = false)
 	private boolean metodoDefault;
 
+	@Column(nullable = false)
+	private boolean attivo;
+
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)
 	private LocalDateTime creatoIl;

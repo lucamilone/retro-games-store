@@ -36,4 +36,7 @@ public class Credenziale {
 
 	@Column(name = "ultimo_login")
 	private LocalDateTime ultimoLogin;
+
+	@Column(nullable = false)
+	private boolean attivo;
 }
