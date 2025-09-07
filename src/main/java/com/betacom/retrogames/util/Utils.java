@@ -1,11 +1,7 @@
 package com.betacom.retrogames.util;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
-
-import com.betacom.retrogames.dto.RuoloDTO;
-import com.betacom.retrogames.model.Ruolo;
 
 public class Utils {
 
@@ -25,15 +21,4 @@ public class Utils {
 
 		return str.trim().toLowerCase();
 	}
-	
-	// Metodo per costruire una lista di RuoloDTO
-    public List<RuoloDTO> buildListRuoloDTO(List<Ruolo> ruoli) 
-    {
-    	return ruoli.stream()
-                .map(ruolo -> RuoloDTO.builder()
-                        .id(ruolo.getId())
-                        .nome(ruolo.getNome())
-                        .build())
-                .collect(Collectors.toList());
-    }
 }
