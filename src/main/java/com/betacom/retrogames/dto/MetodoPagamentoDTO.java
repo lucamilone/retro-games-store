@@ -1,21 +1,17 @@
 package com.betacom.retrogames.dto;
 
-import java.time.LocalDateTime;
-
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Builder
+@Setter
 @ToString
 public class MetodoPagamentoDTO {
 
 	private Integer id;
 	private Integer accountId;
-	private TipoMetodoPagamentoDTO tipoMetodoPagamento;
+	private TipoMetodoPagamentoDTO tipo;
 	private String token;
 	private boolean metodoDefault;
-	private LocalDateTime creatoIl;
-	private LocalDateTime aggiornatoIl;
 }

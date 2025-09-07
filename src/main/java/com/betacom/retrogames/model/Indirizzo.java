@@ -4,14 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
-@Builder
 @ToString
 @Embeddable
 public class Indirizzo {

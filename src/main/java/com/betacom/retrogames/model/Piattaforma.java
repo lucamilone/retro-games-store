@@ -1,9 +1,12 @@
 package com.betacom.retrogames.model;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,9 +39,17 @@ public class Piattaforma {
 	@Check(constraints = "anno_uscita_piattaforma >= 1970 AND anno_uscita_piattaforma <= 2006")
 	private Integer annoUscitaPiattaforma;
 
+	@ManyToMany(mappedBy = "piattaforme", fetch = FetchType.LAZY)
+	private Set<Prodotto> prodotti = new HashSet<>();
+
 	@Column(nullable = false)
 	private boolean attivo;
 
-	@ManyToMany(mappedBy = "piattaforme", fetch = FetchType.LAZY)
-	private Set<Prodotto> prodotti = new HashSet<>();
+	@CreationTimestamp
+	@Column(name = "creato_il", nullable = false, updatable = false)
+	private LocalDateTime creatoIl;
+
+	@UpdateTimestamp
+	@Column(name = "aggiornato_il")
+	private LocalDateTime aggiornatoIl;
 }

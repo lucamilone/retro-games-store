@@ -1,5 +1,6 @@
 package com.betacom.retrogames.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,5 +55,14 @@ public class Carrello {
 	public void removeRiga(CarrelloRiga riga) {
 		righe.remove(riga);
 		riga.setCarrello(null);
+	}
+
+	public int getTotaleQuantita() {
+		return righe == null ? 0 : righe.stream().mapToInt(CarrelloRiga::getQuantita).sum();
+	}
+
+	public BigDecimal getTotale() {
+		return righe == null ? BigDecimal.ZERO
+				: righe.stream().map(CarrelloRiga::getSubTotale).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 }

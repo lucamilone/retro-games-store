@@ -3,12 +3,12 @@ package com.betacom.retrogames.dto;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Builder
+@Setter
 @ToString
 public class ProdottoDTO {
 
@@ -20,4 +20,5 @@ public class ProdottoDTO {
 	private String descrizione;
 	private Integer annoUscita;
 	private BigDecimal prezzo;
+	private String imgUrl;
 }

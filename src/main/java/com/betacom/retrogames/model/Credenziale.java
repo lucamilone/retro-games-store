@@ -2,6 +2,9 @@ package com.betacom.retrogames.model;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,4 +42,12 @@ public class Credenziale {
 
 	@Column(nullable = false)
 	private boolean attivo;
+
+	@CreationTimestamp
+	@Column(name = "creato_il", nullable = false, updatable = false)
+	private LocalDateTime creatoIl;
+
+	@UpdateTimestamp
+	@Column(name = "aggiornato_il")
+	private LocalDateTime aggiornatoIl;
 }

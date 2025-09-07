@@ -1,8 +1,11 @@
 package com.betacom.retrogames.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +45,15 @@ public class OrdineRiga {
 	@Column(name = "prezzo_unitario", precision = 10, scale = 2, nullable = false)
 	private BigDecimal prezzoUnitario;
 
-	public BigDecimal getTotale() {
+	@CreationTimestamp
+	@Column(name = "creato_il", nullable = false, updatable = false)
+	private LocalDateTime creatoIl;
+
+	@UpdateTimestamp
+	@Column(name = "aggiornato_il")
+	private LocalDateTime aggiornatoIl;
+
+	public BigDecimal getSubTotale() {
 		return prezzoUnitario == null ? BigDecimal.ZERO : prezzoUnitario.multiply(BigDecimal.valueOf(quantita));
 	}
 }

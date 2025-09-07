@@ -55,6 +55,9 @@ public class Ordine {
 	@OneToOne(mappedBy = "ordine", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	private Pagamento pagamento;
 
+	@Column(precision = 10, scale = 2, nullable = false)
+	private BigDecimal totale;
+
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)
 	private LocalDateTime creatoIl;
@@ -62,11 +65,6 @@ public class Ordine {
 	@UpdateTimestamp
 	@Column(name = "aggiornato_il")
 	private LocalDateTime aggiornatoIl;
-
-	public BigDecimal getTotale() {
-		return righe == null ? BigDecimal.ZERO
-				: righe.stream().map(OrdineRiga::getTotale).reduce(BigDecimal.ZERO, BigDecimal::add);
-	}
 
 	public void addRiga(OrdineRiga riga) {
 		righe.add(riga);
@@ -76,5 +74,14 @@ public class Ordine {
 	public void removeRiga(OrdineRiga riga) {
 		righe.remove(riga);
 		riga.setOrdine(null);
+	}
+
+	public int getTotaleQuantita() {
+		return righe == null ? 0 : righe.stream().mapToInt(OrdineRiga::getQuantita).sum();
+	}
+
+	public BigDecimal getTotale() {
+		return righe == null ? BigDecimal.ZERO
+				: righe.stream().map(OrdineRiga::getSubTotale).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 }
