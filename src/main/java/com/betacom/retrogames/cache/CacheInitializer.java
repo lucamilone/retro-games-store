@@ -44,11 +44,20 @@ public class CacheInitializer {
 	}
 
 	/**
-	 * Popola la cache all'avvio dell'applicazione
-	 * caricando tutte le tabelle costanti dal database.
+	 * Popola la cache all'avvio dell'applicazione caricando tutte le tabelle costanti dal database.
+	 * Questo metodo viene eseguito automaticamente dopo che il contesto Spring è pronto.
 	 */
 	@EventListener(ApplicationReadyEvent.class)
-	public void loadCacheOnStartup() {
+	private void loadCacheOnStartup() {
+		loadCache();
+		log.debug("Cache inizializzata all'avvio dell'applicazione");
+	}
+
+	/**
+	 * Carica in memoria tutte le tabelle costanti dal database e le inserisce nella cache.
+	 * Questo metodo viene utilizzato sia all'avvio dell'applicazione che durante il reload manuale della cache.
+	 */
+	private void loadCache() {
 		cacheManager.putTable(TabellaCostante.CATEGORIA,
 				buildCacheMapFromList(categoriaRepo.findAll(), CachedCategoria::new));
 		cacheManager.putTable(TabellaCostante.PIATTAFORMA,
@@ -56,8 +65,16 @@ public class CacheInitializer {
 		cacheManager.putTable(TabellaCostante.RUOLO, buildCacheMapFromList(ruoloRepo.findAll(), CachedRuolo::new));
 		cacheManager.putTable(TabellaCostante.TIPO_METODO_PAGAMENTO,
 				buildCacheMapFromList(tipoMetodoPagamentoRepo.findAll(), CachedTipoMetodoPagamento::new));
+	}
 
-		log.debug("Cache inizializzata all'avvio dell'applicazione");
+	/**
+	 * Ricarica la cache in memoria, aggiornando i dati delle tabelle costanti
+	 * con quelli correnti presenti nel database.
+	 * Questo metodo può essere chiamato manualmente in qualsiasi momento per sincronizzare la cache.
+	 */
+	public void reloadCache() {
+		loadCache();
+		log.debug("Cache ricaricata manualmente in memoria");
 	}
 
 	/**
