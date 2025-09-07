@@ -39,6 +39,15 @@ public interface ProdottoService {
 	void disattiva(ProdottoReq req) throws AcademyException;
 
 	/**
+	 * Recupera un prodotto in base al suo ID.
+	 *
+	 * @param id 				ID del prodotto
+	 * @return ProdottoDTO contenente tutti i dati rilevanti
+	 * @throws AcademyException se il prodotto non esiste
+	 */
+	ProdottoDTO getById(Integer id) throws AcademyException;
+
+	/**
 	 * Recupera tutti i prodotti attivi nel catalogo.
 	 *
 	 * @return lista di ProdottoDTO

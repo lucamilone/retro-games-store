@@ -39,6 +39,15 @@ public interface PiattaformaService {
 	void disattiva(PiattaformaReq req) throws AcademyException;
 
 	/**
+	 * Recupera una piattaforma in base al suo ID.
+	 *
+	 * @param id 				ID della piattaforma
+	 * @return PiattaformaDTO contenente tutti i dati rilevanti
+	 * @throws AcademyException se la piattaforma non esiste
+	 */
+	PiattaformaDTO getById(Integer id) throws AcademyException;
+
+	/**
 	 * Recupera tutte le piattaforme attive.
 	 *
 	 * @return Lista di PiattaformaDTO
