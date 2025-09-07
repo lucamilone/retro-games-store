@@ -14,5 +14,5 @@ public interface CredenzialeMapper {
 	@Mapping(target = "accountId", source = "account.id")
 	CredenzialeDTO toDto(Credenziale credenziale);
 
-	List<CredenzialeDTO> toDtos(List<CredenzialeDTO> credenziali);
+	List<CredenzialeDTO> toDtoList(List<Credenziale> credenziali);
 }

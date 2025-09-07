@@ -12,5 +12,5 @@ public interface TipoMetodoPagamentoMapper {
 
 	TipoMetodoPagamentoDTO toDto(TipoMetodoPagamento tipo);
 
-	List<TipoMetodoPagamentoDTO> toDtos(List<TipoMetodoPagamentoDTO> tipi);
+	List<TipoMetodoPagamentoDTO> toDtoList(List<TipoMetodoPagamento> tipi);
 }

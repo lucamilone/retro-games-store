@@ -12,5 +12,5 @@ public interface PiattaformaMapper {
 
 	PiattaformaDTO toDto(Piattaforma piattaforma);
 
-	List<PiattaformaDTO> toDtos(List<PiattaformaDTO> piattaforme);
+	List<PiattaformaDTO> toDtoList(List<Piattaforma> piattaforme);
 }

@@ -15,5 +15,5 @@ public interface OrdineMapper {
 	@Mapping(target = "totaleQuantita", ignore = true)
 	OrdineDTO toDto(Ordine ordine);
 
-	List<OrdineDTO> toDtos(List<OrdineDTO> ordini);
+	List<OrdineDTO> toDtoList(List<Ordine> ordini);
 }

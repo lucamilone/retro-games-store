@@ -14,5 +14,5 @@ public interface MetodoPagamentoMapper {
 	@Mapping(target = "accountId", source = "account.id")
 	MetodoPagamentoDTO toDto(MetodoPagamento metodoPagamento);
 
-	List<MetodoPagamentoDTO> toDtos(List<MetodoPagamentoDTO> metodiPagamento);
+	List<MetodoPagamentoDTO> toDtoList(List<MetodoPagamento> metodiPagamento);
 }

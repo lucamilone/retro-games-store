@@ -15,5 +15,5 @@ public interface AccountMapper {
 	@Mapping(target = "ruolo", source = "ruolo.nome")
 	AccountDTO toDto(Account account);
 
-	List<AccountDTO> toDtos(List<AccountDTO> accounts);
+	List<AccountDTO> toDtoList(List<Account> accounts);
 }

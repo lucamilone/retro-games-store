@@ -15,5 +15,5 @@ public interface CarrelloRigaMapper {
 	@Mapping(target = "subTotale", ignore = true)
 	CarrelloRigaDTO toDto(CarrelloRiga riga);
 
-	List<CarrelloRigaDTO> toDtos(List<CarrelloRigaDTO> righe);
+	List<CarrelloRigaDTO> toDtoList(List<CarrelloRiga> righe);
 }

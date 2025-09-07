@@ -14,5 +14,5 @@ public interface PagamentoMapper {
 	@Mapping(target = "ordineId", source = "ordine.id")
 	PagamentoDTO toDto(Pagamento pagamento);
 
-	List<PagamentoDTO> toDtos(List<PagamentoDTO> pagamenti);
+	List<PagamentoDTO> toDtoList(List<Pagamento> pagamenti);
 }

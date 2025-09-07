@@ -14,5 +14,5 @@ public interface OrdineRigaMapper {
 	@Mapping(target = "ordineId", source = "ordine.id")
 	OrdineRigaDTO toDto(OrdineRiga riga);
 
-	List<OrdineRigaDTO> toDtos(List<OrdineRigaDTO> righe);
+	List<OrdineRigaDTO> toDtoList(List<OrdineRiga> righe);
 }
