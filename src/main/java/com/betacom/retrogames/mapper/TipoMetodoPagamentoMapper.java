@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 
+import com.betacom.retrogames.cache.implementations.CachedTipoMetodoPagamento;
 import com.betacom.retrogames.dto.TipoMetodoPagamentoDTO;
 import com.betacom.retrogames.model.TipoMetodoPagamento;
 
@@ -11,6 +12,8 @@ import com.betacom.retrogames.model.TipoMetodoPagamento;
 public interface TipoMetodoPagamentoMapper {
 
 	TipoMetodoPagamentoDTO toDto(TipoMetodoPagamento tipo);
+
+	TipoMetodoPagamentoDTO toDtoFromCached(CachedTipoMetodoPagamento cached);
 
 	List<TipoMetodoPagamentoDTO> toDtoList(List<TipoMetodoPagamento> tipi);
 }

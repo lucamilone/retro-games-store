@@ -7,4 +7,7 @@ public class ValidationGroup {
 
 	public interface OnUpdate {
 	}
+
+	public interface OnDelete {
+	}
 }
