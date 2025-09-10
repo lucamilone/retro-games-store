@@ -77,8 +77,8 @@ public class RuoloController {
 		return res;
 	}
 
-	@GetMapping("/get-ruolo")
-	public ResponseObject<RuoloDTO> getSocio(@RequestParam(required = true) Integer id) {
+	@GetMapping("/get-by-id")
+	public ResponseObject<RuoloDTO> getById(@RequestParam(required = true) Integer id) {
 		ResponseObject<RuoloDTO> res = new ResponseObject<>();
 
 		try {
