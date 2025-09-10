@@ -61,6 +61,8 @@ public class RuoloImpl extends Utils implements RuoloService {
 		// Creo il nuovo valore nella cache
 		CachedRuolo newRuolo = new CachedRuolo(saved);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, newRuolo);
+		
+		log.debug("Ruolo creato con successo con Id: {}", req.getId());
 
 		// restituisce l'id generato
 		return saved.getId();
@@ -88,6 +90,8 @@ public class RuoloImpl extends Utils implements RuoloService {
 		// Aggiorno la cache
 		CachedRuolo newRuolo = new CachedRuolo(ruolo);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, newRuolo);
+		
+		log.debug("Ruolo modificato con successo con Id: {}", req.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
@@ -112,6 +116,8 @@ public class RuoloImpl extends Utils implements RuoloService {
 
 		// Rimuovo il record dalla cache
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.RUOLO, req.getId());
+		
+		log.debug("Ruolo disattivato con successo con Id: {}", req.getId());
 	}
 
 	@Override
