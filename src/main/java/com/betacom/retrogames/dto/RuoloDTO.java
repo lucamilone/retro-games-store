@@ -11,4 +11,5 @@ public class RuoloDTO {
 
 	private Integer id;
 	private String nome;
+	private Boolean attivo;
 }

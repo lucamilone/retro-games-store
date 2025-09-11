@@ -14,9 +14,11 @@ public class CachedRuolo implements CacheableEntry {
 
 	private Integer id;
 	private String nome;
+	private Boolean attivo;
 
 	public CachedRuolo(Ruolo ruolo) {
 		this.id = ruolo.getId();
 		this.nome = ruolo.getNome();
+		this.attivo = ruolo.getAttivo();
 	}
 }

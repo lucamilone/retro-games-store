@@ -39,10 +39,10 @@ public class MetodoPagamento {
 	private String token; // Es. Numero carta criptato o PayPal ID
 
 	@Column(name = "metodo_default", nullable = false)
-	private boolean metodoDefault;
+	private Boolean metodoDefault;
 
 	@Column(nullable = false)
-	private boolean attivo;
+	private Boolean attivo;
 
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)

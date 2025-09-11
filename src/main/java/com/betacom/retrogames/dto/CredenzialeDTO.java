@@ -15,4 +15,5 @@ public class CredenzialeDTO {
 	private Integer accountId;
 	private String email;
 	private LocalDateTime ultimoLogin;
+	private Boolean attivo;
 }

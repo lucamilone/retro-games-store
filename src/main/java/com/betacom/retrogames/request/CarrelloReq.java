@@ -3,6 +3,7 @@ package com.betacom.retrogames.request;
 import java.util.List;
 
 import com.betacom.retrogames.request.validation.ValidationGroup.OnCreate;
+import com.betacom.retrogames.request.validation.ValidationGroup.OnDelete;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnUpdate;
 
 import jakarta.validation.Valid;
@@ -17,8 +18,8 @@ import lombok.ToString;
 @ToString
 public class CarrelloReq {
 
-	@NotNull(groups = OnUpdate.class, message = "Id obbligatorio")
-	@Positive(groups = OnUpdate.class, message = "Id deve essere positivo")
+	@NotNull(groups = { OnUpdate.class, OnDelete.class }, message = "Id obbligatorio")
+	@Positive(groups = { OnUpdate.class, OnDelete.class }, message = "Id deve essere positivo")
 	private Integer id;
 
 	@NotNull(groups = OnCreate.class, message = "AccountId obbligatorio")

@@ -16,11 +16,13 @@ public class CachedPiattaforma implements CacheableEntry {
 	private String codice;
 	private String nome;
 	private Integer annoUscitaPiattaforma;
+	private Boolean attivo;
 
 	public CachedPiattaforma(Piattaforma piattaforma) {
 		this.id = piattaforma.getId();
 		this.codice = piattaforma.getCodice();
 		this.nome = piattaforma.getNome();
 		this.annoUscitaPiattaforma = piattaforma.getAnnoUscitaPiattaforma();
+		this.attivo = piattaforma.getAttivo();
 	}
 }

@@ -13,5 +13,6 @@ public class MetodoPagamentoDTO {
 	private Integer accountId;
 	private TipoMetodoPagamentoDTO tipo;
 	private String token;
-	private boolean metodoDefault;
+	private Boolean metodoDefault;
+	private Boolean attivo;
 }

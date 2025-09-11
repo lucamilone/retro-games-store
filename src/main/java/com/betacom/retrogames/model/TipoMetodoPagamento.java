@@ -28,7 +28,7 @@ public class TipoMetodoPagamento {
 	private String nome;
 
 	@Column(nullable = false)
-	private boolean attivo;
+	private Boolean attivo;
 
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)

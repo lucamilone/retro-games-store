@@ -11,4 +11,5 @@ public class TipoMetodoPagamentoDTO {
 
 	private Integer id;
 	private String nome;
+	private Boolean attivo;
 }

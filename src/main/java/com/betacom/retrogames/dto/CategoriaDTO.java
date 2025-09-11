@@ -1,6 +1,6 @@
 package com.betacom.retrogames.dto;
 
-import java.util.Set;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,5 +13,6 @@ public class CategoriaDTO {
 
 	private Integer id;
 	private String nome;
-	private Set<ProdottoDTO> prodotti;
+	private List<ProdottoDTO> prodotti;
+	private Boolean attivo;
 }

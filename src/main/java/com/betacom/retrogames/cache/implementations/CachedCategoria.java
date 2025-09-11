@@ -14,9 +14,11 @@ public class CachedCategoria implements CacheableEntry {
 
 	private Integer id;
 	private String nome;
+	private Boolean attivo;
 
 	public CachedCategoria(Categoria categoria) {
 		this.id = categoria.getId();
 		this.nome = categoria.getNome();
+		this.attivo = categoria.getAttivo();
 	}
 }

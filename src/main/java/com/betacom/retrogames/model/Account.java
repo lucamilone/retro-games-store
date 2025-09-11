@@ -56,7 +56,7 @@ public class Account {
 	private Carrello carrello;
 
 	@Column(nullable = false)
-	private boolean attivo;
+	private Boolean attivo;
 
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)

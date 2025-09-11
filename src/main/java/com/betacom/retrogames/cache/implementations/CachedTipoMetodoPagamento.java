@@ -14,9 +14,11 @@ public class CachedTipoMetodoPagamento implements CacheableEntry {
 
 	private Integer id;
 	private String nome;
+	private Boolean attivo;
 
 	public CachedTipoMetodoPagamento(TipoMetodoPagamento tipoMetodoPagamento) {
 		this.id = tipoMetodoPagamento.getId();
 		this.nome = tipoMetodoPagamento.getNome();
+		this.attivo = tipoMetodoPagamento.getAttivo();
 	}
 }

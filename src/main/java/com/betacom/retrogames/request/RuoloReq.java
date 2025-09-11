@@ -24,4 +24,6 @@ public class RuoloReq {
 	@NotBlank(groups = { OnCreate.class, OnUpdate.class }, message = "Nome obbligatorio")
 	@Size(max = 50, message = "Nome non può superare 50 caratteri")
 	private String nome;
+
+	private Boolean attivo;
 }

@@ -43,7 +43,7 @@ public class Piattaforma {
 	private Set<Prodotto> prodotti = new HashSet<>();
 
 	@Column(nullable = false)
-	private boolean attivo;
+	private Boolean attivo;
 
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)

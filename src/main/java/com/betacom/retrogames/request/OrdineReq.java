@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.betacom.retrogames.model.enums.StatoOrdine;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnCreate;
+import com.betacom.retrogames.request.validation.ValidationGroup.OnDelete;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnUpdate;
 
 import jakarta.validation.Valid;
@@ -20,8 +21,8 @@ import lombok.ToString;
 @ToString
 public class OrdineReq {
 
-	@NotNull(groups = OnUpdate.class, message = "Id obbligatorio per l'aggiornamento")
-	@Positive(groups = OnUpdate.class, message = "Id deve essere positivo")
+	@NotNull(groups = { OnUpdate.class, OnDelete.class }, message = "Id obbligatorio per l'aggiornamento")
+	@Positive(groups = { OnUpdate.class, OnDelete.class }, message = "Id deve essere positivo")
 	private Integer id;
 
 	@Null(groups = OnCreate.class, message = "Stato ordine viene assegnato automaticamente alla creazione")

@@ -1,6 +1,7 @@
 package com.betacom.retrogames.request;
 
 import com.betacom.retrogames.request.validation.ValidationGroup.OnCreate;
+import com.betacom.retrogames.request.validation.ValidationGroup.OnDelete;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnUpdate;
 
 import jakarta.validation.constraints.Email;
@@ -17,8 +18,8 @@ import lombok.ToString;
 @ToString
 public class CredenzialeReq {
 
-	@NotNull(groups = OnUpdate.class, message = "Id obbligatorio")
-	@Positive(groups = OnUpdate.class, message = "Id deve essere positivo")
+	@NotNull(groups = { OnUpdate.class, OnDelete.class }, message = "Id obbligatorio")
+	@Positive(groups = { OnUpdate.class, OnDelete.class }, message = "Id deve essere positivo")
 	private Integer id;
 
 	@NotBlank(groups = OnCreate.class, message = "Email obbligatoria")
@@ -29,4 +30,6 @@ public class CredenzialeReq {
 	@NotBlank(groups = OnCreate.class, message = "Password obbligatoria")
 	@Size(min = 8, max = 255, message = "La password deve avere almeno 8 caratteri e massimo 255")
 	private String password;
+
+	private Boolean attivo;
 }

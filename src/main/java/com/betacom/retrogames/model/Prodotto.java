@@ -64,7 +64,7 @@ public class Prodotto {
 	private String imgUrl;
 
 	@Column(nullable = false)
-	private boolean attivo;
+	private Boolean attivo;
 
 	@CreationTimestamp
 	@Column(name = "creato_il", nullable = false, updatable = false)
