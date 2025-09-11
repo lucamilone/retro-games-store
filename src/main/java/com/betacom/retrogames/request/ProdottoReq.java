@@ -6,13 +6,11 @@ import java.util.Set;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnCreate;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnUpdate;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -41,8 +39,6 @@ public class ProdottoReq {
 	@Positive(message = "CategoriaId deve essere positivo")
 	private Integer categoriaId;
 
-	@NotEmpty(groups = OnCreate.class, message = "Almeno una piattaforma è richiesta")
-	@Valid
 	private Set<Integer> piattaformaId;
 
 	@NotBlank(groups = OnCreate.class, message = "Descrizione obbligatoria")
@@ -57,4 +53,6 @@ public class ProdottoReq {
 	@DecimalMin(value = "0.01", inclusive = true, message = "Prezzo deve essere maggiore di 0")
 	@Digits(integer = 10, fraction = 2, message = "Prezzo non valido (max 10 cifre intere e 2 decimali)")
 	private BigDecimal prezzo;
+	
+	private String imgUrl;
 }
