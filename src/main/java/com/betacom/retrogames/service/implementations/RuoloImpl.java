@@ -59,8 +59,8 @@ public class RuoloImpl extends Utils implements RuoloService {
 		Ruolo saved = ruoloRepo.save(ruolo);
 
 		// Creo il nuovo valore nella cache
-		CachedRuolo newRuolo = new CachedRuolo(saved);
-		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, newRuolo);
+		CachedRuolo ruoloNew = new CachedRuolo(saved);
+		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, ruoloNew);
 
 		log.debug("Ruolo creato con successo con Id: {}", saved.getId());
 
@@ -85,13 +85,13 @@ public class RuoloImpl extends Utils implements RuoloService {
 		ruolo.setNome(req.getNome());
 
 		// Salvo il ruolo aggiornato
-		ruoloRepo.save(ruolo);
+		Ruolo saved = ruoloRepo.save(ruolo);
 
 		// Aggiorno la cache
-		CachedRuolo newRuolo = new CachedRuolo(ruolo);
-		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, newRuolo);
+		CachedRuolo ruoloUpd = new CachedRuolo(saved);
+		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, ruoloUpd);
 
-		log.debug("Ruolo modificato con successo con Id: {}", req.getId());
+		log.debug("Ruolo aggiornato con successo con Id: {}", req.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
@@ -137,8 +137,8 @@ public class RuoloImpl extends Utils implements RuoloService {
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ruolo-non-esiste")));
 
 		// Aggiorno la cache
-		CachedRuolo newRuolo = new CachedRuolo(ruolo);
-		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, newRuolo);
+		CachedRuolo ruoloNew = new CachedRuolo(ruolo);
+		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, ruoloNew);
 
 		// Converto il ruolo trovato in un DTO e lo restituisco
 		return ruoloMapper.toDto(ruolo);
