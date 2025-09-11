@@ -1,5 +1,6 @@
 package com.betacom.retrogames.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ import com.betacom.retrogames.model.Categoria;
 public interface CategoriaRepository extends JpaRepository<Categoria, Integer> {
 
 	Optional<Categoria> findByNome(String nome);
+	
+	List<Categoria> findByAttivoTrue();
 }

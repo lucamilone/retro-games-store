@@ -1,5 +1,6 @@
 package com.betacom.retrogames.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ import com.betacom.retrogames.model.Piattaforma;
 public interface PiattaformaRepository extends JpaRepository<Piattaforma, Integer> {
 
 	Optional<Piattaforma> findByCodice(String codice);
+	
+	List<Piattaforma> findByAttivoTrue();
 }

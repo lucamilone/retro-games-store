@@ -81,8 +81,15 @@ public class RuoloImpl extends Utils implements RuoloService {
 		// Recupero dal DB per salvare i dati
 		Ruolo ruolo = ruoloRepo.findById(req.getId())
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ruolo-non-esiste")));
-
-		ruolo.setNome(req.getNome());
+		
+		if(req.getNome() != null)
+		{
+			ruolo.setNome(req.getNome());
+		}
+		if(req.getAttivo() != null)
+		{
+			ruolo.setAttivo(req.getAttivo());
+		}
 
 		// Salvo il ruolo aggiornato
 		Ruolo saved = ruoloRepo.save(ruolo);
