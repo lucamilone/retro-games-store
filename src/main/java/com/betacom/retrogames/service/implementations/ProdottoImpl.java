@@ -140,13 +140,14 @@ public class ProdottoImpl extends Utils implements ProdottoService
             .stream().collect(Collectors.toSet());
 
         // Aggiorno i dati del prodotto
+        prodotto.setSku(req.getSku());
         prodotto.setNome(req.getNome());
         prodotto.setCategoria(categoria);
         prodotto.setPiattaforme(piattaforme);
         prodotto.setDescrizione(req.getDescrizione());
         prodotto.setAnnoUscita(req.getAnnoUscita());
-        prodotto.setImgUrl(req.getImgUrl());
         prodotto.setPrezzo(req.getPrezzo());
+        prodotto.setImgUrl(req.getImgUrl());
 
         // Salvo il prodotto aggiornato
         prodottoRepo.save(prodotto);
