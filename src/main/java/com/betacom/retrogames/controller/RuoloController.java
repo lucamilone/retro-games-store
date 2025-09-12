@@ -36,7 +36,7 @@ public class RuoloController {
 		try {
 			Integer id = ruoloS.crea(req);
 			res.setReturnCode(true);
-			res.setMsg("Ruolo creato con successo. Id: " + id);
+			res.setMsg("Ruolo creato con successo. ID: " + id);
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

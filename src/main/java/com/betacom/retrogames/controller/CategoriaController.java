@@ -1,7 +1,13 @@
 package com.betacom.retrogames.controller;
 
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.betacom.retrogames.dto.CategoriaDTO;
 import com.betacom.retrogames.exception.AcademyException;
@@ -16,29 +22,22 @@ import com.betacom.retrogames.service.interfaces.CategoriaService;
 
 @RestController
 @RequestMapping("/api/v1/retro-games/categorie")
-public class CategoriaController 
-{
+public class CategoriaController {
 	private final CategoriaService categoriaS;
 
-	public CategoriaController(CategoriaService categoriaS) 
-	{
+	public CategoriaController(CategoriaService categoriaS) {
 		this.categoriaS = categoriaS;
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody CategoriaReq req) 
-	{
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody CategoriaReq req) {
 		ResponseBase res = new ResponseBase();
 
-		try 
-		{
+		try {
 			Integer id = categoriaS.crea(req);
-			
 			res.setReturnCode(true);
-			res.setMsg("Categoria creata con successo. Id: " + id);
-		} 
-		catch (AcademyException e) 
-		{
+			res.setMsg("Categoria creata con successo. ID: " + id);
+		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
@@ -47,19 +46,14 @@ public class CategoriaController
 	}
 
 	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody CategoriaReq req) 
-	{
+	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody CategoriaReq req) {
 		ResponseBase res = new ResponseBase();
 
-		try 
-		{
+		try {
 			categoriaS.aggiorna(req);
-			
 			res.setReturnCode(true);
 			res.setMsg("Categoria aggiornata con successo");
-		} 
-		catch (AcademyException e) 
-		{
+		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
@@ -68,19 +62,14 @@ public class CategoriaController
 	}
 
 	@PutMapping("/disattiva")
-	public ResponseBase disattiva(@Validated(OnDelete.class) @RequestBody CategoriaReq req) 
-	{
+	public ResponseBase disattiva(@Validated(OnDelete.class) @RequestBody CategoriaReq req) {
 		ResponseBase res = new ResponseBase();
 
-		try 
-		{
+		try {
 			categoriaS.disattiva(req);
-			
 			res.setReturnCode(true);
 			res.setMsg("Categoria disattivata con successo");
-		} 
-		catch (AcademyException e) 
-		{
+		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
@@ -89,17 +78,13 @@ public class CategoriaController
 	}
 
 	@GetMapping("/get-by-id")
-	public ResponseObject<CategoriaDTO> getById(@RequestParam Integer id)
-	{
+	public ResponseObject<CategoriaDTO> getById(@RequestParam Integer id) {
 		ResponseObject<CategoriaDTO> res = new ResponseObject<>();
 
-		try 
-		{
+		try {
 			res.setDati(categoriaS.getById(id));
 			res.setReturnCode(true);
-		} 
-		catch (AcademyException e) 
-		{
+		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
@@ -108,17 +93,13 @@ public class CategoriaController
 	}
 
 	@GetMapping("/list-active")
-	public ResponseList<CategoriaDTO> listActive() 
-	{
+	public ResponseList<CategoriaDTO> listActive() {
 		ResponseList<CategoriaDTO> res = new ResponseList<>();
 
-		try 
-		{
+		try {
 			res.setDati(categoriaS.listActive());
 			res.setReturnCode(true);
-		} 
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}

@@ -21,7 +21,7 @@ public class RuoloReq {
 	@Positive(groups = { OnUpdate.class, OnDelete.class }, message = "Id deve essere positivo")
 	private Integer id;
 
-	@NotBlank(groups = { OnCreate.class }, message = "Nome obbligatorio")
+	@NotBlank(groups = OnCreate.class, message = "Nome obbligatorio")
 	@Size(max = 50, message = "Nome non può superare 50 caratteri")
 	private String nome;
 

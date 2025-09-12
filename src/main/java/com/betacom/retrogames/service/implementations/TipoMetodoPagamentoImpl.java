@@ -1,5 +1,7 @@
 package com.betacom.retrogames.service.implementations;
 
+import static com.betacom.retrogames.util.Utils.normalizza;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,21 +21,19 @@ import com.betacom.retrogames.repository.TipoMetodoPagamentoRepository;
 import com.betacom.retrogames.request.TipoMetodoPagamentoReq;
 import com.betacom.retrogames.service.interfaces.MessaggioService;
 import com.betacom.retrogames.service.interfaces.TipoMetodoPagamentoService;
-import static com.betacom.retrogames.util.Utils.normalizza;
 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
-public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService 
-{
+public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService {
 	private final CacheManager cacheManager;
 	private final MessaggioService msgS;
 	private final TipoMetodoPagamentoRepository tipoRepo;
 	private final TipoMetodoPagamentoMapper tipoMapper;
 
-	public TipoMetodoPagamentoImpl(CacheManager cacheManager, MessaggioService msgS, TipoMetodoPagamentoRepository tipoRepo, TipoMetodoPagamentoMapper tipoMapper)
-	{
+	public TipoMetodoPagamentoImpl(CacheManager cacheManager, MessaggioService msgS,
+			TipoMetodoPagamentoRepository tipoRepo, TipoMetodoPagamentoMapper tipoMapper) {
 		this.cacheManager = cacheManager;
 		this.msgS = msgS;
 		this.tipoRepo = tipoRepo;
@@ -42,43 +42,39 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(TipoMetodoPagamentoReq req) throws AcademyException 
-	{
+	public Integer crea(TipoMetodoPagamentoReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già un tipo con lo stesso nome
 		Optional<TipoMetodoPagamento> opt = tipoRepo.findByNome(req.getNome());
-		if (opt.isPresent()) 
-		{
+		if (opt.isPresent()) {
 			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-esistente"));
 		}
 
 		TipoMetodoPagamento tipo = new TipoMetodoPagamento();
-		
 		tipo.setNome(normalizza(req.getNome()));
 		tipo.setAttivo(true);
 
-		// Salvataggio del tipo
+		// Salvo il tipo
 		TipoMetodoPagamento saved = tipoRepo.save(tipo);
 
 		// Aggiorno la cache
-		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO, new CachedTipoMetodoPagamento(saved));
+		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO,
+				new CachedTipoMetodoPagamento(saved));
 
-		log.debug("TipoMetodoPagamento creato con successo con Id: {}", saved.getId());
-		
+		log.debug("TipoMetodoPagamento creato con successo con ID: {}", saved.getId());
+
 		// Restituisce l'id generato
 		return saved.getId();
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public void aggiorna(TipoMetodoPagamentoReq req) throws AcademyException 
-	{
+	public void aggiorna(TipoMetodoPagamentoReq req) throws AcademyException {
 		log.debug("Aggiorna: {}", req);
 
-		// Controllo rapido in cache
-		if (!cacheManager.isRecordCached(TabellaCostante.TIPO_METODO_PAGAMENTO, req.getId())) 
-		{
+		// Controllo se il tipo è presente nella cache
+		if (!cacheManager.isRecordCached(TabellaCostante.TIPO_METODO_PAGAMENTO, req.getId())) {
 			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-trovato"));
 		}
 
@@ -86,33 +82,30 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService
 		TipoMetodoPagamento tipo = tipoRepo.findById(req.getId())
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-trovato")));
 
-		if (req.getNome() != null) 
-		{
+		if (req.getNome() != null) {
 			tipo.setNome(normalizza(req.getNome()));
 		}
-		if (req.getAttivo() != null) 
-		{
+		if (req.getAttivo() != null) {
 			tipo.setAttivo(req.getAttivo());
 		}
 
-		// Salvataggio del tipo
+		// Salvo il tipo aggiornato
 		TipoMetodoPagamento saved = tipoRepo.save(tipo);
 
 		// Aggiorno la cache
-		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO, new CachedTipoMetodoPagamento(saved));
+		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO,
+				new CachedTipoMetodoPagamento(saved));
 
-		log.debug("TipoMetodoPagamento aggiornato con successo con Id: {}", saved.getId());
+		log.debug("TipoMetodoPagamento aggiornato con successo con ID: {}", saved.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public void disattiva(TipoMetodoPagamentoReq req) throws AcademyException 
-	{
+	public void disattiva(TipoMetodoPagamentoReq req) throws AcademyException {
 		log.debug("Disattiva: {}", req);
 
-		// Controllo rapido in cache
-		if (!cacheManager.isRecordCached(TabellaCostante.TIPO_METODO_PAGAMENTO, req.getId())) 
-		{
+		// Controllo se il tipo è presente nella cache
+		if (!cacheManager.isRecordCached(TabellaCostante.TIPO_METODO_PAGAMENTO, req.getId())) {
 			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-trovato"));
 		}
 
@@ -123,25 +116,24 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService
 		// Disattivo il tipo
 		tipo.setAttivo(false);
 
-		// Salvataggio del tipo
+		// Salvo il tipo disattivato
 		tipoRepo.save(tipo);
 
 		// Rimuovo il record dalla cache
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO, req.getId());
 
-		log.debug("TipoMetodoPagamento disattivato con successo con Id: {}", req.getId());
+		log.debug("TipoMetodoPagamento disattivato con successo con ID: {}", req.getId());
 	}
 
 	@Override
-	public TipoMetodoPagamentoDTO getById(Integer id) throws AcademyException 
-	{
+	public TipoMetodoPagamentoDTO getById(Integer id) throws AcademyException {
 		log.debug("GetById: {}", id);
 
-		// Controllo in cache
-		CachedTipoMetodoPagamento cached = (CachedTipoMetodoPagamento) cacheManager.getCachedEntryFromTable(TabellaCostante.TIPO_METODO_PAGAMENTO, id);
+		// Controllo se il tipo è presente nella cache
+		CachedTipoMetodoPagamento cached = (CachedTipoMetodoPagamento) cacheManager
+				.getCachedEntryFromTable(TabellaCostante.TIPO_METODO_PAGAMENTO, id);
 
-		if (cached != null) 
-		{
+		if (cached != null) {
 			// Se trovato in cache, ritorna DTO direttamente
 			return tipoMapper.toDtoFromCached(cached);
 		}
@@ -151,19 +143,19 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-trovato")));
 
 		// Aggiorno la cache
-		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO, new CachedTipoMetodoPagamento(tipo));
+		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO,
+				new CachedTipoMetodoPagamento(tipo));
 
 		return tipoMapper.toDto(tipo);
 	}
 
 	@Override
-	public List<TipoMetodoPagamentoDTO> listActive() 
-	{
+	public List<TipoMetodoPagamentoDTO> listActive() {
 		log.debug("ListActive");
-		
+
 		// Recupero solo i tipi attivi
-		List<TipoMetodoPagamento> attivi = tipoRepo.findByAttivoTrue();
-		
-		return tipoMapper.toDtoList(attivi);
+		List<TipoMetodoPagamento> tipiAttivi = tipoRepo.findByAttivoTrue();
+
+		return tipoMapper.toDtoList(tipiAttivi);
 	}
 }

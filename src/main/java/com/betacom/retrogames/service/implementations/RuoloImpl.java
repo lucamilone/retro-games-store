@@ -1,5 +1,7 @@
 package com.betacom.retrogames.service.implementations;
 
+import static com.betacom.retrogames.util.Utils.normalizza;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,13 +21,12 @@ import com.betacom.retrogames.repository.RuoloRepository;
 import com.betacom.retrogames.request.RuoloReq;
 import com.betacom.retrogames.service.interfaces.MessaggioService;
 import com.betacom.retrogames.service.interfaces.RuoloService;
-import com.betacom.retrogames.util.Utils;
 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
-public class RuoloImpl extends Utils implements RuoloService {
+public class RuoloImpl implements RuoloService {
 	private final CacheManager cacheManager;
 	private final MessaggioService msgS;
 	private final RuoloRepository ruoloRepo;
@@ -45,14 +46,13 @@ public class RuoloImpl extends Utils implements RuoloService {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già un ruolo con lo stesso nome
-		Optional<Ruolo> ruoloOpt = ruoloRepo.findByNome(req.getNome());
-
+		Optional<Ruolo> ruoloOpt = ruoloRepo.findByNome(normalizza(req.getNome()));
 		if (ruoloOpt.isPresent()) {
-			throw new AcademyException(msgS.getMessaggio("ruolo-esiste"));
+			throw new AcademyException(msgS.getMessaggio("ruolo-esistente"));
 		}
 
 		Ruolo ruolo = new Ruolo();
-		ruolo.setNome(req.getNome());
+		ruolo.setNome(normalizza(req.getNome()));
 		ruolo.setAttivo(true);
 
 		// Salvo il ruolo
@@ -62,9 +62,9 @@ public class RuoloImpl extends Utils implements RuoloService {
 		CachedRuolo ruoloNew = new CachedRuolo(saved);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, ruoloNew);
 
-		log.debug("Ruolo creato con successo con Id: {}", saved.getId());
+		log.debug("Ruolo creato con successo con ID: {}", saved.getId());
 
-		// restituisce l'id generato
+		// Restituisce l'id generato
 		return saved.getId();
 	}
 
@@ -73,21 +73,20 @@ public class RuoloImpl extends Utils implements RuoloService {
 	public void aggiorna(RuoloReq req) throws AcademyException {
 		log.debug("Aggiorna: {}", req);
 
-		// Controllo rapido in cache
+		// Controllo se il ruolo è presente nella cache
 		if (!cacheManager.isRecordCached(TabellaCostante.RUOLO, req.getId())) {
-			throw new AcademyException(msgS.getMessaggio("ruolo-non-esiste"));
+			throw new AcademyException(msgS.getMessaggio("ruolo-non-trovato"));
 		}
 
 		// Recupero dal DB per salvare i dati
 		Ruolo ruolo = ruoloRepo.findById(req.getId())
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ruolo-non-esiste")));
-		
-		if(req.getNome() != null)
-		{
-			ruolo.setNome(req.getNome());
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ruolo-non-trovato")));
+
+		if (req.getNome() != null) {
+			ruolo.setNome(normalizza(req.getNome()));
 		}
-		if(req.getAttivo() != null)
-		{
+
+		if (req.getAttivo() != null) {
 			ruolo.setAttivo(req.getAttivo());
 		}
 
@@ -98,7 +97,7 @@ public class RuoloImpl extends Utils implements RuoloService {
 		CachedRuolo ruoloUpd = new CachedRuolo(saved);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, ruoloUpd);
 
-		log.debug("Ruolo aggiornato con successo con Id: {}", req.getId());
+		log.debug("Ruolo aggiornato con successo con ID: {}", req.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
@@ -106,14 +105,14 @@ public class RuoloImpl extends Utils implements RuoloService {
 	public void disattiva(RuoloReq req) throws AcademyException {
 		log.debug("Disattiva: {}", req);
 
-		// Controllo rapido in cache
+		// Controllo se il ruolo è presente nella cache
 		if (!cacheManager.isRecordCached(TabellaCostante.RUOLO, req.getId())) {
-			throw new AcademyException(msgS.getMessaggio("ruolo-non-esiste"));
+			throw new AcademyException(msgS.getMessaggio("ruolo-non-trovato"));
 		}
 
 		// Recupero dal DB per salvare i dati
 		Ruolo ruolo = ruoloRepo.findById(req.getId())
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ruolo-non-esiste")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ruolo-non-trovato")));
 
 		// Disattivo il ruolo
 		ruolo.setAttivo(false);
@@ -124,14 +123,14 @@ public class RuoloImpl extends Utils implements RuoloService {
 		// Rimuovo il record dalla cache
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.RUOLO, req.getId());
 
-		log.debug("Ruolo disattivato con successo con Id: {}", req.getId());
+		log.debug("Ruolo disattivato con successo con ID: {}", req.getId());
 	}
 
 	@Override
 	public RuoloDTO getById(Integer id) throws AcademyException {
 		log.debug("GetById: {}", id);
 
-		// Controllo in cache
+		// Controllo se il ruolo è presente nella cache
 		CachedRuolo cached = (CachedRuolo) cacheManager.getCachedEntryFromTable(TabellaCostante.RUOLO, id);
 
 		if (cached != null) {
@@ -141,13 +140,12 @@ public class RuoloImpl extends Utils implements RuoloService {
 
 		// Se non presente, recupero dal DB
 		Ruolo ruolo = ruoloRepo.findById(id)
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ruolo-non-esiste")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ruolo-non-trovato")));
 
 		// Aggiorno la cache
 		CachedRuolo ruoloNew = new CachedRuolo(ruolo);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, ruoloNew);
 
-		// Converto il ruolo trovato in un DTO e lo restituisco
 		return ruoloMapper.toDto(ruolo);
 	}
 

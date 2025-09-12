@@ -22,30 +22,23 @@ import com.betacom.retrogames.service.interfaces.PiattaformaService;
 
 @RestController
 @RequestMapping("/api/v1/retro-games/piattaforme")
-public class PiattaformaController
-{
+public class PiattaformaController {
 
 	private final PiattaformaService piattaformaS;
 
-	public PiattaformaController(PiattaformaService piattaformaS) 
-	{
+	public PiattaformaController(PiattaformaService piattaformaS) {
 		this.piattaformaS = piattaformaS;
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) PiattaformaReq req)
-	{
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) PiattaformaReq req) {
 		ResponseBase res = new ResponseBase();
 
-		try 
-		{
+		try {
 			Integer id = piattaformaS.crea(req);
-			
 			res.setReturnCode(true);
-			res.setMsg("Piattaforma creata con successo. Id: " + id);
-		} 
-		catch (AcademyException e) 
-		{
+			res.setMsg("Piattaforma creata con successo. ID: " + id);
+		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
@@ -54,19 +47,14 @@ public class PiattaformaController
 	}
 
 	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) PiattaformaReq req) 
-	{
+	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) PiattaformaReq req) {
 		ResponseBase res = new ResponseBase();
 
-		try 
-		{
+		try {
 			piattaformaS.aggiorna(req);
-			
 			res.setReturnCode(true);
 			res.setMsg("Piattaforma aggiornata con successo");
-		} 
-		catch (AcademyException e) 
-		{
+		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
@@ -75,19 +63,14 @@ public class PiattaformaController
 	}
 
 	@PutMapping("/disattiva")
-	public ResponseBase disattiva(@Validated(OnDelete.class) @RequestBody(required = true) PiattaformaReq req) 
-	{
+	public ResponseBase disattiva(@Validated(OnDelete.class) @RequestBody(required = true) PiattaformaReq req) {
 		ResponseBase res = new ResponseBase();
 
-		try 
-		{
+		try {
 			piattaformaS.disattiva(req);
-			
 			res.setReturnCode(true);
 			res.setMsg("Piattaforma disattivata con successo");
-		} 
-		catch (AcademyException e)
-		{
+		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
@@ -96,17 +79,13 @@ public class PiattaformaController
 	}
 
 	@GetMapping("/get-by-id")
-	public ResponseObject<PiattaformaDTO> getById(@RequestParam(required = true) Integer id) 
-	{
+	public ResponseObject<PiattaformaDTO> getById(@RequestParam(required = true) Integer id) {
 		ResponseObject<PiattaformaDTO> res = new ResponseObject<>();
 
-		try 
-		{
+		try {
 			res.setDati(piattaformaS.getById(id));
 			res.setReturnCode(true);
-		} 
-		catch (AcademyException e) 
-		{
+		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
@@ -115,17 +94,13 @@ public class PiattaformaController
 	}
 
 	@GetMapping("/list-active")
-	public ResponseList<PiattaformaDTO> listActive() 
-	{
+	public ResponseList<PiattaformaDTO> listActive() {
 		ResponseList<PiattaformaDTO> res = new ResponseList<>();
 
-		try 
-		{
+		try {
 			res.setDati(piattaformaS.listActive());
 			res.setReturnCode(true);
-		} 
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}

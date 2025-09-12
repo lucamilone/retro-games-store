@@ -1,5 +1,7 @@
 package com.betacom.retrogames.service.implementations;
 
+import static com.betacom.retrogames.util.Utils.normalizza;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,21 +21,19 @@ import com.betacom.retrogames.repository.PiattaformaRepository;
 import com.betacom.retrogames.request.PiattaformaReq;
 import com.betacom.retrogames.service.interfaces.MessaggioService;
 import com.betacom.retrogames.service.interfaces.PiattaformaService;
-import com.betacom.retrogames.util.Utils;
 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
-public class PiattaformaImpl extends Utils implements PiattaformaService 
-{
+public class PiattaformaImpl implements PiattaformaService {
 	private final CacheManager cacheManager;
 	private final MessaggioService msgS;
 	private final PiattaformaRepository piattaformaRepo;
 	private final PiattaformaMapper piattaformaMapper;
 
-	public PiattaformaImpl(CacheManager cacheManager, MessaggioService msgS, PiattaformaRepository piattaformaRepo, PiattaformaMapper piattaformaMapper) 
-	{
+	public PiattaformaImpl(CacheManager cacheManager, MessaggioService msgS, PiattaformaRepository piattaformaRepo,
+			PiattaformaMapper piattaformaMapper) {
 		this.cacheManager = cacheManager;
 		this.msgS = msgS;
 		this.piattaformaRepo = piattaformaRepo;
@@ -42,21 +42,17 @@ public class PiattaformaImpl extends Utils implements PiattaformaService
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(PiattaformaReq req) throws AcademyException 
-	{
+	public Integer crea(PiattaformaReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già una piattaforma con lo stesso codice
-		Optional<Piattaforma> piattaformaOpt = piattaformaRepo.findByCodice(req.getCodice());
-
-		if (piattaformaOpt.isPresent()) 
-		{
-			throw new AcademyException(msgS.getMessaggio("piattaforma-esiste"));
+		Optional<Piattaforma> piattaformaOpt = piattaformaRepo.findByCodice(normalizza(req.getCodice()));
+		if (piattaformaOpt.isPresent()) {
+			throw new AcademyException(msgS.getMessaggio("piattaforma-esistente"));
 		}
 
 		Piattaforma piattaforma = new Piattaforma();
-		
-		piattaforma.setCodice(req.getCodice());
+		piattaforma.setCodice(normalizza(req.getCodice()));
 		piattaforma.setNome(req.getNome());
 		piattaforma.setAnnoUscitaPiattaforma(req.getAnnoUscitaPiattaforma());
 		piattaforma.setProdotti(null);
@@ -69,45 +65,42 @@ public class PiattaformaImpl extends Utils implements PiattaformaService
 		CachedPiattaforma piattaformaNew = new CachedPiattaforma(saved);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.PIATTAFORMA, piattaformaNew);
 
-		log.debug("Piattaforma creata con Id: {}", saved.getId());
-		
+		log.debug("Piattaforma creata con ID: {}", saved.getId());
+
 		// Restituisce l'id generato
 		return saved.getId();
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public void aggiorna(PiattaformaReq req) throws AcademyException 
-	{
+	public void aggiorna(PiattaformaReq req) throws AcademyException {
 		log.debug("Aggiorna: {}", req);
 
-		// Controllo rapido in cache
-		if (!cacheManager.isRecordCached(TabellaCostante.PIATTAFORMA, req.getId())) 
-		{
-			throw new AcademyException(msgS.getMessaggio("piattaforma-non-esiste"));
+		// Controllo se la piattaforma è presente nella cache
+		if (!cacheManager.isRecordCached(TabellaCostante.PIATTAFORMA, req.getId())) {
+			throw new AcademyException(msgS.getMessaggio("piattaforma-non-trovata"));
 		}
 
 		// Recupero dal DB per salvare i dati
 		Piattaforma piattaforma = piattaformaRepo.findById(req.getId())
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("piattaforma-non-esiste")));
-		
-		if(req.getCodice() != null)
-		{
-			piattaforma.setCodice(req.getCodice());
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("piattaforma-non-trovata")));
+
+		if (req.getCodice() != null) {
+			piattaforma.setCodice(normalizza(req.getCodice()));
 		}
-		if(req.getNome() != null)
-		{
+
+		if (req.getNome() != null) {
 			piattaforma.setNome(req.getNome());
 		}
-		if(req.getAnnoUscitaPiattaforma() != null)
-		{
+
+		if (req.getAnnoUscitaPiattaforma() != null) {
 			piattaforma.setAnnoUscitaPiattaforma(req.getAnnoUscitaPiattaforma());
 		}
-		if(req.getAttivo() != null)
-		{
+
+		if (req.getAttivo() != null) {
 			piattaforma.setAttivo(req.getAttivo());
 		}
-		
+
 		piattaforma.setProdotti(null);
 
 		// Salvo la piattaforma aggiornata
@@ -117,70 +110,66 @@ public class PiattaformaImpl extends Utils implements PiattaformaService
 		CachedPiattaforma piattaformaUpd = new CachedPiattaforma(saved);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.PIATTAFORMA, piattaformaUpd);
 
-		log.debug("Piattaforma aggiornata con Id: {}", req.getId());
+		log.debug("Piattaforma aggiornata con ID: {}", req.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public void disattiva(PiattaformaReq req) throws AcademyException 
-	{
+	public void disattiva(PiattaformaReq req) throws AcademyException {
 		log.debug("Disattiva: {}", req);
 
-		// Controllo rapido in cache
-		if (!cacheManager.isRecordCached(TabellaCostante.PIATTAFORMA, req.getId())) 
-		{
-			throw new AcademyException(msgS.getMessaggio("piattaforma-non-esiste"));
+		// Controllo se la piattaforma è presente nella cache
+		if (!cacheManager.isRecordCached(TabellaCostante.PIATTAFORMA, req.getId())) {
+			throw new AcademyException(msgS.getMessaggio("piattaforma-non-trovata"));
 		}
 
 		// Recupero dal DB per salvare i dati
 		Piattaforma piattaforma = piattaformaRepo.findById(req.getId())
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("piattaforma-non-esiste")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("piattaforma-non-trovata")));
 
 		// Disattivo la piattaforma
 		piattaforma.setAttivo(false);
-		
+
 		// Salvo la piattaforma disattivata
 		piattaformaRepo.save(piattaforma);
 
 		// Rimuovo il record dalla cache
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.PIATTAFORMA, req.getId());
 
-		log.debug("Piattaforma disattivata con Id: {}", req.getId());
+		log.debug("Piattaforma disattivata con ID: {}", req.getId());
 	}
 
 	@Override
-	public PiattaformaDTO getById(Integer id) throws AcademyException 
-	{
+	public PiattaformaDTO getById(Integer id) throws AcademyException {
 		log.debug("GetById: {}", id);
 
-		// Controllo in cache
-		CachedPiattaforma cached = (CachedPiattaforma) cacheManager.getCachedEntryFromTable(TabellaCostante.PIATTAFORMA, id);
+		// Controllo se la piattaforma è presente nella cache
+		CachedPiattaforma cached = (CachedPiattaforma) cacheManager.getCachedEntryFromTable(TabellaCostante.PIATTAFORMA,
+				id);
 
-		if (cached != null) 
-		{
+		if (cached != null) {
 			// Se trovato in cache, ritorna DTO direttamente
 			return piattaformaMapper.toDtoFromCached(cached);
 		}
 
 		// Se non presente, recupero dal DB
 		Piattaforma piattaforma = piattaformaRepo.findById(id)
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("piattaforma-non-esiste")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("piattaforma-non-trovata")));
 
 		// Aggiorno la cache
 		CachedPiattaforma piattaformaNew = new CachedPiattaforma(piattaforma);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.PIATTAFORMA, piattaformaNew);
 
-		// Converto la piattaforma trovata in un DTO e lo restituisco
 		return piattaformaMapper.toDto(piattaforma);
 	}
 
 	@Override
-	public List<PiattaformaDTO> listActive() 
-	{
-		log.debug("ListActive Piattaforme");
+	public List<PiattaformaDTO> listActive() {
+		log.debug("ListActive");
 
 		// Recupero solo le piattaforme attive
 		List<Piattaforma> piattaformeAttive = piattaformaRepo.findByAttivoTrue();
+
 		return piattaformaMapper.toDtoList(piattaformeAttive);
 	}
 }
