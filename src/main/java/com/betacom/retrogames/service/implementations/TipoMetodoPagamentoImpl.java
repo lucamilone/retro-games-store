@@ -50,7 +50,7 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService
 		Optional<TipoMetodoPagamento> opt = tipoRepo.findByNome(req.getNome());
 		if (opt.isPresent()) 
 		{
-			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-esiste"));
+			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-esistente"));
 		}
 
 		TipoMetodoPagamento tipo = new TipoMetodoPagamento();
@@ -79,12 +79,12 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService
 		// Controllo rapido in cache
 		if (!cacheManager.isRecordCached(TabellaCostante.TIPO_METODO_PAGAMENTO, req.getId())) 
 		{
-			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-esiste"));
+			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-trovato"));
 		}
 
 		// Recupero dal DB per salvare i dati
 		TipoMetodoPagamento tipo = tipoRepo.findById(req.getId())
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-esiste")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-trovato")));
 
 		if (req.getNome() != null) 
 		{
@@ -113,12 +113,12 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService
 		// Controllo rapido in cache
 		if (!cacheManager.isRecordCached(TabellaCostante.TIPO_METODO_PAGAMENTO, req.getId())) 
 		{
-			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-esiste"));
+			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-trovato"));
 		}
 
 		// Recupero dal DB per salvare i dati
 		TipoMetodoPagamento tipo = tipoRepo.findById(req.getId())
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-esiste")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-trovato")));
 
 		// Disattivo il tipo
 		tipo.setAttivo(false);
@@ -148,7 +148,7 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService
 
 		// Se non presente, recupero dal DB
 		TipoMetodoPagamento tipo = tipoRepo.findById(id)
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-esiste")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-non-trovato")));
 
 		// Aggiorno la cache
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO, new CachedTipoMetodoPagamento(tipo));
