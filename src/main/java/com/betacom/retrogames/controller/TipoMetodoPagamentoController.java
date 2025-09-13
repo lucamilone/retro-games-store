@@ -61,8 +61,8 @@ public class TipoMetodoPagamentoController {
 		return res;
 	}
 
-	@PutMapping("/disattiva")
-	public ResponseBase disattiva(@Validated(OnDelete.class) @RequestBody TipoMetodoPagamentoReq req) {
+	@PutMapping("/disable")
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody TipoMetodoPagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {

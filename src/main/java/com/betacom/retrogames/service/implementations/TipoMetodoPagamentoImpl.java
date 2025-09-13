@@ -46,7 +46,7 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già un tipo con lo stesso nome
-		Optional<TipoMetodoPagamento> opt = tipoRepo.findByNome(req.getNome());
+		Optional<TipoMetodoPagamento> opt = tipoRepo.findByNome(normalizza(req.getNome()));
 		if (opt.isPresent()) {
 			throw new AcademyException(msgS.getMessaggio("tipo-metodo-pagamento-esistente"));
 		}
@@ -62,7 +62,7 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService {
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO,
 				new CachedTipoMetodoPagamento(saved));
 
-		log.debug("TipoMetodoPagamento creato con successo con ID: {}", saved.getId());
+		log.debug("TipoMetodoPagamento creato con successo. ID: {}", saved.getId());
 
 		// Restituisce l'id generato
 		return saved.getId();
@@ -96,7 +96,7 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService {
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO,
 				new CachedTipoMetodoPagamento(saved));
 
-		log.debug("TipoMetodoPagamento aggiornato con successo con ID: {}", saved.getId());
+		log.debug("TipoMetodoPagamento aggiornato con successo. ID: {}", saved.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
@@ -122,7 +122,7 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService {
 		// Rimuovo il record dalla cache
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO, req.getId());
 
-		log.debug("TipoMetodoPagamento disattivato con successo con ID: {}", req.getId());
+		log.debug("TipoMetodoPagamento disattivato con successo. ID: {}", req.getId());
 	}
 
 	@Override

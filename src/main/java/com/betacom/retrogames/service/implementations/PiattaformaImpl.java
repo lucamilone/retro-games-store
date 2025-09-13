@@ -55,7 +55,6 @@ public class PiattaformaImpl implements PiattaformaService {
 		piattaforma.setCodice(normalizza(req.getCodice()));
 		piattaforma.setNome(req.getNome());
 		piattaforma.setAnnoUscitaPiattaforma(req.getAnnoUscitaPiattaforma());
-		piattaforma.setProdotti(null);
 		piattaforma.setAttivo(true);
 
 		// Salvo la piattaforma
@@ -65,7 +64,7 @@ public class PiattaformaImpl implements PiattaformaService {
 		CachedPiattaforma piattaformaNew = new CachedPiattaforma(saved);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.PIATTAFORMA, piattaformaNew);
 
-		log.debug("Piattaforma creata con ID: {}", saved.getId());
+		log.debug("Piattaforma creata con successo. ID: {}", saved.getId());
 
 		// Restituisce l'id generato
 		return saved.getId();
@@ -101,8 +100,6 @@ public class PiattaformaImpl implements PiattaformaService {
 			piattaforma.setAttivo(req.getAttivo());
 		}
 
-		piattaforma.setProdotti(null);
-
 		// Salvo la piattaforma aggiornata
 		Piattaforma saved = piattaformaRepo.save(piattaforma);
 
@@ -110,7 +107,7 @@ public class PiattaformaImpl implements PiattaformaService {
 		CachedPiattaforma piattaformaUpd = new CachedPiattaforma(saved);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.PIATTAFORMA, piattaformaUpd);
 
-		log.debug("Piattaforma aggiornata con ID: {}", req.getId());
+		log.debug("Piattaforma aggiornata con successo. ID: {}", req.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
@@ -136,7 +133,7 @@ public class PiattaformaImpl implements PiattaformaService {
 		// Rimuovo il record dalla cache
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.PIATTAFORMA, req.getId());
 
-		log.debug("Piattaforma disattivata con ID: {}", req.getId());
+		log.debug("Piattaforma disattivata con successo. ID: {}", req.getId());
 	}
 
 	@Override

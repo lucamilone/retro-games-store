@@ -3,6 +3,7 @@ package com.betacom.retrogames.service.implementations;
 import static com.betacom.retrogames.util.Utils.normalizza;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,8 @@ public class ProdottoImpl implements ProdottoService {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già un prodotto con lo stesso SKU
-		if (prodottoRepo.findBySku(normalizza(req.getSku())).isPresent()) {
+		Optional<Prodotto> prodottoOpt = prodottoRepo.findBySku(normalizza(req.getSku()));
+		if (prodottoOpt.isPresent()) {
 			throw new AcademyException(msgS.getMessaggio("prodotto-sku-esistente"));
 		}
 
@@ -85,7 +87,7 @@ public class ProdottoImpl implements ProdottoService {
 		// Salvo il prodotto
 		prodotto = prodottoRepo.save(prodotto);
 
-		log.debug("Prodotto creato con successo con ID: {}", prodotto.getId());
+		log.debug("Prodotto creato con successo. ID: {}", prodotto.getId());
 
 		// Restituisco l'id generato
 		return prodotto.getId();
@@ -146,7 +148,7 @@ public class ProdottoImpl implements ProdottoService {
 		// Salvo il prodotto aggiornato
 		prodottoRepo.save(prodotto);
 
-		log.debug("Prodotto modificato con successo con ID: {}", req.getId());
+		log.debug("Prodotto aggiornato con successo. ID: {}", req.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
@@ -164,7 +166,7 @@ public class ProdottoImpl implements ProdottoService {
 		// Salvo il prodotto disattivato
 		prodottoRepo.save(prodotto);
 
-		log.debug("Prodotto disattivato con successo con ID: {}", req.getId());
+		log.debug("Prodotto disattivato con successo. ID: {}", req.getId());
 	}
 
 	@Override
@@ -214,7 +216,7 @@ public class ProdottoImpl implements ProdottoService {
 		// Controllo se le piattaforme sono presenti nella cache
 		boolean allCached = idsRichiesti.stream()
 				.allMatch(id -> cacheManager.isRecordCached(TabellaCostante.PIATTAFORMA, id));
-
+		
 		if (!allCached) {
 			throw new AcademyException(msgS.getMessaggio("piattaforma-non-trovata"));
 		}

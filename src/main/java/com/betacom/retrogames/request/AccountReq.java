@@ -38,5 +38,9 @@ public class AccountReq {
 	@Positive(message = "RuoloId deve essere positivo")
 	private Integer ruoloId;
 
+	@NotNull(groups = OnCreate.class, message = "Credenziale obbligatoria")
+	@Positive(message = "CredenzialeId deve essere positivo")
+	private Integer credenzialeId;
+
 	private Boolean attivo;
 }

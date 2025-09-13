@@ -61,8 +61,8 @@ public class RuoloController {
 		return res;
 	}
 
-	@PutMapping("/disattiva")
-	public ResponseBase disattiva(@Validated(OnDelete.class) @RequestBody(required = true) RuoloReq req) {
+	@PutMapping("/disable")
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody(required = true) RuoloReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {

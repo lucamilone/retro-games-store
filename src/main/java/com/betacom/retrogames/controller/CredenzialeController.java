@@ -9,34 +9,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.betacom.retrogames.dto.PiattaformaDTO;
+import com.betacom.retrogames.dto.CredenzialeDTO;
 import com.betacom.retrogames.exception.AcademyException;
-import com.betacom.retrogames.request.PiattaformaReq;
+import com.betacom.retrogames.request.CredenzialeReq;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnCreate;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnDelete;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnUpdate;
 import com.betacom.retrogames.response.ResponseBase;
 import com.betacom.retrogames.response.ResponseList;
 import com.betacom.retrogames.response.ResponseObject;
-import com.betacom.retrogames.service.interfaces.PiattaformaService;
+import com.betacom.retrogames.service.interfaces.CredenzialeService;
 
 @RestController
-@RequestMapping("/api/v1/retro-games/piattaforme")
-public class PiattaformaController {
-	private final PiattaformaService piattaformaS;
+@RequestMapping("/api/v1/retro-games/credenziali")
+public class CredenzialeController {
+	private final CredenzialeService credenzialeS;
 
-	public PiattaformaController(PiattaformaService piattaformaS) {
-		this.piattaformaS = piattaformaS;
+	public CredenzialeController(CredenzialeService credenzialeS) {
+		this.credenzialeS = credenzialeS;
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) PiattaformaReq req) {
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody CredenzialeReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
-			Integer id = piattaformaS.crea(req);
+			Integer id = credenzialeS.crea(req);
 			res.setReturnCode(true);
-			res.setMsg("Piattaforma creata con successo. ID: " + id);
+			res.setMsg("Credenziale creata con successo. ID: " + id);
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
@@ -45,14 +45,30 @@ public class PiattaformaController {
 		return res;
 	}
 
-	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) PiattaformaReq req) {
+	@PutMapping("/update-email")
+	public ResponseBase updateEmail(@Validated(OnUpdate.class) @RequestBody CredenzialeReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
-			piattaformaS.aggiorna(req);
+			credenzialeS.aggiornaEmail(req.getId(), req.getEmail());
 			res.setReturnCode(true);
-			res.setMsg("Piattaforma aggiornata con successo");
+			res.setMsg("Email aggiornata con successo");
+		} catch (AcademyException e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
+
+	@PutMapping("/update-password")
+	public ResponseBase updatePassword(@Validated(OnUpdate.class) @RequestBody CredenzialeReq req) {
+		ResponseBase res = new ResponseBase();
+
+		try {
+			credenzialeS.aggiornaPassword(req.getId(), req.getPassword());
+			res.setReturnCode(true);
+			res.setMsg("Password aggiornata con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
@@ -62,13 +78,13 @@ public class PiattaformaController {
 	}
 
 	@PutMapping("/disable")
-	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody(required = true) PiattaformaReq req) {
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody CredenzialeReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
-			piattaformaS.disattiva(req);
+			credenzialeS.disattiva(req);
 			res.setReturnCode(true);
-			res.setMsg("Piattaforma disattivata con successo");
+			res.setMsg("Credenziale disattivata con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
@@ -78,11 +94,11 @@ public class PiattaformaController {
 	}
 
 	@GetMapping("/get-by-id")
-	public ResponseObject<PiattaformaDTO> getById(@RequestParam(required = true) Integer id) {
-		ResponseObject<PiattaformaDTO> res = new ResponseObject<>();
+	public ResponseObject<CredenzialeDTO> getById(@RequestParam Integer id) {
+		ResponseObject<CredenzialeDTO> res = new ResponseObject<>();
 
 		try {
-			res.setDati(piattaformaS.getById(id));
+			res.setDati(credenzialeS.getById(id));
 			res.setReturnCode(true);
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
@@ -93,11 +109,11 @@ public class PiattaformaController {
 	}
 
 	@GetMapping("/list-active")
-	public ResponseList<PiattaformaDTO> listActive() {
-		ResponseList<PiattaformaDTO> res = new ResponseList<>();
+	public ResponseList<CredenzialeDTO> listActive() {
+		ResponseList<CredenzialeDTO> res = new ResponseList<>();
 
 		try {
-			res.setDati(piattaformaS.listActive());
+			res.setDati(credenzialeS.listActive());
 			res.setReturnCode(true);
 		} catch (Exception e) {
 			res.setReturnCode(false);

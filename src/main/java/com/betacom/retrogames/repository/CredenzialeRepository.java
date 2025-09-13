@@ -1,5 +1,6 @@
 package com.betacom.retrogames.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,6 @@ import com.betacom.retrogames.model.Credenziale;
 public interface CredenzialeRepository extends JpaRepository<Credenziale, Integer> {
 
 	Optional<Credenziale> findByEmail(String email);
+
+	List<Credenziale> findByAttivoTrue();
 }

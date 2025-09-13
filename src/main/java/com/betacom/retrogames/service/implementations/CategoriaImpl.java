@@ -53,7 +53,6 @@ public class CategoriaImpl implements CategoriaService {
 
 		Categoria categoria = new Categoria();
 		categoria.setNome(normalizza(req.getNome()));
-		categoria.setProdotti(null);
 		categoria.setAttivo(true);
 
 		// Salvo la categoria
@@ -63,7 +62,7 @@ public class CategoriaImpl implements CategoriaService {
 		CachedCategoria categoriaNew = new CachedCategoria(saved);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.CATEGORIA, categoriaNew);
 
-		log.debug("Categoria creata con successo con ID: {}", saved.getId());
+		log.debug("Categoria creata con successo. ID: {}", saved.getId());
 
 		// Restituisce l'id generato
 		return saved.getId();
@@ -91,8 +90,6 @@ public class CategoriaImpl implements CategoriaService {
 			categoria.setAttivo(req.getAttivo());
 		}
 
-		categoria.setProdotti(null);
-
 		// Salvo la categoria aggiornata
 		Categoria saved = categoriaRepo.save(categoria);
 
@@ -100,7 +97,7 @@ public class CategoriaImpl implements CategoriaService {
 		CachedCategoria categoriaUpd = new CachedCategoria(saved);
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.CATEGORIA, categoriaUpd);
 
-		log.debug("Categoria aggiornata con successo con ID: {}", req.getId());
+		log.debug("Categoria aggiornata con successo. ID: {}", req.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
@@ -126,7 +123,7 @@ public class CategoriaImpl implements CategoriaService {
 		// Rimuovo il record dalla cache
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.CATEGORIA, req.getId());
 
-		log.debug("Categoria disattivata con successo con ID: {}", req.getId());
+		log.debug("Categoria disattivata con successo. ID: {}", req.getId());
 	}
 
 	@Override

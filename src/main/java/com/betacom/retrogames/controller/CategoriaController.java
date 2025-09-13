@@ -61,8 +61,8 @@ public class CategoriaController {
 		return res;
 	}
 
-	@PutMapping("/disattiva")
-	public ResponseBase disattiva(@Validated(OnDelete.class) @RequestBody CategoriaReq req) {
+	@PutMapping("/disable")
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody CategoriaReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
