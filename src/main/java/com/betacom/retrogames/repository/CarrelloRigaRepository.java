@@ -1,14 +1,11 @@
 package com.betacom.retrogames.repository;
 
-import java.util.Optional;
-
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import com.betacom.retrogames.model.CarrelloRiga;
 
 @Repository
 public interface CarrelloRigaRepository extends JpaRepository<CarrelloRiga, Integer> {
-
-	Optional<CarrelloRiga> findByCarrelloId(Integer carrelloId);
+	List<CarrelloRiga> findAllByCarrelloId(Integer carrelloId);
 }

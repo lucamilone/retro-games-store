@@ -1,7 +1,6 @@
 package com.betacom.retrogames.service.interfaces;
 
 import java.util.List;
-
 import com.betacom.retrogames.dto.CarrelloRigaDTO;
 import com.betacom.retrogames.exception.AcademyException;
 import com.betacom.retrogames.request.CarrelloRigaReq;
@@ -43,5 +42,5 @@ public interface CarrelloRigaService {
 	 * @param carrelloId 	   ID del carrello
 	 * @return lista di CarrelloRigaDTO
 	 */
-	List<CarrelloRigaDTO> listByCarrello(Integer carrelloId);
+	List<CarrelloRigaDTO> listByCarrello(Integer carrelloId) throws AcademyException;
 }
