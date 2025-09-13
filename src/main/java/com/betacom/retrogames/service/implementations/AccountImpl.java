@@ -22,8 +22,10 @@ import com.betacom.retrogames.repository.CredenzialeRepository;
 import com.betacom.retrogames.repository.RuoloRepository;
 import com.betacom.retrogames.request.AccountReq;
 import com.betacom.retrogames.request.CarrelloReq;
+import com.betacom.retrogames.request.CredenzialeReq;
 import com.betacom.retrogames.service.interfaces.AccountService;
 import com.betacom.retrogames.service.interfaces.CarrelloService;
+import com.betacom.retrogames.service.interfaces.CredenzialeService;
 import com.betacom.retrogames.service.interfaces.MessaggioService;
 
 import lombok.extern.log4j.Log4j2;
@@ -36,18 +38,20 @@ public class AccountImpl implements AccountService {
 	private final CredenzialeRepository credenzialeRepo;
 	private final RuoloRepository ruoloRepo;
 	private final MessaggioService msgS;
+	private final CredenzialeService credenzialeS;
 	private final CarrelloService carrelloS;
 	private final AccountMapper accountMapper;
 	private final IndirizzoMapper indirizzoMapper;
 
 	public AccountImpl(CacheManager cacheManager, AccountRepository accountRepo, CredenzialeRepository credenzialeRepo,
-			RuoloRepository ruoloRepo, MessaggioService msgS, CarrelloService carrelloS, AccountMapper accountMapper,
-			IndirizzoMapper indirizzoMapper) {
+			RuoloRepository ruoloRepo, MessaggioService msgS, CredenzialeService credenzialeS,
+			CarrelloService carrelloS, AccountMapper accountMapper, IndirizzoMapper indirizzoMapper) {
 		this.cacheManager = cacheManager;
 		this.accountRepo = accountRepo;
 		this.credenzialeRepo = credenzialeRepo;
 		this.ruoloRepo = ruoloRepo;
 		this.msgS = msgS;
+		this.credenzialeS = credenzialeS;
 		this.carrelloS = carrelloS;
 		this.accountMapper = accountMapper;
 		this.indirizzoMapper = indirizzoMapper;
@@ -112,10 +116,6 @@ public class AccountImpl implements AccountService {
 			account.setRuolo(ruolo);
 		}
 
-		if (req.getAttivo() != null) {
-			account.setAttivo(req.getAttivo());
-		}
-
 		// Salvo l'account aggiornato
 		accountRepo.save(account);
 
@@ -134,10 +134,38 @@ public class AccountImpl implements AccountService {
 		// Disattivo l'account
 		account.setAttivo(false);
 
+		// Disattivo credenziale tramite il service dedicato
+		CredenzialeReq credenzialeReq = new CredenzialeReq();
+		credenzialeReq.setId(account.getCredenziale().getId());
+		credenzialeS.disattiva(credenzialeReq);
+
 		// Salvo l'account disattivato
 		accountRepo.save(account);
 
 		log.debug("Account disattivato con successo. ID: {}", req.getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	@Override
+	public void riattiva(AccountReq req) throws AcademyException {
+		log.debug("Riattiva: {}", req);
+
+		// Verifico l'esistenza dell'account
+		Account account = accountRepo.findById(req.getId())
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("account-non-trovato")));
+
+		// Riattivo l'account
+		account.setAttivo(true);
+
+		// Riattivo credenziale tramite il service dedicato
+		CredenzialeReq credenzialeReq = new CredenzialeReq();
+		credenzialeReq.setId(account.getCredenziale().getId());
+		credenzialeS.riattiva(credenzialeReq);
+
+		// Salvo l'account riattivato
+		accountRepo.save(account);
+
+		log.debug("Account riattivato con successo. ID: {}", req.getId());
 	}
 
 	@Override

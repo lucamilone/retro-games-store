@@ -13,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.betacom.retrogames.dto.CredenzialeDTO;
 import com.betacom.retrogames.exception.AcademyException;
 import com.betacom.retrogames.mapper.CredenzialeMapper;
-import com.betacom.retrogames.model.Account;
 import com.betacom.retrogames.model.Credenziale;
-import com.betacom.retrogames.repository.AccountRepository;
 import com.betacom.retrogames.repository.CredenzialeRepository;
 import com.betacom.retrogames.request.CredenzialeReq;
 import com.betacom.retrogames.service.interfaces.CredenzialeService;
@@ -27,14 +25,12 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class CredenzialeImpl implements CredenzialeService {
 	private final CredenzialeRepository credenzialeRepo;
-	private final AccountRepository accountRepo;
 	private final MessaggioService msgS;
 	private final CredenzialeMapper credenzialeMapper;
 
-	public CredenzialeImpl(CredenzialeRepository credenzialeRepo, AccountRepository accountRepo, MessaggioService msgS,
+	public CredenzialeImpl(CredenzialeRepository credenzialeRepo, MessaggioService msgS,
 			CredenzialeMapper credenzialeMapper) {
 		this.credenzialeRepo = credenzialeRepo;
-		this.accountRepo = accountRepo;
 		this.msgS = msgS;
 		this.credenzialeMapper = credenzialeMapper;
 	}
@@ -50,12 +46,7 @@ public class CredenzialeImpl implements CredenzialeService {
 			throw new AcademyException(msgS.getMessaggio("email-esistente"));
 		}
 
-		// Verifico l'esistenza dell'account
-		Account account = accountRepo.findById(req.getAccountId())
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("account-non-trovato")));
-
 		Credenziale credenziale = new Credenziale();
-		credenziale.setAccount(account);
 		credenziale.setEmail(normalizza(req.getEmail()));
 		credenziale.setPassword(req.getPassword());
 		credenziale.setUltimoLogin(null);
@@ -128,6 +119,24 @@ public class CredenzialeImpl implements CredenzialeService {
 		credenzialeRepo.save(credenziale);
 
 		log.debug("Credenziale disattivata con successo. ID: {}", req.getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	@Override
+	public void riattiva(CredenzialeReq req) throws AcademyException {
+		log.debug("Riattiva: {}", req.getId());
+
+		// Verifico l'esistenza della credenziale
+		Credenziale credenziale = credenzialeRepo.findById(req.getId())
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("credenziale-non-trovata")));
+
+		// Riattivo la credenziale
+		credenziale.setAttivo(true);
+
+		// Salvo la credenziale riattivata
+		credenzialeRepo.save(credenziale);
+
+		log.debug("Credenziale riattivata con successo. ID: {}", req.getId());
 	}
 
 	@Override

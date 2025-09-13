@@ -12,11 +12,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString
 public class CredenzialeReq {
 
@@ -24,8 +26,7 @@ public class CredenzialeReq {
 	@Positive(groups = { OnUpdate.class, OnDelete.class }, message = "Id deve essere positivo")
 	private Integer id;
 
-	@NotNull(groups = OnCreate.class, message = "AccountId obbligatorio")
-	@Positive(groups = OnCreate.class, message = "AccountId deve essere positivo")
+	@Positive(message = "AccountId deve essere positivo")
 	private Integer accountId;
 
 	@NotBlank(groups = OnCreate.class, message = "Email obbligatoria")

@@ -51,6 +51,14 @@ public interface CredenzialeService {
 	void disattiva(CredenzialeReq req) throws AcademyException;
 
 	/**
+	 * Riattiva una credenziale, marcandola come "attiva".
+	 *
+	 * @param req 				Richiesta contenente solo l'ID della credenziale da riattivare
+	 * @throws AcademyException se credenziale non esiste
+	 */
+	void riattiva(CredenzialeReq req) throws AcademyException;
+
+	/**
 	 * Recupera una credenziale in base al suo ID.
 	 *
 	 * @param id 				ID della credenziale

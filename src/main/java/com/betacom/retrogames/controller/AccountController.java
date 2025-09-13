@@ -77,6 +77,22 @@ public class AccountController {
 		return res;
 	}
 
+	@PutMapping("/reactivate")
+	public ResponseBase reactivate(@Validated(OnUpdate.class) @RequestBody AccountReq req) {
+		ResponseBase res = new ResponseBase();
+
+		try {
+			accountS.riattiva(req);
+			res.setReturnCode(true);
+			res.setMsg("Account riattivato con successo");
+		} catch (AcademyException e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
+
 	@GetMapping("/get-by-id")
 	public ResponseObject<AccountDTO> getById(@RequestParam Integer id) {
 		ResponseObject<AccountDTO> res = new ResponseObject<>();

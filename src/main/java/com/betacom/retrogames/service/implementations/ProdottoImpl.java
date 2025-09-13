@@ -206,7 +206,7 @@ public class ProdottoImpl implements ProdottoService {
 			}
 			prodotto.setPiattaforme(checkCachedPiattaforme(req));
 		} else {
-			prodotto.setPiattaforme(Set.of()); // Null se non è un videogioco
+			prodotto.setPiattaforme(Set.of()); // Set vuoto se non è un videogioco
 		}
 	}
 
@@ -216,7 +216,7 @@ public class ProdottoImpl implements ProdottoService {
 		// Controllo se le piattaforme sono presenti nella cache
 		boolean allCached = idsRichiesti.stream()
 				.allMatch(id -> cacheManager.isRecordCached(TabellaCostante.PIATTAFORMA, id));
-		
+
 		if (!allCached) {
 			throw new AcademyException(msgS.getMessaggio("piattaforma-non-trovata"));
 		}

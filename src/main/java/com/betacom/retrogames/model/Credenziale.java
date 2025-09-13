@@ -28,7 +28,7 @@ public class Credenziale {
 	private Integer id;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "account_id", nullable = false)
+	@JoinColumn(name = "account_id")
 	private Account account;
 
 	@Column(length = 255, nullable = false, unique = true)

@@ -75,4 +75,9 @@ public class Account {
 		metodiPagamento.remove(mp);
 		mp.setAccount(null);
 	}
+
+	public void setCredenziale(Credenziale cred) {
+		this.credenziale = cred;
+		cred.setAccount(this);
+	}
 }

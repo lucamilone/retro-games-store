@@ -41,6 +41,14 @@ public interface AccountService {
 	void disattiva(AccountReq req) throws AcademyException;
 
 	/**
+	 * Riattiva un account, marcandolo come "attivo".
+	 *
+	 * @param req 				Richiesta contenente solo l'ID dell'account da riattivare
+	 * @throws AcademyException se l'account non esiste
+	 */
+	void riattiva(AccountReq req) throws AcademyException;
+
+	/**
 	 * Recupera un account in base al suo ID.
 	 *
 	 * @param id 				ID dell'account

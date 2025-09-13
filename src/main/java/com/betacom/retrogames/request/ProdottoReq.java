@@ -40,7 +40,7 @@ public class ProdottoReq {
 	@Positive(message = "CategoriaId deve essere positivo")
 	private Integer categoriaId;
 
-	private Set<Integer> piattaformaId;
+	private Set<@Positive(message = "PiattaformaId deve essere positivo") Integer> piattaformaId;
 
 	@NotBlank(groups = OnCreate.class, message = "Descrizione obbligatoria")
 	private String descrizione;

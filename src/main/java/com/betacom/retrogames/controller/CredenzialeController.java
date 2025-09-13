@@ -93,6 +93,22 @@ public class CredenzialeController {
 		return res;
 	}
 
+	@PutMapping("/reactivate")
+	public ResponseBase reactivate(@Validated(OnUpdate.class) @RequestBody CredenzialeReq req) {
+		ResponseBase res = new ResponseBase();
+
+		try {
+			credenzialeS.riattiva(req);
+			res.setReturnCode(true);
+			res.setMsg("Credenziale riattivata con successo");
+		} catch (AcademyException e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
+
 	@GetMapping("/get-by-id")
 	public ResponseObject<CredenzialeDTO> getById(@RequestParam Integer id) {
 		ResponseObject<CredenzialeDTO> res = new ResponseObject<>();
