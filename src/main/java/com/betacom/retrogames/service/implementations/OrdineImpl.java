@@ -57,8 +57,9 @@ public class OrdineImpl implements OrdineService {
 		Ordine ordine = new Ordine();
 		ordine.setAccount(account);
 		ordine.setIndirizzoSpedizione(indirizzo);
-		ordine.setPagamento(pagamentoRepo.findById(req.getPagamento().getId())
-			.orElseThrow(() -> new AcademyException("Pagamento non esistente")));
+		if(req.getPagamento() != null)
+			ordine.setPagamento(pagamentoRepo.findById(req.getPagamento().getId())
+				.orElseThrow(() -> new AcademyException("Pagamento non esistente")));
 		ordine.setTotale(BigDecimal.ZERO);
 		Integer returnId = ordineRepo.save(ordine).getId();
 		

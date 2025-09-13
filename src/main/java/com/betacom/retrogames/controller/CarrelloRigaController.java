@@ -18,7 +18,7 @@ import com.betacom.retrogames.response.ResponseBase;
 import com.betacom.retrogames.response.ResponseList;
 import com.betacom.retrogames.service.interfaces.CarrelloRigaService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
