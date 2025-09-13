@@ -36,11 +36,9 @@ public class OrdineReq {
 	@NotEmpty(groups = OnCreate.class, message = "Almeno una riga è richiesta")
 	private List<OrdineRigaReq> righe;
 
-	@NotNull(groups = OnCreate.class, message = "Indirizzo di spedizione obbligatorio")
 	@Valid
 	private IndirizzoReq indirizzoSpedizione;
 
-	@NotNull(groups = OnCreate.class, message = "Pagamento obbligatorio")
 	@Valid
 	private PagamentoReq pagamento;
 }
