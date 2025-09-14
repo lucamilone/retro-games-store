@@ -19,8 +19,8 @@ public class CarrelloRigaReq {
 	@Positive(groups = { OnUpdate.class, OnDelete.class }, message = "Id deve essere positivo")
 	private Integer id;
 
-	@NotNull(groups = { OnCreate.class, OnUpdate.class }, message = "CarrelloId obbligatorio")
-	@Positive(groups = { OnCreate.class, OnUpdate.class }, message = "CarrelloId deve essere positivo")
+	@NotNull(groups = OnCreate.class, message = "CarrelloId obbligatorio")
+	@Positive(groups = OnCreate.class, message = "CarrelloId deve essere positivo")
 	private Integer carrelloId;
 
 	@NotNull(groups = OnCreate.class, message = "ProdottoId obbligatorio")

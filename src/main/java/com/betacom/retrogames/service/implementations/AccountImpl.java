@@ -62,6 +62,7 @@ public class AccountImpl implements AccountService {
 	public Integer crea(AccountReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
+		// Verifico l'esistenza della credenziale
 		Credenziale credenziale = credenzialeRepo.findById(req.getCredenzialeId())
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("credenziale-non-trovata")));
 

@@ -1,6 +1,7 @@
 package com.betacom.retrogames.service.interfaces;
 
 import java.util.List;
+
 import com.betacom.retrogames.dto.CarrelloRigaDTO;
 import com.betacom.retrogames.exception.AcademyException;
 import com.betacom.retrogames.request.CarrelloRigaReq;
@@ -15,10 +16,9 @@ public interface CarrelloRigaService {
 	 * Aggiunge un prodotto al carrello creando una nuova riga.
 	 *
 	 * @param req 				Dati del prodotto da aggiungere
-	 * @return ID della riga appena creata
 	 * @throws AcademyException se si verifica un errore durante l'aggiunta del prodotto
 	 */
-	Integer aggiungiProdotto(CarrelloRigaReq req) throws AcademyException;
+	void aggiungiProdotto(CarrelloRigaReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna il prodotto e la quantità di un prodotto già presente nel carrello.
