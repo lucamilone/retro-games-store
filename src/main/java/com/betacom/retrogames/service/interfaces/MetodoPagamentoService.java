@@ -48,10 +48,10 @@ public interface MetodoPagamentoService {
 	MetodoPagamentoDTO getById(Integer id) throws AcademyException;
 
 	/**
-	 * Restituisce tutti i metodi di pagamento associati ad un account.
+	 * Restituisce tutti i metodi di pagamento attivi associati ad un account.
 	 *
 	 * @param accountId 		ID dell'account
-	 * @return lista dei metodi di pagamento
+	 * @return lista di MetodoPagamentoDTO
 	 */
-	List<MetodoPagamentoDTO> listByAccount(Integer accountId);
+	List<MetodoPagamentoDTO> listActiveByAccount(Integer accountId);
 }
