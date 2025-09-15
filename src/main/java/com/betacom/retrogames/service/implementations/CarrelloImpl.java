@@ -47,7 +47,7 @@ public class CarrelloImpl implements CarrelloService {
 
 		// Verifico l'esistenza dell'account
 		Account account = accountRepo.findById(req.getAccountId())
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("account-non-esistente")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("account-non-trovato")));
 
 		Carrello carrello = new Carrello();
 		carrello.setAccount(account);
@@ -68,7 +68,7 @@ public class CarrelloImpl implements CarrelloService {
 
 		// Verifico l'esistenza del carrello
 		Carrello carrello = carrelloRepo.findById(req.getId())
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("carrello-non-esistente")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("carrello-non-trovato")));
 
 		// Svuoto il carrello
 		carrello.getRighe().clear();
@@ -79,14 +79,13 @@ public class CarrelloImpl implements CarrelloService {
 		log.debug("Carrello svuotato con successo. ID: {}", req.getId());
 	}
 
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
 	public CarrelloDTO getCarrelloByAccount(Integer accountId) throws AcademyException {
 		log.debug("GetCarrelloByAccount: {}", accountId);
 
 		// Verifico l'esistenza del carrello
 		Carrello carrello = carrelloRepo.findByAccountId(accountId)
-				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("carrello-non-esistente-per-account")));
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("carrello-non-trovato-per-account")));
 
 		List<CarrelloRigaDTO> righeDto = carrelloRigaS.listByCarrello(carrello.getId());
 

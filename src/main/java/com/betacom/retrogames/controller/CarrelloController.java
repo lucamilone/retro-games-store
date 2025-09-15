@@ -25,9 +25,10 @@ public class CarrelloController {
 		this.carrelloS = carrelloS;
 	}
 
-	@PostMapping("/clear")
-	public ResponseBase clear(@Validated(OnDelete.class) @RequestBody(required = true) CarrelloReq req) {
+	@PostMapping("/clear-cart")
+	public ResponseBase clearCart(@Validated(OnDelete.class) @RequestBody(required = true) CarrelloReq req) {
 		ResponseBase res = new ResponseBase();
+
 		try {
 			carrelloS.svuotaCarrello(req);
 			res.setReturnCode(true);
@@ -36,12 +37,14 @@ public class CarrelloController {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
+
 		return res;
 	}
 
 	@GetMapping("/get-carrello-by-account")
 	public ResponseObject<CarrelloDTO> getCarrelloByAccount(@RequestParam(required = true) Integer accountId) {
 		ResponseObject<CarrelloDTO> res = new ResponseObject<>();
+
 		try {
 			res.setDati(carrelloS.getCarrelloByAccount(accountId));
 			res.setReturnCode(true);
@@ -49,6 +52,7 @@ public class CarrelloController {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
+
 		return res;
 	}
 }

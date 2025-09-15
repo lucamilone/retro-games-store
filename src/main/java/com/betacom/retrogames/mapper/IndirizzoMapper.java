@@ -14,6 +14,6 @@ public interface IndirizzoMapper {
 
 	Indirizzo toEntity(IndirizzoReq req);
 
-	// Aggiorna solo i campi non null
+	// Aggiorna solo i campi non Null
 	void updateIndirizzoFromReq(IndirizzoReq req, @MappingTarget Indirizzo indirizzo);
 }

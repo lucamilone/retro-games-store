@@ -2,158 +2,207 @@ package com.betacom.retrogames.service.implementations;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.betacom.retrogames.dto.OrdineDTO;
+import com.betacom.retrogames.dto.OrdineRigaDTO;
 import com.betacom.retrogames.exception.AcademyException;
+import com.betacom.retrogames.mapper.IndirizzoMapper;
 import com.betacom.retrogames.mapper.OrdineMapper;
+import com.betacom.retrogames.mapper.PagamentoMapper;
 import com.betacom.retrogames.model.Account;
-import com.betacom.retrogames.model.Indirizzo;
+import com.betacom.retrogames.model.Carrello;
+import com.betacom.retrogames.model.CarrelloRiga;
 import com.betacom.retrogames.model.Ordine;
+import com.betacom.retrogames.model.OrdineRiga;
+import com.betacom.retrogames.model.Pagamento;
 import com.betacom.retrogames.model.enums.StatoOrdine;
 import com.betacom.retrogames.repository.AccountRepository;
 import com.betacom.retrogames.repository.OrdineRepository;
-import com.betacom.retrogames.repository.PagamentoRepository;
+import com.betacom.retrogames.request.CarrelloReq;
 import com.betacom.retrogames.request.OrdineReq;
-import com.betacom.retrogames.request.OrdineRigaReq;
+import com.betacom.retrogames.service.interfaces.CarrelloService;
 import com.betacom.retrogames.service.interfaces.MessaggioService;
 import com.betacom.retrogames.service.interfaces.OrdineRigaService;
 import com.betacom.retrogames.service.interfaces.OrdineService;
-import lombok.AllArgsConstructor;
+
 import lombok.extern.log4j.Log4j2;
 
-@AllArgsConstructor
 @Log4j2
 @Service
 public class OrdineImpl implements OrdineService {
 	private final OrdineRepository ordineRepo;
-	private final OrdineMapper ordineMapper;
-	private final OrdineRigaService ordineRigaService;
 	private final AccountRepository accountRepo;
-	private final PagamentoRepository pagamentoRepo;
 	private final MessaggioService msgS;
+	private final CarrelloService carrelloS;
+	private final OrdineRigaService ordineRigaS;
+	private final OrdineMapper ordineMapper;
+	private final IndirizzoMapper indirizzoMapper;
+	private final PagamentoMapper pagamentoMapper;
+
+	public OrdineImpl(OrdineRepository ordineRepo, AccountRepository accountRepo, MessaggioService msgS,
+			CarrelloService carrelloS, OrdineRigaService ordineRigaS, OrdineMapper ordineMapper,
+			IndirizzoMapper indirizzoMapper, PagamentoMapper pagamentoMapper) {
+		this.ordineRepo = ordineRepo;
+		this.accountRepo = accountRepo;
+		this.msgS = msgS;
+		this.carrelloS = carrelloS;
+		this.ordineRigaS = ordineRigaS;
+		this.ordineMapper = ordineMapper;
+		this.indirizzoMapper = indirizzoMapper;
+		this.pagamentoMapper = pagamentoMapper;
+	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
 	public Integer crea(OrdineReq req) throws AcademyException {
-		log.debug("Crea ordine: {}", req);
+		log.debug("Crea: {}", req);
 
+		// Verifico l'esistenza dell'account
 		Account account = accountRepo.findById(req.getAccountId())
-			.orElseThrow(() -> new AcademyException(msgS.getMessaggio("account-non-esistente")));
-		
-		Indirizzo indirizzo;
-		if(req.getIndirizzoSpedizione() != null) {
-			indirizzo = new Indirizzo();
-			indirizzo.setVia(req.getIndirizzoSpedizione().getVia());
-			indirizzo.setCitta(req.getIndirizzoSpedizione().getCitta());
-			indirizzo.setCap(req.getIndirizzoSpedizione().getCap());
-			indirizzo.setPaese(req.getIndirizzoSpedizione().getPaese());
-		} else {
-			indirizzo = account.getIndirizzo();
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("account-non-trovato")));
+
+		// Recupero carrello dell'account
+		Carrello carrello = account.getCarrello();
+		if (carrello == null || carrello.getRighe().isEmpty()) {
+			throw new AcademyException(msgS.getMessaggio("carrello-vuoto"));
 		}
-		
+
 		Ordine ordine = new Ordine();
 		ordine.setAccount(account);
-		ordine.setIndirizzoSpedizione(indirizzo);
-		if(req.getPagamento() != null)
-			ordine.setPagamento(pagamentoRepo.findById(req.getPagamento().getId())
-				.orElseThrow(() -> new AcademyException("Pagamento non esistente")));
-		ordine.setTotale(BigDecimal.ZERO);
-		Integer returnId = ordineRepo.save(ordine).getId();
-		
-		for(OrdineRigaReq rigaReq : req.getRighe()) {
-			rigaReq.setOrdineId(returnId);
-			ordineRigaService.aggiungiProdotto(rigaReq);
+
+		if (req.getIndirizzoSpedizione() != null) {
+			ordine.setIndirizzoSpedizione(indirizzoMapper.toEntity(req.getIndirizzoSpedizione()));
+		} else {
+			ordine.setIndirizzoSpedizione(account.getIndirizzo());
 		}
-		ordine.setTotale(ordine.getTotale());
-		ordineRepo.save(ordine);
-		return returnId;
+
+		// Trasferisco righe dal carrello all'ordine
+		for (CarrelloRiga carrelloRiga : carrello.getRighe()) {
+			OrdineRiga ordineRiga = new OrdineRiga();
+			ordineRiga.setProdotto(carrelloRiga.getProdotto());
+			ordineRiga.setQuantita(carrelloRiga.getQuantita());
+			ordineRiga.setPrezzoUnitario(carrelloRiga.getProdotto().getPrezzo());
+
+			ordine.addRiga(ordineRiga);
+		}
+
+		BigDecimal totale = ordine.getTotale();
+		ordine.setTotale(totale);
+
+		// Salvo l'ordine
+		ordine = ordineRepo.save(ordine);
+
+		log.debug("Ordine creato con successo. ID: {}", ordine.getId());
+
+		// Svuoto il carrello
+		CarrelloReq carrelloReq = new CarrelloReq();
+		carrelloReq.setId(carrello.getId());
+		carrelloS.svuotaCarrello(carrelloReq);
+
+		// Restituisco l'id generato
+		return ordine.getId();
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
 	public void aggiorna(OrdineReq req) throws AcademyException {
-	    log.debug("Aggiorna ordine: {}", req);
+		log.debug("Aggiorna: {}", req);
 
-	    Ordine ordine = ordineRepo.findById(req.getId())
-	        .orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-esistente")));
+		// Verifico l'esistenza dell'ordine
+		Ordine ordine = ordineRepo.findById(req.getId())
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-trovato")));
 
-	    if(req.getAccountId() != null) {
-	    	Account account = accountRepo.findById(req.getAccountId())
-		            .orElseThrow(() -> new AcademyException(msgS.getMessaggio("account-non-esistente")));
-		    ordine.setAccount(account);
-	    }
-	    
-	    Indirizzo indirizzo = ordine.getIndirizzoSpedizione();
-	    if(req.getIndirizzoSpedizione() != null) {
-	    	if(req.getIndirizzoSpedizione().getVia() != null) {
-		    	indirizzo.setVia(req.getIndirizzoSpedizione().getVia());
-		    }
-		    if(req.getIndirizzoSpedizione().getCitta() != null) {
-		    	indirizzo.setCitta(req.getIndirizzoSpedizione().getCitta());
-		    }
-		    if(req.getIndirizzoSpedizione().getCap() != null) {
-		    	indirizzo.setCap(req.getIndirizzoSpedizione().getCap());
-		    }
-		    if(req.getIndirizzoSpedizione().getPaese() != null) {
-		    	indirizzo.setPaese(req.getIndirizzoSpedizione().getPaese());
-		    }
-		    ordine.setIndirizzoSpedizione(indirizzo);
-	    }
-	    
-	    if(req.getPagamento() != null) {
-	        ordine.setPagamento(
-	            pagamentoRepo.findById(req.getPagamento().getId())
-	                .orElseThrow(() -> new AcademyException(msgS.getMessaggio("pagamento-non-esistente")))
-	        );
-	    }
+		// Permetto aggiornamenti solo se l'ordine è ancora in stato iniziale
+		if (!StatoOrdine.IN_ATTESA.equals(ordine.getStatoOrdine())) {
+			throw new AcademyException(msgS.getMessaggio("ordine-non-modificabile"));
+		}
 
-        ordine.setTotale(ordine.getTotale());
-	    ordineRepo.save(ordine);
+		if (req.getIndirizzoSpedizione() != null) {
+			indirizzoMapper.updateIndirizzoFromReq(req.getIndirizzoSpedizione(), ordine.getIndirizzoSpedizione());
+		}
+
+		if (req.getPagamento() != null) {
+			if (ordine.getPagamento() == null) {
+				Pagamento pagamento = pagamentoMapper.toEntity(req.getPagamento());
+				ordine.setPagamentoWithRelation(pagamento);
+			} else {
+				pagamentoMapper.updatePagamentoFromReq(req.getPagamento(), ordine.getPagamento());
+			}
+		}
+
+		// Salvo l'ordine aggiornato
+		ordineRepo.save(ordine);
+
+		log.debug("Ordine aggiornato con successo. ID: {}", ordine.getId());
 	}
 
-
-	@Override
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	@Override
 	public void aggiornaStato(Integer ordineId, String nuovoStato) throws AcademyException {
-	    log.debug("Aggiorna stato ordine: id={}, nuovoStato={}", ordineId, nuovoStato);
+		log.debug("AggiornaStato: ID = {}, NuovoStato = {}", ordineId, nuovoStato);
 
-	    Ordine ordine = ordineRepo.findById(ordineId)
-	        .orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-esistente")));
+		// Verifico l'esistenza dell'ordine
+		Ordine ordine = ordineRepo.findById(ordineId)
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-trovato")));
 
-	    // Se hai un enum per lo stato, usa quello; altrimenti salva la stringa normalizzata.
-	    try {
-	        ordine.setStatoOrdine(StatoOrdine.valueOf(nuovoStato.toUpperCase()));
-	    } catch (Exception ex) {
-	        throw new AcademyException(msgS.getMessaggio("stato-ordine-non-valido"));
-	    }
-	    ordineRepo.save(ordine);
+		// Converto lo stato richiesto in enum valido
+		StatoOrdine statoRichiesto;
+		try {
+			statoRichiesto = StatoOrdine.valueOf(nuovoStato.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new AcademyException(msgS.getMessaggio("stato-ordine-non-valido"));
+		}
+
+		// Controllo la validità della transizione usando l'helper dell'enum
+		StatoOrdine statoCorrente = ordine.getStatoOrdine();
+		if (!statoCorrente.isTransizioneValidaVerso(statoRichiesto)) {
+			throw new AcademyException(msgS.getMessaggio("transizione-stato-non-valida"));
+		}
+
+		// Aggiorno lo stato
+		ordine.setStatoOrdine(statoRichiesto);
+
+		// Salvo l'ordine aggiornato
+		ordineRepo.save(ordine);
+
+		log.debug("Stato ordine aggiornato con successo. ID: {}, Nuovo Stato: {}", ordineId, statoRichiesto);
 	}
 
-
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	public OrdineDTO getById(Integer ordineId) throws AcademyException {
-	    log.debug("Recupera ordine per id: {}", ordineId);
-	    Ordine ordine = ordineRepo.findById(ordineId)
-	        .orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-esistente")));
-	    OrdineDTO dto = ordineMapper.toDto(ordine);
-	    dto.setTotaleQuantita(ordine.getTotaleQuantita());
-	    return dto;
-	}
+		log.debug("GetById: {}", ordineId);
 
+		// Verifico l'esistenza dell'ordine
+		Ordine ordine = ordineRepo.findById(ordineId)
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-trovato")));
+
+		OrdineDTO dto = ordineMapper.toDto(ordine);
+		dto.setTotaleQuantita(ordine.getTotaleQuantita());
+
+		return dto;
+	}
 
 	@Override
-	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	public List<OrdineDTO> listByAccount(Integer accountId) {
-	    log.debug("Recupera ordini per account: {}", accountId);
-	    List<Ordine> ordini = ordineRepo.findAllByAccountId(accountId);
-	    List<OrdineDTO> dtos = ordineMapper.toDtoList(ordini);
-	    for(int i=0; i<ordini.size(); i++)
-	    	dtos.get(i).setTotaleQuantita(ordini.get(i).getTotaleQuantita());
-	    return dtos;
-	}
+		log.debug("ListByAccount: {}", accountId);
 
+		// Recupero gli ordini dell'account
+		List<Ordine> ordini = ordineRepo.findAllByAccountId(accountId);
+
+		// Mappo Entity a DTO
+		return ordini.stream().map(ordine -> {
+			List<OrdineRigaDTO> righeDto = ordineRigaS.listByOrdine(ordine.getId());
+
+			OrdineDTO dto = ordineMapper.toDto(ordine);
+			dto.setRighe(righeDto);
+			dto.setTotaleQuantita(ordine.getTotaleQuantita());
+
+			return dto;
+		}).toList();
+	}
 }

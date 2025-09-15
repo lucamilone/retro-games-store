@@ -24,9 +24,10 @@ public class CarrelloRigaController {
 		this.carrelloRigaS = carrelloRigaS;
 	}
 
-	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) CarrelloRigaReq req) {
+	@PostMapping("/add-product")
+	public ResponseBase addProduct(@Validated(OnCreate.class) @RequestBody(required = true) CarrelloRigaReq req) {
 		ResponseBase res = new ResponseBase();
+
 		try {
 			carrelloRigaS.aggiungiProdotto(req);
 			res.setReturnCode(true);
@@ -36,12 +37,14 @@ public class CarrelloRigaController {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
+
 		return res;
 	}
 
-	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) CarrelloRigaReq req) {
+	@PutMapping("/update-row")
+	public ResponseBase updateRow(@Validated(OnUpdate.class) @RequestBody(required = true) CarrelloRigaReq req) {
 		ResponseBase res = new ResponseBase();
+
 		try {
 			carrelloRigaS.aggiornaRiga(req);
 			res.setReturnCode(true);
@@ -50,12 +53,14 @@ public class CarrelloRigaController {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
+
 		return res;
 	}
 
-	@PostMapping("/delete")
-	public ResponseBase delete(@Validated(OnDelete.class) @RequestBody(required = true) CarrelloRigaReq req) {
+	@PostMapping("/remove-product")
+	public ResponseBase removeProduct(@Validated(OnDelete.class) @RequestBody(required = true) CarrelloRigaReq req) {
 		ResponseBase res = new ResponseBase();
+
 		try {
 			carrelloRigaS.rimuoviProdotto(req);
 			res.setReturnCode(true);
@@ -64,6 +69,7 @@ public class CarrelloRigaController {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
 		}
+
 		return res;
 	}
 }

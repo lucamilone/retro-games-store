@@ -25,4 +25,27 @@ public enum StatoOrdine {
 	public boolean isSpedito() {
 		return spedito;
 	}
+
+	/**
+	 * Controlla se la transizione da questo stato a nuovoStato è valida.
+	 */
+	public boolean isTransizioneValidaVerso(StatoOrdine nuovoStato) {
+		if (this == nuovoStato) {
+			return true; // Permette di "riconfermare" lo stesso stato
+		}
+
+		switch (this) {
+		case IN_ATTESA:
+			return nuovoStato == PAGATO || nuovoStato == ANNULLATO;
+		case PAGATO:
+			return nuovoStato == SPEDITO || nuovoStato == ANNULLATO;
+		case SPEDITO:
+			return nuovoStato == CONSEGNATO;
+		case CONSEGNATO:
+		case ANNULLATO:
+			return false; // Stati finali non possono cambiare
+		default:
+			return false;
+		}
+	}
 }

@@ -84,4 +84,11 @@ public class Ordine {
 		return righe == null ? BigDecimal.ZERO
 				: righe.stream().map(OrdineRiga::getSubTotale).reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
+
+	public void setPagamentoWithRelation(Pagamento pagamento) {
+		this.pagamento = pagamento;
+		if (pagamento != null) {
+			pagamento.setOrdine(this);
+		}
+	}
 }

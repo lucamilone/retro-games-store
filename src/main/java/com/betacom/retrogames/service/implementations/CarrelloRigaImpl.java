@@ -45,7 +45,7 @@ public class CarrelloRigaImpl implements CarrelloRigaService {
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
 	public void aggiungiProdotto(CarrelloRigaReq req) throws AcademyException {
-		log.debug("Aggiungi prodotto al carrello: {}", req);
+		log.debug("AggiungiProdotto: {}", req);
 
 		// Verifico l'esistenza del carrello
 		Carrello carrello = carrelloRepo.findById(req.getCarrelloId())
@@ -64,7 +64,7 @@ public class CarrelloRigaImpl implements CarrelloRigaService {
 			riga.setQuantita(riga.getQuantita() + req.getQuantita());
 			carrelloRigaRepo.save(riga);
 
-			log.debug("Quantità aggiornata per riga esistente: ProdottoId={}, NuovaQuantità={}",
+			log.debug("Quantità aggiornata per riga esistente: ProdottoId = {}, NuovaQuantità = {}",
 					riga.getProdotto().getId(), riga.getQuantita());
 
 			return; // Esce per evitare di creare una nuova riga
@@ -81,13 +81,14 @@ public class CarrelloRigaImpl implements CarrelloRigaService {
 		// Salvo il carrello (cascade salva la riga)
 		carrelloRepo.save(carrello);
 
-		log.debug("Riga carrello creata con successo: ProdottoId={}, Quantità={}", prodotto.getId(), req.getQuantita());
+		log.debug("Riga carrello creata con successo: ProdottoId = {}, Quantità = {}", prodotto.getId(),
+				req.getQuantita());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
 	public void aggiornaRiga(CarrelloRigaReq req) throws AcademyException {
-		log.debug("Aggiorna riga del carrello: {}", req);
+		log.debug("AggiornaRiga: {}", req);
 
 		// Verifico l'esistenza della riga del carrello
 		CarrelloRiga riga = carrelloRigaRepo.findById(req.getId())
@@ -144,7 +145,7 @@ public class CarrelloRigaImpl implements CarrelloRigaService {
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
 	public void rimuoviProdotto(CarrelloRigaReq req) throws AcademyException {
-		log.debug("Rimuovi prodotto dal carrello: {}", req);
+		log.debug("RimuoviProdotto: {}", req);
 
 		// Verifico l'esistenza della riga del carrello
 		CarrelloRiga riga = carrelloRigaRepo.findById(req.getId())
@@ -168,7 +169,7 @@ public class CarrelloRigaImpl implements CarrelloRigaService {
 		// Recupero le righe del carrello
 		List<CarrelloRiga> righe = carrelloRigaRepo.findAllByCarrelloId(carrelloId);
 
-		// Mappo entity a DTO
+		// Mappo Entity a DTO
 		List<CarrelloRigaDTO> righeDtos = carrelloRigaMapper.toDtoList(righe);
 
 		// Calcolo il SubTotale dinamicamente da esporre verso il frontend

@@ -13,7 +13,6 @@ import com.betacom.retrogames.dto.CredenzialeDTO;
 import com.betacom.retrogames.exception.AcademyException;
 import com.betacom.retrogames.request.CredenzialeReq;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnCreate;
-import com.betacom.retrogames.request.validation.ValidationGroup.OnDelete;
 import com.betacom.retrogames.request.validation.ValidationGroup.OnUpdate;
 import com.betacom.retrogames.response.ResponseBase;
 import com.betacom.retrogames.response.ResponseList;
@@ -69,38 +68,6 @@ public class CredenzialeController {
 			credenzialeS.aggiornaPassword(req.getId(), req.getPassword());
 			res.setReturnCode(true);
 			res.setMsg("Password aggiornata con successo");
-		} catch (AcademyException e) {
-			res.setReturnCode(false);
-			res.setMsg(e.getMessage());
-		}
-
-		return res;
-	}
-
-	@PutMapping("/disable")
-	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody CredenzialeReq req) {
-		ResponseBase res = new ResponseBase();
-
-		try {
-			credenzialeS.disattiva(req);
-			res.setReturnCode(true);
-			res.setMsg("Credenziale disattivata con successo");
-		} catch (AcademyException e) {
-			res.setReturnCode(false);
-			res.setMsg(e.getMessage());
-		}
-
-		return res;
-	}
-
-	@PutMapping("/reactivate")
-	public ResponseBase reactivate(@Validated(OnUpdate.class) @RequestBody CredenzialeReq req) {
-		ResponseBase res = new ResponseBase();
-
-		try {
-			credenzialeS.riattiva(req);
-			res.setReturnCode(true);
-			res.setMsg("Credenziale riattivata con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
