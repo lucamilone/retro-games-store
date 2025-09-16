@@ -30,8 +30,10 @@ public class PagamentoReq {
 	private Integer ordineId;
 
 	@NotNull(groups = OnCreate.class, message = "Totale obbligatorio")
-	@DecimalMin(value = "0.01", inclusive = true, message = "Totale deve essere maggiore di 0")
-	@Digits(integer = 10, fraction = 2, message = "Totale non valido (max 10 cifre intere e 2 decimali)")
+	@DecimalMin(groups = { OnCreate.class,
+			OnUpdate.class }, value = "0.01", inclusive = true, message = "Totale deve essere maggiore di 0")
+	@Digits(groups = { OnCreate.class,
+			OnUpdate.class }, integer = 10, fraction = 2, message = "Totale non valido (max 10 cifre intere e 2 decimali)")
 	private BigDecimal totale;
 
 	@NotNull(groups = OnCreate.class, message = "MetodoPagamentoId obbligatorio")

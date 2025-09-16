@@ -35,7 +35,7 @@ public class Pagamento {
 	private Integer id;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ordine_id", nullable = false)
+	@JoinColumn(name = "ordine_id", nullable = false, unique = true)
 	private Ordine ordine;
 
 	@Column(precision = 10, scale = 2, nullable = false)

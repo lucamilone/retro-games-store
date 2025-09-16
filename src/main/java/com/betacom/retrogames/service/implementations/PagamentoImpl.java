@@ -24,121 +24,101 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
-public class PagamentoImpl implements PagamentoService 
-{
-    private final PagamentoRepository pagamentoRepo;
-    private final MetodoPagamentoRepository metodoPagamentoRepo;
-    private final OrdineRepository ordineRepo;
-    private final MessaggioService msgS;
-    private final PagamentoMapper pagamentoMapper;
+public class PagamentoImpl implements PagamentoService {
+	private final PagamentoRepository pagamentoRepo;
+	private final MetodoPagamentoRepository metodoPagamentoRepo;
+	private final OrdineRepository ordineRepo;
+	private final MessaggioService msgS;
+	private final PagamentoMapper pagamentoMapper;
 
-    public PagamentoImpl(PagamentoRepository pagamentoRepo, MetodoPagamentoRepository metodoPagamentoRepo, OrdineRepository ordineRepo, MessaggioService msgS, PagamentoMapper pagamentoMapper) 
-    {
-        this.pagamentoRepo = pagamentoRepo;
-        this.metodoPagamentoRepo = metodoPagamentoRepo;
-        this.ordineRepo = ordineRepo;
-        this.msgS = msgS;
-        this.pagamentoMapper = pagamentoMapper;
-    }
+	public PagamentoImpl(PagamentoRepository pagamentoRepo, MetodoPagamentoRepository metodoPagamentoRepo,
+			OrdineRepository ordineRepo, MessaggioService msgS, PagamentoMapper pagamentoMapper) {
+		this.pagamentoRepo = pagamentoRepo;
+		this.metodoPagamentoRepo = metodoPagamentoRepo;
+		this.ordineRepo = ordineRepo;
+		this.msgS = msgS;
+		this.pagamentoMapper = pagamentoMapper;
+	}
 
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
-    @Override
-    public Integer crea(PagamentoReq req) throws AcademyException 
-    {
-        log.debug("Crea: {}", req);
-        
-        // Verifico se esiste già un pagamento per lo stesso ordine
-        if (pagamentoRepo.findByOrdineId(req.getOrdineId()).isPresent()) 
-        {
-            throw new AcademyException(msgS.getMessaggio("pagamento-esistente"));
-        }
-       
-        // Recupero l'ordine dal DB per salvare i dati
-     	Ordine ordine = ordineRepo.findById(req.getOrdineId())
-     			.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-esistente")));
-     	
-     	// Recupero il metodo pagamento dal DB per salvare i dati
-     	MetodoPagamento metodoPagamento = metodoPagamentoRepo.findById(req.getMetodoPagamentoId())
-     			.orElseThrow(() -> new AcademyException(msgS.getMessaggio("metodo-pagamento-non-esistente")));
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	@Override
+	public Integer crea(PagamentoReq req) throws AcademyException {
+		log.debug("Crea: {}", req);
 
-        // Creo il nuovo pagamento
-        Pagamento pagamento = new Pagamento();
-        
-        pagamento.setOrdine(ordine);
-        pagamento.setTotale(req.getTotale());
-        pagamento.setMetodoPagamento(metodoPagamento);
+		// Verifico l'esistenza dell'ordine
+		Ordine ordine = ordineRepo.findById(req.getOrdineId())
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-trovato")));
 
-        // Salvataggio del pagamento nel database
-        pagamento = pagamentoRepo.save(pagamento);
+		// Verifico l'esistenza di un pagamento per lo stesso ordine
+		if (pagamentoRepo.findByOrdineId(req.getOrdineId()).isPresent()) {
+			throw new AcademyException(msgS.getMessaggio("pagamento-esistente"));
+		}
 
-        log.debug("Pagamento creato con successo con ID: {}", pagamento.getId());
+		// Recupero dal DB per salvare i dati
+		MetodoPagamento metodoPagamento = metodoPagamentoRepo.findById(req.getMetodoPagamentoId())
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("metodo-pagamento-non-trovato")));
 
-        return pagamento.getId();
-    }
+		Pagamento pagamento = new Pagamento();
+		pagamento.setOrdine(ordine);
+		pagamento.setTotale(req.getTotale());
+		pagamento.setMetodoPagamento(metodoPagamento);
 
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
-    @Override
-    public void aggiorna(PagamentoReq req) throws AcademyException 
-    {
-        log.debug("Aggiorna: {}", req);
+		// Salvo il pagamento 
+		pagamento = pagamentoRepo.save(pagamento);
 
-        // Verifico se il pagamento esiste
-        Pagamento pagamento = pagamentoRepo.findById(req.getId())
-                .orElseThrow(() -> new AcademyException(msgS.getMessaggio("pagamento-non-esistente")));
-        
-        // Aggiorno i campi modificabili
-        if(req.getOrdineId() != null)
-        {
-        	Ordine ordine = ordineRepo.findById(req.getOrdineId())
-         			.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-esistente")));
-        	
-        	pagamento.setOrdine(ordine);
-        }
-        
-        if (req.getTotale() != null) 
-        {
-            pagamento.setTotale(req.getTotale());
-        }
-        
-        if (req.getMetodoPagamentoId() != null) 
-        {
-         	MetodoPagamento metodoPagamento = metodoPagamentoRepo.findById(req.getMetodoPagamentoId())
-         			.orElseThrow(() -> new AcademyException(msgS.getMessaggio("metodo-pagamento-non-esistente")));
-         	
-            pagamento.setMetodoPagamento(metodoPagamento);
-        }
-        
-        if (req.getStatoPagamento() != null) 
-        {
-            pagamento.setStatoPagamento(req.getStatoPagamento());
-        }
+		log.debug("Pagamento creato con successo. ID: {}", pagamento.getId());
 
-        // Salvataggio del pagamento aggiornato
-        pagamentoRepo.save(pagamento);
+		return pagamento.getId();
+	}
 
-        log.debug("Pagamento aggiornato con successo con ID: {}", req.getId());
-    }
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	@Override
+	public void aggiorna(PagamentoReq req) throws AcademyException {
+		log.debug("Aggiorna: {}", req);
 
-    @Override
-    public PagamentoDTO getById(Integer id) throws AcademyException 
-    {
-        log.debug("GetById: {}", id);
+		// Verifico l'esistenza del pagamento
+		Pagamento pagamento = pagamentoRepo.findById(req.getId())
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("pagamento-non-trovato")));
 
-        // Recupero il pagamento dal DB
-        Pagamento pagamento = pagamentoRepo.findById(id)
-                .orElseThrow(() -> new AcademyException(msgS.getMessaggio("pagamento-non-esistente")));
+		if (req.getStatoPagamento() != null) {
+			pagamento.setStatoPagamento(req.getStatoPagamento());
+		}
 
-        return pagamentoMapper.toDto(pagamento);
-    }
+		if (req.getMetodoPagamentoId() != null) {
+			MetodoPagamento metodoPagamento = metodoPagamentoRepo.findById(req.getMetodoPagamentoId())
+					.orElseThrow(() -> new AcademyException(msgS.getMessaggio("metodo-pagamento-non-trovato")));
 
-    @Override
-    public List<PagamentoDTO> list() 
-    {
-        log.debug("List");
+			pagamento.setMetodoPagamento(metodoPagamento);
+		}
 
-        // Recupero tutti i pagamenti
-        List<Pagamento> pagamenti = pagamentoRepo.findAll();
+		if (req.getTotale() != null) {
+			pagamento.setTotale(req.getTotale());
+		}
 
-        return pagamentoMapper.toDtoList(pagamenti);
-    }
+		// Salvo il pagamento aggiornato
+		pagamentoRepo.save(pagamento);
+
+		log.debug("Pagamento aggiornato con successo. ID: {}", req.getId());
+	}
+
+	@Override
+	public PagamentoDTO getById(Integer id) throws AcademyException {
+		log.debug("GetById: {}", id);
+
+		// Recupero il pagamento dal DB
+		Pagamento pagamento = pagamentoRepo.findById(id)
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("pagamento-non-trovato")));
+
+		return pagamentoMapper.toDto(pagamento);
+	}
+
+	@Override
+	public List<PagamentoDTO> list() {
+		log.debug("List");
+
+		// Recupero tutti i pagamenti
+		List<Pagamento> pagamenti = pagamentoRepo.findAll();
+
+		return pagamentoMapper.toDtoList(pagamenti);
+	}
 }

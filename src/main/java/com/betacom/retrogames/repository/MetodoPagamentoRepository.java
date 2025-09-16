@@ -14,4 +14,6 @@ public interface MetodoPagamentoRepository extends JpaRepository<MetodoPagamento
 	Optional<MetodoPagamento> findByToken(String token);
 
 	List<MetodoPagamento> findByAccountIdAndAttivoTrue(Integer accountId);
+
+	List<MetodoPagamento> findByAccountIdAndAttivoTrueOrderByCreatedAtDesc(Integer accountId);
 }

@@ -51,8 +51,10 @@ public class ProdottoReq {
 	private Integer annoUscita;
 
 	@NotNull(groups = OnCreate.class, message = "Prezzo obbligatorio")
-	@DecimalMin(value = "0.01", inclusive = true, message = "Prezzo deve essere maggiore di 0")
-	@Digits(integer = 10, fraction = 2, message = "Prezzo non valido (max 10 cifre intere e 2 decimali)")
+	@DecimalMin(groups = { OnCreate.class,
+			OnUpdate.class }, value = "0.01", inclusive = true, message = "Prezzo deve essere maggiore di 0")
+	@Digits(groups = { OnCreate.class,
+			OnUpdate.class }, integer = 10, fraction = 2, message = "Prezzo non valido (max 10 cifre intere e 2 decimali)")
 	private BigDecimal prezzo;
 
 	private String imgUrl;

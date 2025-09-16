@@ -22,113 +22,88 @@ import com.betacom.retrogames.service.interfaces.MetodoPagamentoService;
 
 @RestController
 @RequestMapping("/api/v1/retro-games/metodi-pagamento")
-public class MetodoPagamentoController 
-{
-    private final MetodoPagamentoService metodoPagamentoS;
+public class MetodoPagamentoController {
+	private final MetodoPagamentoService metodoPagamentoS;
 
-    public MetodoPagamentoController(MetodoPagamentoService metodoPagamentoS) 
-    {
-        this.metodoPagamentoS = metodoPagamentoS;
-    }
+	public MetodoPagamentoController(MetodoPagamentoService metodoPagamentoS) {
+		this.metodoPagamentoS = metodoPagamentoS;
+	}
 
-    @PostMapping("/create")
-    public ResponseBase create(@Validated(OnCreate.class) @RequestBody MetodoPagamentoReq req) 
-    {
-        ResponseBase res = new ResponseBase();
-        
-        try 
-        {
-            Integer id = metodoPagamentoS.crea(req);
-            
-            res.setReturnCode(true);
-            res.setMsg("Metodo di pagamento creato con successo. ID: " + id);
-        } 
-        catch (AcademyException e) 
-        {
-            res.setReturnCode(false);
-            res.setMsg(e.getMessage());
-        }
-        
-        return res;
-    }
+	@PostMapping("/create")
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody MetodoPagamentoReq req) {
+		ResponseBase res = new ResponseBase();
 
-    @PutMapping("/update")
-    public ResponseBase update(@Validated(OnUpdate.class) @RequestBody MetodoPagamentoReq req) 
-    {
-        ResponseBase res = new ResponseBase();
-        
-        try 
-        {
-            metodoPagamentoS.aggiorna(req);
-            
-            res.setReturnCode(true);
-            res.setMsg("Metodo di pagamento aggiornato con successo");
-        } 
-        catch (AcademyException e)
-        {
-            res.setReturnCode(false);
-            res.setMsg(e.getMessage());
-        }
-        
-        return res;
-    }
+		try {
+			Integer id = metodoPagamentoS.crea(req);
+			res.setReturnCode(true);
+			res.setMsg("Metodo di pagamento creato con successo. ID: " + id);
+		} catch (AcademyException e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
 
-    @PutMapping("/disattiva")
-    public ResponseBase disattiva(@Validated(OnDelete.class) @RequestBody MetodoPagamentoReq req) 
-    {
-        ResponseBase res = new ResponseBase();
-        
-        try 
-        {
-            metodoPagamentoS.disattiva(req);
-            
-            res.setReturnCode(true);
-            res.setMsg("Metodo di pagamento disattivato con successo");
-        } 
-        catch (AcademyException e) 
-        {
-            res.setReturnCode(false);
-            res.setMsg(e.getMessage());
-        }
-        
-        return res;
-    }
+		return res;
+	}
 
-    @GetMapping("/get-by-id")
-    public ResponseObject<MetodoPagamentoDTO> getById(@RequestParam Integer id)
-    {
-        ResponseObject<MetodoPagamentoDTO> res = new ResponseObject<>();
-        
-        try 
-        {
-            res.setDati(metodoPagamentoS.getById(id));
-            res.setReturnCode(true);
-        } 
-        catch (AcademyException e) 
-        {
-            res.setReturnCode(false);
-            res.setMsg(e.getMessage());
-        }
-        
-        return res;
-    }
+	@PutMapping("/update")
+	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody MetodoPagamentoReq req) {
+		ResponseBase res = new ResponseBase();
 
-    @GetMapping("/list-active-by-account")
-    public ResponseList<MetodoPagamentoDTO> listActiveByAccount(@RequestParam Integer accountId) 
-    {
-        ResponseList<MetodoPagamentoDTO> res = new ResponseList<>();
-        
-        try 
-        {
-            res.setDati(metodoPagamentoS.listActiveByAccount(accountId));
-            res.setReturnCode(true);
-        } 
-        catch (Exception e) 
-        {
-            res.setReturnCode(false);
-            res.setMsg(e.getMessage());
-        }
-        
-        return res;
-    }
+		try {
+			metodoPagamentoS.aggiorna(req);
+			res.setReturnCode(true);
+			res.setMsg("Metodo di pagamento aggiornato con successo");
+		} catch (AcademyException e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
+
+	@PutMapping("/disable")
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody MetodoPagamentoReq req) {
+		ResponseBase res = new ResponseBase();
+
+		try {
+			metodoPagamentoS.disattiva(req);
+			res.setReturnCode(true);
+			res.setMsg("Metodo di pagamento disattivato con successo");
+		} catch (AcademyException e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
+
+	@GetMapping("/get-by-id")
+	public ResponseObject<MetodoPagamentoDTO> getById(@RequestParam Integer id) {
+		ResponseObject<MetodoPagamentoDTO> res = new ResponseObject<>();
+
+		try {
+			res.setDati(metodoPagamentoS.getById(id));
+			res.setReturnCode(true);
+		} catch (AcademyException e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
+
+	@GetMapping("/list-active-by-account")
+	public ResponseList<MetodoPagamentoDTO> listActiveByAccount(@RequestParam Integer accountId) {
+		ResponseList<MetodoPagamentoDTO> res = new ResponseList<>();
+
+		try {
+			res.setDati(metodoPagamentoS.listActiveByAccount(accountId));
+			res.setReturnCode(true);
+		} catch (Exception e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
 }
