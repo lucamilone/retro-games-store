@@ -1,5 +1,6 @@
 package com.betacom.retrogames;
 
+import static com.betacom.retrogames.util.Utils.normalizza;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,13 +32,13 @@ class TipoMetodoPagamentoControllerTest {
 
 	private TipoMetodoPagamentoReq createValidReq(String nome) {
 		TipoMetodoPagamentoReq req = new TipoMetodoPagamentoReq();
-		req.setNome(nome);
+		req.setNome(normalizza(nome));
 		return req;
 	}
 
 	private TipoMetodoPagamentoReq createValidReqWithId(String nome, Integer id) {
 		TipoMetodoPagamentoReq req = new TipoMetodoPagamentoReq();
-		req.setNome(nome);
+		req.setNome(normalizza(nome));
 		req.setId(id);
 		return req;
 	}
@@ -72,8 +73,8 @@ class TipoMetodoPagamentoControllerTest {
 		ResponseBase createRes = controller.create(reqCreate);
 		assertTrue(createRes.getReturnCode());
 
-		// Recupero l'id dal repository usando il nome normalizzato
-		String normalizedName = reqCreate.getNome().trim().toLowerCase(); // simula il normalizza del service
+		// Recupero l'id dal repository usando il nome
+		String normalizedName = normalizza(reqCreate.getNome());
 		Integer generatedId = tipoRepo.findAll().stream().filter(t -> t.getNome().equalsIgnoreCase(normalizedName))
 				.findFirst().orElseThrow(() -> new RuntimeException("ID non trovato per il tipo creato")).getId();
 

@@ -1,5 +1,6 @@
 package com.betacom.retrogames;
 
+import static com.betacom.retrogames.util.Utils.normalizza;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,120 +30,113 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Transactional
 @SpringBootTest
-public class CategoriaControllerTest 
-{
-    @Autowired
-    private CacheManager cacheManager;
+public class CategoriaControllerTest {
+	@Autowired
+	private CacheManager cacheManager;
 
-    @Autowired
-    private CategoriaService categoriaService;
+	@Autowired
+	private CategoriaService categoriaService;
 
-    @Autowired
-    private CategoriaRepository categoriaRepo;
+	@Autowired
+	private CategoriaRepository categoriaRepo;
 
-    @Test
-    void testCreaSuccesso() throws AcademyException 
-    {
-        CategoriaReq req = new CategoriaReq();
-        String nomeCategoria = "Action";
+	@Test
+	void testCreaSuccesso() throws AcademyException {
+		CategoriaReq req = new CategoriaReq();
+		String nomeCategoria = "Action";
 
-        // Imposto il nome e altre proprietà per la categoria
-        req.setNome(nomeCategoria);
-        req.setAttivo(true);
+		// Imposto il nome e altre proprietà per la categoria
+		req.setNome(normalizza(nomeCategoria));
+		req.setAttivo(true);
 
-        // Verifico che la categoria non esista già
-        Optional<Categoria> categoriaEsistente = categoriaRepo.findByNome(req.getNome());
-        categoriaEsistente.ifPresent(categoriaRepo::delete);
+		// Verifico che la categoria non esista già
+		Optional<Categoria> categoriaEsistente = categoriaRepo.findByNome(req.getNome());
+		categoriaEsistente.ifPresent(categoriaRepo::delete);
 
-        Integer id = categoriaService.crea(req);
+		Integer id = categoriaService.crea(req);
 
-        // Verifico che l'id restituito non sia nullo
-        assertNotNull(id);
+		// Verifico che l'id restituito non sia nullo
+		assertNotNull(id);
 
-        // Ottengo la categoria creata
-        CategoriaDTO dto = categoriaService.getById(id);
+		// Ottengo la categoria creata
+		CategoriaDTO dto = categoriaService.getById(id);
 
-        // Verifico che il nome e la categoria siano salvati correttamente
-        assertEquals(nomeCategoria, dto.getNome());
-        assertTrue(dto.getAttivo());
-    }
+		// Verifico che il nome e la categoria siano salvati correttamente
+		assertEquals(normalizza(nomeCategoria), dto.getNome());
+		assertTrue(dto.getAttivo());
+	}
 
-    @Test
-    void testAggiornaSuccesso() throws AcademyException 
-    {
-        // Crea una categoria di test
-        Categoria categoria = new Categoria();
-        categoria.setNome("Action");
-        categoria.setAttivo(true);
-        categoria = categoriaRepo.save(categoria);
+	@Test
+	void testAggiornaSuccesso() throws AcademyException {
+		// Crea una categoria di test
+		Categoria categoria = new Categoria();
+		categoria.setNome(normalizza("Action"));
+		categoria.setAttivo(true);
+		categoria = categoriaRepo.save(categoria);
 
-        cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.CATEGORIA, new CachedCategoria(categoria));
+		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.CATEGORIA, new CachedCategoria(categoria));
 
-        CategoriaReq req = new CategoriaReq();
-        req.setId(categoria.getId());
-        req.setNome("Adventure");
+		CategoriaReq req = new CategoriaReq();
+		req.setId(categoria.getId());
+		req.setNome(normalizza("Adventure"));
 
-        // Aggiorno la categoria
-        categoriaService.aggiorna(req);
+		// Aggiorno la categoria
+		categoriaService.aggiorna(req);
 
-        CategoriaDTO updated = categoriaService.getById(categoria.getId());
-        assertEquals("Adventure", updated.getNome());
-    }
+		CategoriaDTO updated = categoriaService.getById(categoria.getId());
+		assertEquals("adventure", updated.getNome());
+	}
 
-    @Test
-    void testAggiornaNonEsistente() 
-    {
-        CategoriaReq req = new CategoriaReq();
+	@Test
+	void testAggiornaNonEsistente() {
+		CategoriaReq req = new CategoriaReq();
 
-        // Id che non esiste
-        req.setId(99);
-        req.setNome("NonEsistente");
+		// Id che non esiste
+		req.setId(99);
+		req.setNome("NonEsistente");
 
-        assertThrows(AcademyException.class, () -> categoriaService.aggiorna(req));
-    }
+		assertThrows(AcademyException.class, () -> categoriaService.aggiorna(req));
+	}
 
-    @Test
-    public void testDisattivaSuccesso() throws AcademyException
-    {
-    	CategoriaReq req = new CategoriaReq();
+	@Test
+	public void testDisattivaSuccesso() throws AcademyException {
+		CategoriaReq req = new CategoriaReq();
 
-        // Supponiamo che esista una piattaforma con id 1
-        req.setId(1);
-        categoriaService.disattiva(req);
+		// Supponiamo che esista una piattaforma con id 1
+		req.setId(1);
+		categoriaService.disattiva(req);
 
-        // Verifico che la piattaforma sia stata disattivata correttamente
-        assertFalse(cacheManager.isRecordCached(TabellaCostante.CATEGORIA, req.getId()));
-    }
+		// Verifico che la piattaforma sia stata disattivata correttamente
+		assertFalse(cacheManager.isRecordCached(TabellaCostante.CATEGORIA, req.getId()));
+	}
 
-    @Test
-    void testDisattivaNonEsistenteLanciaEccezione() 
-    {
-        CategoriaReq req = new CategoriaReq();
+	@Test
+	void testDisattivaNonEsistenteLanciaEccezione() {
+		CategoriaReq req = new CategoriaReq();
 
-        // Id inesistente
-        req.setId(99);
-        assertThrows(AcademyException.class, () -> categoriaService.disattiva(req));
-    }
+		// Id inesistente
+		req.setId(99);
+		assertThrows(AcademyException.class, () -> categoriaService.disattiva(req));
+	}
 
-    @Test
-    void testListActive() 
-    {
-        Categoria categoria1 = new Categoria();
-        categoria1.setNome("Action");
-        categoria1.setAttivo(true);
-        categoriaRepo.save(categoria1);
+	@Test
+	void testListActive() {
+		Categoria categoria1 = new Categoria();
+		categoria1.setNome("Action");
+		categoria1.setAttivo(true);
+		categoriaRepo.save(categoria1);
 
-        Categoria categoria2 = new Categoria();
-        categoria2.setNome("Adventure");
-        categoria2.setAttivo(false);
-        categoriaRepo.save(categoria2);
+		Categoria categoria2 = new Categoria();
+		categoria2.setNome("Adventure");
+		categoria2.setAttivo(false);
+		categoriaRepo.save(categoria2);
 
-        List<CategoriaDTO> lista = categoriaService.listActive();
+		List<CategoriaDTO> lista = categoriaService.listActive();
 
-        // Verifico che la lista non sia vuota
-        assertFalse(lista.isEmpty());
+		// Verifico che la lista non sia vuota
+		assertFalse(lista.isEmpty());
 
-        // Verifico che tutte le categorie siano attive
-        assertTrue(lista.stream().allMatch(CategoriaDTO::getAttivo));
-    }
+		// Verifico che tutte le categorie siano attive
+		assertTrue(lista.stream().allMatch(CategoriaDTO::getAttivo));
+	}
 }
