@@ -189,7 +189,7 @@ public class CacheManager {
 	 * @return mappa interna immutabile (ID → record cacheabile)
 	 * @throws IllegalArgumentException se la tabella non è presente in cache
 	 */
-	private Map<Integer, ? extends CacheableEntry> getCachedRecords(TabellaCostante nomeTabella) {
+	protected Map<Integer, ? extends CacheableEntry> getCachedRecords(TabellaCostante nomeTabella) {
 		Map<Integer, ? extends CacheableEntry> map = cache.get(nomeTabella);
 
 		if (map == null) {
