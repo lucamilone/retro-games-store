@@ -6,13 +6,20 @@ import org.junit.platform.suite.api.Suite;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @Suite
-@SelectClasses({ CacheManagerTest.class, CacheInitializerTest.class, TipoMetodoPagamentoServiceTest.class,
-		TipoMetodoPagamentoControllerTest.class })
+@SelectClasses
+({
+	CacheManagerTest.class, 
+	CacheInitializerTest.class,
+	RuoloControllerTest.class,
+	PiattaformaControllerTest.class,
+	CategoriaControllerTest.class,
+	TipoMetodoPagamentoServiceTest.class,
+	TipoMetodoPagamentoControllerTest.class
+})
 @SpringBootTest
-class RetroGamesStoreApplicationTests {
-
+class RetroGamesStoreApplicationTests 
+{
 	@Test
-	void contextLoads() {
-	}
-
+	void contextLoads() 
+	{}
 }
