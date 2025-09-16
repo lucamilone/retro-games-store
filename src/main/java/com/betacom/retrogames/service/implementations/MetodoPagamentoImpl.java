@@ -166,7 +166,7 @@ public class MetodoPagamentoImpl implements MetodoPagamentoService {
 		// Se era il metodo di default, scelgo un nuovo default
 		if (eraDefault) {
 			List<MetodoPagamento> metodiAttivi = metodoPagamentoRepo
-					.findByAccountIdAndAttivoTrueOrderByCreatedAtDesc(metodoPagamento.getAccount().getId());
+					.findByAccountIdAndAttivoTrueOrderByCreatoIlDesc(metodoPagamento.getAccount().getId());
 
 			if (!metodiAttivi.isEmpty()) {
 				// Imposto quello più recente
