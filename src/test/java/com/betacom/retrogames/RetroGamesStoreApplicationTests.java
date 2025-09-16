@@ -6,7 +6,8 @@ import org.junit.platform.suite.api.Suite;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @Suite
-@SelectClasses({ CacheManagerTest.class, CacheInitializerTest.class })
+@SelectClasses({ CacheManagerTest.class, CacheInitializerTest.class, TipoMetodoPagamentoServiceTest.class,
+		TipoMetodoPagamentoControllerTest.class })
 @SpringBootTest
 class RetroGamesStoreApplicationTests {
 
