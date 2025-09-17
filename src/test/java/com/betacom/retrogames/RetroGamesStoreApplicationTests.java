@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Suite
 @SelectClasses({ CacheInitializerTest.class, CacheManagerTest.class, RuoloControllerTest.class,
-		PiattaformaControllerTest.class, CategoriaControllerTest.class, TipoMetodoPagamentoServiceTest.class,
+		RuoloServiceTest.class, PiattaformaControllerTest.class, PiattaformaServiceTest.class,
+		CategoriaControllerTest.class, CategoriaServiceTest.class, TipoMetodoPagamentoServiceTest.class, 
 		TipoMetodoPagamentoControllerTest.class })
 @SpringBootTest
 class RetroGamesStoreApplicationTests {

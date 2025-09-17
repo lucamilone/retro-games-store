@@ -23,9 +23,6 @@ import com.betacom.retrogames.repository.TipoMetodoPagamentoRepository;
 import com.betacom.retrogames.request.TipoMetodoPagamentoReq;
 import com.betacom.retrogames.service.interfaces.TipoMetodoPagamentoService;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 @SpringBootTest
 @Transactional
 class TipoMetodoPagamentoServiceTest {
