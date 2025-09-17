@@ -29,7 +29,7 @@ public class PagamentoController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody PagamentoReq req) {
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) PagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -45,7 +45,7 @@ public class PagamentoController {
 	}
 
 	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody PagamentoReq req) {
+	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) PagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -60,8 +60,25 @@ public class PagamentoController {
 		return res;
 	}
 
+	@PutMapping("/update-status")
+	public ResponseBase updateStatus(@RequestParam(required = true) Integer pagamentoId,
+			@RequestParam(required = true) String nuovoStato) {
+		ResponseBase res = new ResponseBase();
+
+		try {
+			pagamentoS.aggiornaStato(pagamentoId, nuovoStato);
+			res.setReturnCode(true);
+			res.setMsg("Stato pagamento aggiornato con successo");
+		} catch (AcademyException e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
+
 	@GetMapping("/get-by-id")
-	public ResponseObject<PagamentoDTO> getById(@RequestParam Integer id) {
+	public ResponseObject<PagamentoDTO> getById(@RequestParam(required = true) Integer id) {
 		ResponseObject<PagamentoDTO> res = new ResponseObject<>();
 
 		try {

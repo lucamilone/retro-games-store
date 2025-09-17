@@ -29,7 +29,6 @@ public class PagamentoReq {
 	@Positive(message = "OrdineId deve essere positivo")
 	private Integer ordineId;
 
-	@NotNull(groups = OnCreate.class, message = "Totale obbligatorio")
 	@DecimalMin(groups = { OnCreate.class,
 			OnUpdate.class }, value = "0.01", inclusive = true, message = "Totale deve essere maggiore di 0")
 	@Digits(groups = { OnCreate.class,

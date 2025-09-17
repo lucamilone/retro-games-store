@@ -18,4 +18,23 @@ public enum StatoPagamento {
 	public boolean isFinale() {
 		return finale;
 	}
+
+	/**
+	 * Controlla se la transizione da questo stato a nuovoStato è valida.
+	 */
+	public boolean isTransizioneValidaVerso(StatoPagamento nuovoStato) {
+		if (this == nuovoStato) {
+			return true; // Permette di "riconfermare" lo stesso stato
+		}
+
+		switch (this) {
+		case IN_ATTESA:
+			return nuovoStato == SUCCESSO || nuovoStato == FALLITO;
+		case SUCCESSO:
+		case FALLITO:
+			return false; // Stati finali non possono cambiare
+		default:
+			return false;
+		}
+	}
 }

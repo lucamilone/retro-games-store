@@ -166,6 +166,7 @@ public class OrdineImpl implements OrdineService {
 
 		// Aggiorno lo stato
 		ordine.setStatoOrdine(statoRichiesto);
+		log.debug("Transizione stato ordine: {} -> {}", statoCorrente, statoRichiesto);
 
 		// Salvo l'ordine aggiornato
 		ordineRepo.save(ordine);

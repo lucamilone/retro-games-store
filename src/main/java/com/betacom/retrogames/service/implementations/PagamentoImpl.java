@@ -13,6 +13,7 @@ import com.betacom.retrogames.mapper.PagamentoMapper;
 import com.betacom.retrogames.model.MetodoPagamento;
 import com.betacom.retrogames.model.Ordine;
 import com.betacom.retrogames.model.Pagamento;
+import com.betacom.retrogames.model.enums.StatoPagamento;
 import com.betacom.retrogames.repository.MetodoPagamentoRepository;
 import com.betacom.retrogames.repository.OrdineRepository;
 import com.betacom.retrogames.repository.PagamentoRepository;
@@ -60,7 +61,7 @@ public class PagamentoImpl implements PagamentoService {
 
 		Pagamento pagamento = new Pagamento();
 		pagamento.setOrdine(ordine);
-		pagamento.setTotale(req.getTotale());
+		pagamento.setTotale(ordine.getTotale());
 		pagamento.setMetodoPagamento(metodoPagamento);
 
 		// Salvo il pagamento 
@@ -80,8 +81,9 @@ public class PagamentoImpl implements PagamentoService {
 		Pagamento pagamento = pagamentoRepo.findById(req.getId())
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("pagamento-non-trovato")));
 
-		if (req.getStatoPagamento() != null) {
-			pagamento.setStatoPagamento(req.getStatoPagamento());
+		// Permetto aggiornamenti solo se il pagamento è ancora in stato iniziale
+		if (!StatoPagamento.IN_ATTESA.equals(pagamento.getStatoPagamento())) {
+			throw new AcademyException(msgS.getMessaggio("pagamento-non-modificabile"));
 		}
 
 		if (req.getMetodoPagamentoId() != null) {
@@ -99,6 +101,39 @@ public class PagamentoImpl implements PagamentoService {
 		pagamentoRepo.save(pagamento);
 
 		log.debug("Pagamento aggiornato con successo. ID: {}", req.getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	@Override
+	public void aggiornaStato(Integer pagamentoId, String nuovoStato) throws AcademyException {
+		log.debug("AggiornaStato: ID = {}, NuovoStato = {}", pagamentoId, nuovoStato);
+
+		// Verifico l'esistenza del pagamento
+		Pagamento pagamento = pagamentoRepo.findById(pagamentoId)
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("pagamento-non-trovato")));
+
+		// Converto lo stato richiesto in enum valido
+		StatoPagamento statoRichiesto;
+		try {
+			statoRichiesto = StatoPagamento.valueOf(nuovoStato.toUpperCase());
+		} catch (IllegalArgumentException e) {
+			throw new AcademyException(msgS.getMessaggio("stato-pagamento-non-valido"));
+		}
+
+		// Controllo la validità della transizione usando l'helper dell'enum
+		StatoPagamento statoCorrente = pagamento.getStatoPagamento();
+		if (!statoCorrente.isTransizioneValidaVerso(statoRichiesto)) {
+			throw new AcademyException(msgS.getMessaggio("transizione-stato-non-valida"));
+		}
+
+		// Aggiorno lo stato
+		pagamento.setStatoPagamento(statoRichiesto);
+		log.debug("Transizione stato pagamento: {} -> {}", statoCorrente, statoRichiesto);
+
+		// Salvo il pagamento aggiornato
+		pagamentoRepo.save(pagamento);
+
+		log.debug("Stato pagamento aggiornato con successo. ID: {}, Nuovo Stato: {}", pagamentoId, statoRichiesto);
 	}
 
 	@Override
