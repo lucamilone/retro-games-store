@@ -49,7 +49,7 @@ public class CredenzialeController {
 		ResponseBase res = new ResponseBase();
 
 		try {
-			credenzialeS.aggiornaEmail(req.getId(), req.getEmail());
+			credenzialeS.aggiornaEmail(req);
 			res.setReturnCode(true);
 			res.setMsg("Email aggiornata con successo");
 		} catch (AcademyException e) {
@@ -65,7 +65,7 @@ public class CredenzialeController {
 		ResponseBase res = new ResponseBase();
 
 		try {
-			credenzialeS.aggiornaPassword(req.getId(), req.getPassword());
+			credenzialeS.aggiornaPassword(req);
 			res.setReturnCode(true);
 			res.setMsg("Password aggiornata con successo");
 		} catch (AcademyException e) {

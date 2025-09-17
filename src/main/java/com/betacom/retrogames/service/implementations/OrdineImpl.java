@@ -169,11 +169,11 @@ public class OrdineImpl implements OrdineService {
 	}
 
 	@Override
-	public OrdineDTO getById(Integer ordineId) throws AcademyException {
-		log.debug("GetById: {}", ordineId);
+	public OrdineDTO getById(Integer id) throws AcademyException {
+		log.debug("GetById: {}", id);
 
 		// Verifico l'esistenza dell'ordine
-		Ordine ordine = ordineRepo.findById(ordineId)
+		Ordine ordine = ordineRepo.findById(id)
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-trovato")));
 
 		OrdineDTO dto = ordineMapper.toDto(ordine);

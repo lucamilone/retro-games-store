@@ -26,20 +26,18 @@ public interface CredenzialeService {
 	/**
 	 * Aggiorna solo l'email di una credenziale esistente.
 	 *
-	 * @param credenzialeId 	ID della credenziale
-	 * @param nuovaEmail 		Nuova email
+	 * @param req				Dati della credenziale (ID + Nuova email)
 	 * @throws AcademyException se credenziale non trovata o email già in uso
 	 */
-	void aggiornaEmail(Integer credenzialeId, String nuovaEmail) throws AcademyException;
+	void aggiornaEmail(CredenzialeReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna solo la password di una credenziale esistente.
 	 *
-	 * @param credenzialeId 	ID della credenziale
-	 * @param nuovaPassword 	Nuova password
+	 * @param req				Dati della credenziale (ID + Nuova password)
 	 * @throws AcademyException se credenziale non trovata o dati non validi
 	 */
-	void aggiornaPassword(Integer credenzialeId, String nuovaPassword) throws AcademyException;
+	void aggiornaPassword(CredenzialeReq req) throws AcademyException;
 
 	/**
 	 * Disattiva una credenziale (soft delete), marcandola come "non attiva".

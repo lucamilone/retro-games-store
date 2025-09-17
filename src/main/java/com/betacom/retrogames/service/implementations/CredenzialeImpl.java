@@ -64,44 +64,44 @@ public class CredenzialeImpl implements CredenzialeService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public void aggiornaEmail(Integer credenzialeId, String nuovaEmail) throws AcademyException {
-		log.debug("Aggiorna Email - Credenziale ID: {} - Nuova Email: {}", credenzialeId, nuovaEmail);
+	public void aggiornaEmail(CredenzialeReq req) throws AcademyException {
+		log.debug("Aggiorna Email - Credenziale ID: {} - Nuova Email: {}", req.getId(), req.getEmail());
 
 		// Verifico se esiste già una credenziale con la stessa email
-		Optional<Credenziale> credenzialeOpt = credenzialeRepo.findByEmail(nuovaEmail);
+		Optional<Credenziale> credenzialeOpt = credenzialeRepo.findByEmail(req.getEmail());
 		if (credenzialeOpt.isPresent()) {
 			throw new AcademyException(msgS.getMessaggio("email-esistente"));
 		}
 
 		// Verifico l'esistenza della credenziale
-		Credenziale credenziale = credenzialeRepo.findById(credenzialeId)
+		Credenziale credenziale = credenzialeRepo.findById(req.getId())
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("credenziale-non-trovata")));
 
 		// Aggiorno l'email
-		credenziale.setEmail(normalizza(nuovaEmail));
+		credenziale.setEmail(normalizza(req.getEmail()));
 
 		// Salvo la credenziale aggiornata
 		credenzialeRepo.save(credenziale);
 
-		log.debug("Email aggiornata con successo. Credenziale ID: {}", credenzialeId);
+		log.debug("Email aggiornata con successo. Credenziale ID: {}", req.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public void aggiornaPassword(Integer credenzialeId, String nuovaPassword) throws AcademyException {
-		log.debug("Aggiorna Password - Credenziale ID: {} - Nuova Password: {}", credenzialeId, nuovaPassword);
+	public void aggiornaPassword(CredenzialeReq req) throws AcademyException {
+		log.debug("Aggiorna Password - Credenziale ID: {} - Nuova Password: {}", req.getId(), req.getPassword());
 
 		// Verifico l'esistenza della credenziale
-		Credenziale credenziale = credenzialeRepo.findById(credenzialeId)
+		Credenziale credenziale = credenzialeRepo.findById(req.getId())
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("credenziale-non-trovata")));
 
 		// Aggiorno la password
-		credenziale.setPassword(nuovaPassword);
+		credenziale.setPassword(req.getPassword());
 
 		// Salvo la credenziale aggiornata
 		credenzialeRepo.save(credenziale);
 
-		log.debug("Password aggiornata con successo. Credenziale ID: {}", credenzialeId);
+		log.debug("Password aggiornata con successo. Credenziale ID: {}", req.getId());
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

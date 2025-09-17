@@ -41,11 +41,11 @@ public interface OrdineService {
 	/**
 	 * Recupera un ordine in base al suo ID.
 	 *
-	 * @param ordineId 			ID dell'ordine
+	 * @param id 				ID dell'ordine
 	 * @return OrdineDTO contenente tutti i dati rilevanti
 	 * @throws AcademyException se l'ordine non esiste
 	 */
-	OrdineDTO getById(Integer ordineId) throws AcademyException;
+	OrdineDTO getById(Integer id) throws AcademyException;
 
 	/**
 	 * Recupera tutti gli ordini di un account.
