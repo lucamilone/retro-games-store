@@ -115,7 +115,7 @@ public class CategoriaControllerTest {
 		CategoriaReq req = new CategoriaReq();
 
 		// Id inesistente
-		req.setId(99);
+		req.setId(999);
 		assertThrows(AcademyException.class, () -> categoriaService.disattiva(req));
 	}
 
