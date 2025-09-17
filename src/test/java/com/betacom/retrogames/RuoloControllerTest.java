@@ -21,9 +21,7 @@ import com.betacom.retrogames.request.RuoloReq;
 import com.betacom.retrogames.service.interfaces.RuoloService;
 
 import jakarta.transaction.Transactional;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @Transactional
 @SpringBootTest
 public class RuoloControllerTest {
