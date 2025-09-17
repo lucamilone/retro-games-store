@@ -13,5 +13,7 @@ public interface CredenzialeRepository extends JpaRepository<Credenziale, Intege
 
 	Optional<Credenziale> findByEmail(String email);
 
+	Optional<Credenziale> findByEmailAndPassword(String email, String password);
+
 	List<Credenziale> findByAttivoTrue();
 }

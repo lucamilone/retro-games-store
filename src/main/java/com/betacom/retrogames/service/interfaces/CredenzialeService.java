@@ -59,6 +59,15 @@ public interface CredenzialeService {
 	void riattiva(CredenzialeReq req) throws AcademyException;
 
 	/**
+	 * Esegue l'autenticazione di un utente in base alle credenziali fornite.
+	 *
+	 * @param req 				Dati della credenziale (email + password)
+	 * @return CredenzialeDTO contenente tutti i dati rilevanti
+	 * @throws AcademyException se credenziale sono errate
+	 */
+	CredenzialeDTO signIn(CredenzialeReq req) throws AcademyException;
+
+	/**
 	 * Recupera una credenziale in base al suo ID.
 	 *
 	 * @param id 				ID della credenziale

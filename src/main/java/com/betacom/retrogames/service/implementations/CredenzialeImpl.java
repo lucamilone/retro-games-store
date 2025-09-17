@@ -2,6 +2,7 @@ package com.betacom.retrogames.service.implementations;
 
 import static com.betacom.retrogames.util.Utils.normalizza;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -137,6 +138,29 @@ public class CredenzialeImpl implements CredenzialeService {
 		credenzialeRepo.save(credenziale);
 
 		log.debug("Credenziale riattivata con successo. ID: {}", req.getId());
+	}
+
+	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+	@Override
+	public CredenzialeDTO signIn(CredenzialeReq req) throws AcademyException {
+		log.debug("SignIn: {}", req.getEmail());
+
+		// Verifico l'esistenza della credenziale
+		Credenziale credenziale = credenzialeRepo.findByEmailAndPassword(req.getEmail(), req.getPassword())
+				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("credenziali-non-valide")));
+
+		// Verifico se l'account è attivo
+		if (Boolean.FALSE.equals(credenziale.getAttivo())) {
+			throw new AcademyException(msgS.getMessaggio("account-non-attivo"));
+		}
+
+		// Aggiorno ultimo login
+		credenziale.setUltimoLogin(LocalDateTime.now());
+
+		// Salvo la credenziale aggiornata
+		credenzialeRepo.save(credenziale);
+
+		return credenzialeMapper.toDto(credenziale);
 	}
 
 	@Override

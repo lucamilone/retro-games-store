@@ -29,7 +29,7 @@ public class CredenzialeController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody CredenzialeReq req) {
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) CredenzialeReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -45,7 +45,7 @@ public class CredenzialeController {
 	}
 
 	@PutMapping("/update-email")
-	public ResponseBase updateEmail(@Validated(OnUpdate.class) @RequestBody CredenzialeReq req) {
+	public ResponseBase updateEmail(@Validated(OnUpdate.class) @RequestBody(required = true) CredenzialeReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -61,7 +61,7 @@ public class CredenzialeController {
 	}
 
 	@PutMapping("/update-password")
-	public ResponseBase updatePassword(@Validated(OnUpdate.class) @RequestBody CredenzialeReq req) {
+	public ResponseBase updatePassword(@Validated(OnUpdate.class) @RequestBody(required = true) CredenzialeReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -76,8 +76,23 @@ public class CredenzialeController {
 		return res;
 	}
 
+	@PostMapping("/login")
+	public ResponseObject<CredenzialeDTO> login(@RequestBody(required = true) CredenzialeReq req) {
+		ResponseObject<CredenzialeDTO> res = new ResponseObject<>();
+
+		try {
+			res.setDati(credenzialeS.signIn(req));
+			res.setReturnCode(true);
+		} catch (AcademyException e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
+
 	@GetMapping("/get-by-id")
-	public ResponseObject<CredenzialeDTO> getById(@RequestParam Integer id) {
+	public ResponseObject<CredenzialeDTO> getById(@RequestParam(required = true) Integer id) {
 		ResponseObject<CredenzialeDTO> res = new ResponseObject<>();
 
 		try {
