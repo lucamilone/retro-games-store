@@ -105,23 +105,17 @@ public class PagamentoImpl implements PagamentoService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public void aggiornaStato(Integer pagamentoId, String nuovoStato) throws AcademyException {
-		log.debug("AggiornaStato: ID = {}, NuovoStato = {}", pagamentoId, nuovoStato);
+	public void aggiornaStato(PagamentoReq req) throws AcademyException {
+		log.debug("AggiornaStato: ID = {}, NuovoStato = {}", req.getId(), req.getStatoPagamento());
 
 		// Verifico l'esistenza del pagamento
-		Pagamento pagamento = pagamentoRepo.findById(pagamentoId)
+		Pagamento pagamento = pagamentoRepo.findById(req.getId())
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("pagamento-non-trovato")));
 
-		// Converto lo stato richiesto in enum valido
-		StatoPagamento statoRichiesto;
-		try {
-			statoRichiesto = StatoPagamento.valueOf(nuovoStato.toUpperCase());
-		} catch (IllegalArgumentException e) {
-			throw new AcademyException(msgS.getMessaggio("stato-pagamento-non-valido"));
-		}
+		StatoPagamento statoRichiesto = req.getStatoPagamento();
+		StatoPagamento statoCorrente = pagamento.getStatoPagamento();
 
 		// Controllo la validità della transizione usando l'helper dell'enum
-		StatoPagamento statoCorrente = pagamento.getStatoPagamento();
 		if (!statoCorrente.isTransizioneValidaVerso(statoRichiesto)) {
 			throw new AcademyException(msgS.getMessaggio("transizione-stato-non-valida"));
 		}
@@ -133,7 +127,7 @@ public class PagamentoImpl implements PagamentoService {
 		// Salvo il pagamento aggiornato
 		pagamentoRepo.save(pagamento);
 
-		log.debug("Stato pagamento aggiornato con successo. ID: {}, Nuovo Stato: {}", pagamentoId, statoRichiesto);
+		log.debug("Stato pagamento aggiornato con successo. ID: {}, Nuovo Stato: {}", req.getId(), statoRichiesto);
 	}
 
 	@Override

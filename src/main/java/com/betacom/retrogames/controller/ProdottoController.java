@@ -30,7 +30,7 @@ public class ProdottoController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody ProdottoReq req) {
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) ProdottoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -46,7 +46,7 @@ public class ProdottoController {
 	}
 
 	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody ProdottoReq req) {
+	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) ProdottoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -62,7 +62,7 @@ public class ProdottoController {
 	}
 
 	@PutMapping("/disable")
-	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody ProdottoReq req) {
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody(required = true) ProdottoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -78,7 +78,7 @@ public class ProdottoController {
 	}
 
 	@GetMapping("/get-by-id")
-	public ResponseObject<ProdottoDTO> getById(@RequestParam Integer id) {
+	public ResponseObject<ProdottoDTO> getById(@RequestParam(required = true) Integer id) {
 		ResponseObject<ProdottoDTO> res = new ResponseObject<>();
 
 		try {

@@ -1,5 +1,9 @@
 package com.betacom.retrogames.model.enums;
 
+import java.util.Arrays;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum StatoOrdine {
 	IN_ATTESA("In attesa", false, false), PAGATO("Pagato", false, false), SPEDITO("Spedito", false, true),
 	CONSEGNATO("Consegnato", true, true), ANNULLATO("Annullato", true, false);
@@ -24,6 +28,16 @@ public enum StatoOrdine {
 
 	public boolean isSpedito() {
 		return spedito;
+	}
+
+	@JsonCreator
+	public static StatoOrdine fromString(String value) {
+		if (value == null || value.isBlank()) {
+			return null;
+		}
+		String normalized = value.trim();
+		return Arrays.stream(values()).filter(s -> s.name().equalsIgnoreCase(normalized)).findFirst()
+				.orElseThrow(() -> new IllegalArgumentException("Stato ordine non valido: " + value));
 	}
 
 	/**

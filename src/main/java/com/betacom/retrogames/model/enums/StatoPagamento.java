@@ -1,5 +1,9 @@
 package com.betacom.retrogames.model.enums;
 
+import java.util.Arrays;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum StatoPagamento {
 	IN_ATTESA("In attesa", false), SUCCESSO("Successo", true), FALLITO("Fallito", true);
 
@@ -17,6 +21,16 @@ public enum StatoPagamento {
 
 	public boolean isFinale() {
 		return finale;
+	}
+
+	@JsonCreator
+	public static StatoPagamento fromString(String value) {
+		if (value == null || value.isBlank()) {
+			return null;
+		}
+		String normalized = value.trim();
+		return Arrays.stream(values()).filter(s -> s.name().equalsIgnoreCase(normalized)).findFirst()
+				.orElseThrow(() -> new IllegalArgumentException("Stato pagamento non valido: " + value));
 	}
 
 	/**

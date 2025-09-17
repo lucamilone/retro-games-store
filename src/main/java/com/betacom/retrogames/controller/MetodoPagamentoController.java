@@ -30,7 +30,7 @@ public class MetodoPagamentoController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody MetodoPagamentoReq req) {
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) MetodoPagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -46,7 +46,7 @@ public class MetodoPagamentoController {
 	}
 
 	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody MetodoPagamentoReq req) {
+	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) MetodoPagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -62,7 +62,7 @@ public class MetodoPagamentoController {
 	}
 
 	@PutMapping("/disable")
-	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody MetodoPagamentoReq req) {
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody(required = true) MetodoPagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -78,7 +78,7 @@ public class MetodoPagamentoController {
 	}
 
 	@GetMapping("/get-by-id")
-	public ResponseObject<MetodoPagamentoDTO> getById(@RequestParam Integer id) {
+	public ResponseObject<MetodoPagamentoDTO> getById(@RequestParam(required = true) Integer id) {
 		ResponseObject<MetodoPagamentoDTO> res = new ResponseObject<>();
 
 		try {
@@ -93,7 +93,7 @@ public class MetodoPagamentoController {
 	}
 
 	@GetMapping("/list-active-by-account")
-	public ResponseList<MetodoPagamentoDTO> listActiveByAccount(@RequestParam Integer accountId) {
+	public ResponseList<MetodoPagamentoDTO> listActiveByAccount(@RequestParam(required = true) Integer accountId) {
 		ResponseList<MetodoPagamentoDTO> res = new ResponseList<>();
 
 		try {

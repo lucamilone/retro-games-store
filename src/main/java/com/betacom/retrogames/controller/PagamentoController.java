@@ -61,12 +61,11 @@ public class PagamentoController {
 	}
 
 	@PutMapping("/update-status")
-	public ResponseBase updateStatus(@RequestParam(required = true) Integer pagamentoId,
-			@RequestParam(required = true) String nuovoStato) {
+	public ResponseBase updateStatus(@Validated(OnUpdate.class) @RequestBody(required = true) PagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
-			pagamentoS.aggiornaStato(pagamentoId, nuovoStato);
+			pagamentoS.aggiornaStato(req);
 			res.setReturnCode(true);
 			res.setMsg("Stato pagamento aggiornato con successo");
 		} catch (AcademyException e) {

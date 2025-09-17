@@ -30,7 +30,7 @@ public class CategoriaController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody CategoriaReq req) {
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) CategoriaReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -46,7 +46,7 @@ public class CategoriaController {
 	}
 
 	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody CategoriaReq req) {
+	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) CategoriaReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -62,7 +62,7 @@ public class CategoriaController {
 	}
 
 	@PutMapping("/disable")
-	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody CategoriaReq req) {
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody(required = true) CategoriaReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -78,7 +78,7 @@ public class CategoriaController {
 	}
 
 	@GetMapping("/get-by-id")
-	public ResponseObject<CategoriaDTO> getById(@RequestParam Integer id) {
+	public ResponseObject<CategoriaDTO> getById(@RequestParam(required = true) Integer id) {
 		ResponseObject<CategoriaDTO> res = new ResponseObject<>();
 
 		try {

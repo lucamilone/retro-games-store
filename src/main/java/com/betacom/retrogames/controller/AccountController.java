@@ -30,7 +30,7 @@ public class AccountController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody AccountReq req) {
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) AccountReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -46,7 +46,7 @@ public class AccountController {
 	}
 
 	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody AccountReq req) {
+	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) AccountReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -62,7 +62,7 @@ public class AccountController {
 	}
 
 	@PutMapping("/disable")
-	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody AccountReq req) {
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody(required = true) AccountReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -78,7 +78,7 @@ public class AccountController {
 	}
 
 	@PutMapping("/reactivate")
-	public ResponseBase reactivate(@Validated(OnUpdate.class) @RequestBody AccountReq req) {
+	public ResponseBase reactivate(@Validated(OnUpdate.class) @RequestBody(required = true) AccountReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -94,7 +94,7 @@ public class AccountController {
 	}
 
 	@GetMapping("/get-by-id")
-	public ResponseObject<AccountDTO> getById(@RequestParam Integer id) {
+	public ResponseObject<AccountDTO> getById(@RequestParam(required = true) Integer id) {
 		ResponseObject<AccountDTO> res = new ResponseObject<>();
 
 		try {

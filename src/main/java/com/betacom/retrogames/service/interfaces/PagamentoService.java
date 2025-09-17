@@ -33,11 +33,10 @@ public interface PagamentoService {
 	/**
 	 * Aggiorna lo stato di un pagamento (es. da IN_ATTESA a SUCCESSO).
 	 *
-	 * @param pagamentoId 		ID del pagamento da aggiornare
-	 * @param nuovoStato 		Nuovo stato da impostare
+	 * @param req 				Dati da aggiornare
 	 * @throws AcademyException se il pagamento non esiste o la transizione non è valida
 	 */
-	void aggiornaStato(Integer pagamentoId, String nuovoStato) throws AcademyException;
+	void aggiornaStato(PagamentoReq req) throws AcademyException;
 
 	/**
 	 * Recupera un pagamento in base al suo ID.

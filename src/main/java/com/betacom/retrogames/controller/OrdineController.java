@@ -61,12 +61,11 @@ public class OrdineController {
 	}
 
 	@PutMapping("/update-status")
-	public ResponseBase updateStatus(@Validated(OnUpdate.class) @RequestParam(required = true) Integer ordineId,
-			@RequestParam(required = true) String nuovoStato) {
+	public ResponseBase updateStatus(@Validated(OnUpdate.class) @RequestBody(required = true) OrdineReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
-			ordineS.aggiornaStato(ordineId, nuovoStato);
+			ordineS.aggiornaStato(req);
 			res.setReturnCode(true);
 			res.setMsg("Stato ordine aggiornato con successo");
 		} catch (AcademyException e) {

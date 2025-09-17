@@ -30,7 +30,7 @@ public class TipoMetodoPagamentoController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody TipoMetodoPagamentoReq req) {
+	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) TipoMetodoPagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -46,7 +46,7 @@ public class TipoMetodoPagamentoController {
 	}
 
 	@PutMapping("/update")
-	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody TipoMetodoPagamentoReq req) {
+	public ResponseBase update(@Validated(OnUpdate.class) @RequestBody(required = true) TipoMetodoPagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -62,7 +62,7 @@ public class TipoMetodoPagamentoController {
 	}
 
 	@PutMapping("/disable")
-	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody TipoMetodoPagamentoReq req) {
+	public ResponseBase disable(@Validated(OnDelete.class) @RequestBody(required = true) TipoMetodoPagamentoReq req) {
 		ResponseBase res = new ResponseBase();
 
 		try {
@@ -78,7 +78,7 @@ public class TipoMetodoPagamentoController {
 	}
 
 	@GetMapping("/get-by-id")
-	public ResponseObject<TipoMetodoPagamentoDTO> getById(@RequestParam Integer id) {
+	public ResponseObject<TipoMetodoPagamentoDTO> getById(@RequestParam(required = true) Integer id) {
 		ResponseObject<TipoMetodoPagamentoDTO> res = new ResponseObject<>();
 
 		try {

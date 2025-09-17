@@ -33,11 +33,10 @@ public interface OrdineService {
 	/**
 	 * Aggiorna lo stato di un ordine (es. da IN_ATTESA a CONSEGNATO).
 	 *
-	 * @param ordineId 			ID dell'ordine da aggiornare
-	 * @param nuovoStato 		Nuovo stato da impostare
+	 * @param req 				Dati da aggiornare
 	 * @throws AcademyException se l'ordine non esiste o la transizione non è valida
 	 */
-	void aggiornaStato(Integer ordineId, String nuovoStato) throws AcademyException;
+	void aggiornaStato(OrdineReq req) throws AcademyException;
 
 	/**
 	 * Recupera un ordine in base al suo ID.
