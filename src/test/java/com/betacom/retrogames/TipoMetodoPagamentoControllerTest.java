@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.betacom.retrogames.controller.TipoMetodoPagamentoController;
 import com.betacom.retrogames.dto.TipoMetodoPagamentoDTO;
-import com.betacom.retrogames.repository.TipoMetodoPagamentoRepository;
 import com.betacom.retrogames.request.TipoMetodoPagamentoReq;
 import com.betacom.retrogames.response.ResponseBase;
 import com.betacom.retrogames.response.ResponseObject;
@@ -26,9 +25,6 @@ class TipoMetodoPagamentoControllerTest {
 
 	@Autowired
 	private TipoMetodoPagamentoController controller;
-
-	@Autowired
-	private TipoMetodoPagamentoRepository tipoRepo;
 
 	private TipoMetodoPagamentoReq createValidReq(String nome) {
 		TipoMetodoPagamentoReq req = new TipoMetodoPagamentoReq();
@@ -68,18 +64,13 @@ class TipoMetodoPagamentoControllerTest {
 
 	@Test
 	void testUpdateSuccess() {
-		// Creo il tipo
-		TipoMetodoPagamentoReq reqCreate = createValidReq("Pagamento Aggiorna");
-		ResponseBase createRes = controller.create(reqCreate);
+		// Creo un tipo
+		ResponseBase createRes = controller.create(createValidReq("Pagamento Aggiorna"));
 		assertTrue(createRes.getReturnCode());
+		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
 
-		// Recupero l'id dal repository usando il nome
-		String normalizedName = normalizza(reqCreate.getNome());
-		Integer generatedId = tipoRepo.findAll().stream().filter(t -> t.getNome().equalsIgnoreCase(normalizedName))
-				.findFirst().orElseThrow(() -> new RuntimeException("ID non trovato per il tipo creato")).getId();
-
-		// Aggiorno il tipo usando l'id corretto
-		TipoMetodoPagamentoReq reqUpdate = createValidReqWithId("Pagamento Aggiornato", generatedId);
+		// Aggiorno usando l'ID estratto
+		TipoMetodoPagamentoReq reqUpdate = createValidReqWithId("Pagamento Aggiornato", id);
 		ResponseBase updateRes = controller.update(reqUpdate);
 		assertTrue(updateRes.getReturnCode());
 		assertNotNull(updateRes.getMsg());
@@ -119,11 +110,11 @@ class TipoMetodoPagamentoControllerTest {
 
 	@Test
 	void testGetByIdSuccess() {
-		TipoMetodoPagamentoReq reqCreate = createValidReq("Pagamento Get");
-		ResponseBase createRes = controller.create(reqCreate);
+		ResponseBase createRes = controller.create(createValidReq("Pagamento Get"));
 		assertTrue(createRes.getReturnCode());
+		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
 
-		ResponseObject<?> res = controller.getById(1);
+		ResponseObject<?> res = controller.getById(id);
 		assertTrue(res.getReturnCode());
 		assertNotNull(res.getDati());
 	}

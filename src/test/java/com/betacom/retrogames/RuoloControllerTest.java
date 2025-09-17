@@ -4,103 +4,185 @@ import static com.betacom.retrogames.util.Utils.normalizza;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.betacom.retrogames.cache.CacheManager;
+import com.betacom.retrogames.controller.RuoloController;
 import com.betacom.retrogames.dto.RuoloDTO;
-import com.betacom.retrogames.enums.TabellaCostante;
 import com.betacom.retrogames.exception.AcademyException;
 import com.betacom.retrogames.request.RuoloReq;
+import com.betacom.retrogames.response.ResponseBase;
+import com.betacom.retrogames.response.ResponseList;
+import com.betacom.retrogames.response.ResponseObject;
 import com.betacom.retrogames.service.interfaces.RuoloService;
 
-import jakarta.transaction.Transactional;
-
-@Transactional
 @SpringBootTest
+@Transactional
 public class RuoloControllerTest {
 
 	@Autowired
-	private CacheManager cacheManager;
+	private RuoloController controller;
 
-	@Autowired
-	private RuoloService ruoloService;
-
-	@Test
-	void testCreaSuccesso() throws AcademyException {
-		String nomeRuolo = "admin";
-
+	private RuoloReq createValidReq(String nome) {
 		RuoloReq req = new RuoloReq();
-		req.setNome(normalizza(nomeRuolo));
+		req.setNome(normalizza(nome));
+		return req;
+	}
 
-		Integer id = ruoloService.crea(req);
-		assertNotNull(id);
-
-		RuoloDTO dto = ruoloService.getById(id);
-		assertEquals(nomeRuolo, dto.getNome());
+	private RuoloReq createValidReqWithId(String nome, Integer id) {
+		RuoloReq req = new RuoloReq();
+		req.setNome(normalizza(nome));
+		req.setId(id);
+		return req;
 	}
 
 	@Test
-	void testAggiornaSuccesso() throws AcademyException {
-		// Creazione ruolo se non esiste
-		RuoloReq reqCreate = new RuoloReq();
-		reqCreate.setNome("admin");
-		Integer id = ruoloService.crea(reqCreate);
-		RuoloDTO dto = ruoloService.getById(id);
-
-		// Aggiornamento
-		RuoloReq reqUpdate = new RuoloReq();
-		reqUpdate.setId(dto.getId());
-		reqUpdate.setNome("admin_aggiornato");
-		ruoloService.aggiorna(reqUpdate);
-
-		assertEquals("admin_aggiornato", ruoloService.getById(dto.getId()).getNome());
+	void testCreateSuccess() throws Exception {
+		RuoloReq req = createValidReq("admin_test");
+		ResponseBase res = controller.create(req);
+		assertTrue(res.getReturnCode());
+		assertNotNull(res.getMsg());
+		assertTrue(res.getMsg().toLowerCase().contains("creato"));
 	}
 
 	@Test
-	void testAggiornaNonEsistente() {
-		RuoloReq req = new RuoloReq();
-		req.setId(999);
-		req.setNome("FakeRole");
+	void testCreateDuplicateFails() throws Exception {
+		RuoloReq req1 = createValidReq("admin_dup");
+		RuoloReq req2 = createValidReq("admin_dup");
 
-		assertThrows(AcademyException.class, () -> ruoloService.aggiorna(req));
+		ResponseBase res1 = controller.create(req1);
+		assertTrue(res1.getReturnCode());
+
+		ResponseBase res2 = controller.create(req2);
+		assertFalse(res2.getReturnCode());
+		assertNotNull(res2.getMsg());
+		assertTrue(res2.getMsg().toLowerCase().contains("esistente"));
 	}
 
 	@Test
-	void testDisattivaSuccesso() throws AcademyException {
-		RuoloReq req = new RuoloReq();
+	void testUpdateSuccess() throws Exception {
+		// Creo un ruolo
+		ResponseBase createRes = controller.create(createValidReq("admin_update"));
+		assertTrue(createRes.getReturnCode());
+		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
 
-		// Supponiamo che esista un ruolo con id 1
-		req.setId(1);
-		ruoloService.disattiva(req);
+		// Aggiorno
+		RuoloReq updateReq = createValidReqWithId("admin_updated", id);
+		ResponseBase updateRes = controller.update(updateReq);
+		assertTrue(updateRes.getReturnCode());
+		assertNotNull(updateRes.getMsg());
+		assertTrue(updateRes.getMsg().toLowerCase().contains("aggiornato"));
 
-		// Verifico che il ruolo sia stato disattivato correttamente
-		assertFalse(cacheManager.isRecordCached(TabellaCostante.RUOLO, req.getId()));
+		// Controllo tramite getById
+		ResponseObject<RuoloDTO> getRes = controller.getById(id);
+		assertTrue(getRes.getReturnCode());
+		assertEquals("admin_updated", getRes.getDati().getNome());
 	}
 
 	@Test
-	void testDisattivaNonEsistenteLanciaEccezione() {
-		RuoloReq req = new RuoloReq();
+	void testUpdateNonExistentFails() {
+		RuoloReq req = createValidReqWithId("fake_role", 99999);
+		ResponseBase res = controller.update(req);
+		assertFalse(res.getReturnCode());
+		assertNotNull(res.getMsg());
+		assertTrue(res.getMsg().toLowerCase().contains("non-trovato"));
+	}
 
-		// Id inesistente
-		req.setId(99);
-		assertThrows(AcademyException.class, () -> ruoloService.disattiva(req));
+	@Test
+	void testDisableSuccess() throws Exception {
+		ResponseBase createRes = controller.create(createValidReq("admin_disable"));
+		assertTrue(createRes.getReturnCode());
+		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+
+		RuoloReq disableReq = createValidReqWithId("admin_disable", id);
+		ResponseBase disableRes = controller.disable(disableReq);
+		assertTrue(disableRes.getReturnCode());
+		assertNotNull(disableRes.getMsg());
+		assertTrue(disableRes.getMsg().toLowerCase().contains("disattivato"));
+	}
+
+	@Test
+	void testDisableNonExistentFails() {
+		RuoloReq req = createValidReqWithId("fake_disable", 99999);
+		ResponseBase res = controller.disable(req);
+		assertFalse(res.getReturnCode());
+		assertNotNull(res.getMsg());
+		assertTrue(res.getMsg().toLowerCase().contains("non-trovato"));
+	}
+
+	@Test
+	void testGetByIdSuccess() throws Exception {
+		ResponseBase createRes = controller.create(createValidReq("admin_get"));
+		assertTrue(createRes.getReturnCode());
+		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+
+		ResponseObject<RuoloDTO> getRes = controller.getById(id);
+		assertTrue(getRes.getReturnCode());
+		assertNotNull(getRes.getDati());
+		assertEquals("admin_get", getRes.getDati().getNome());
+	}
+
+	@Test
+	void testGetByIdNonExistentFails() {
+		ResponseObject<RuoloDTO> res = controller.getById(99999);
+		assertFalse(res.getReturnCode());
+		assertNotNull(res.getMsg());
+		assertTrue(res.getMsg().toLowerCase().contains("non-trovato"));
 	}
 
 	@Test
 	void testListActive() {
-		List<RuoloDTO> lista = ruoloService.listActive();
+		// Creo due ruoli
+		controller.create(createValidReq("admin_active1"));
+		controller.create(createValidReq("admin_active2"));
 
-		// Verifico che la lista non sia vuota
-		assertFalse(lista.isEmpty());
+		ResponseList<RuoloDTO> resList = controller.listActive();
+		assertTrue(resList.getReturnCode());
+		assertNotNull(resList.getDati());
+		assertTrue(resList.getDati().size() >= 2);
 
-		// Verifico che tutti i ruoli siano attivi
-		assertTrue(lista.stream().allMatch(RuoloDTO::getAttivo));
+		boolean contains1 = resList.getDati().stream().anyMatch(dto -> dto.getNome().equalsIgnoreCase("admin_active1"));
+		boolean contains2 = resList.getDati().stream().anyMatch(dto -> dto.getNome().equalsIgnoreCase("admin_active2"));
+
+		assertTrue(contains1);
+		assertTrue(contains2);
+	}
+
+	@Test
+	void testListActiveException() {
+		// Creo un controller temporaneo con servizio che lancia eccezione
+		RuoloController controllerWithError = new RuoloController(new RuoloService() {
+			@Override
+			public Integer crea(RuoloReq req) {
+				return null;
+			}
+
+			@Override
+			public void aggiorna(RuoloReq req) throws AcademyException {
+			}
+
+			@Override
+			public void disattiva(RuoloReq req) throws AcademyException {
+			}
+
+			@Override
+			public RuoloDTO getById(Integer id) {
+				return null;
+			}
+
+			@Override
+			public java.util.List<RuoloDTO> listActive() {
+				throw new RuntimeException("Errore simulato");
+			}
+		});
+
+		ResponseList<RuoloDTO> res = controllerWithError.listActive();
+		assertFalse(res.getReturnCode());
+		assertNotNull(res.getMsg());
+		assertTrue(res.getMsg().contains("Errore simulato"));
 	}
 }
