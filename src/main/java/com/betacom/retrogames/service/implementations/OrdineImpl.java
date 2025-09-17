@@ -143,23 +143,17 @@ public class OrdineImpl implements OrdineService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public void aggiornaStato(Integer ordineId, String nuovoStato) throws AcademyException {
-		log.debug("AggiornaStato: ID = {}, NuovoStato = {}", ordineId, nuovoStato);
+	public void aggiornaStato(OrdineReq req) throws AcademyException {
+		log.debug("AggiornaStato: ID = {}, NuovoStato = {}", req.getId(), req.getStatoOrdine());
 
 		// Verifico l'esistenza dell'ordine
-		Ordine ordine = ordineRepo.findById(ordineId)
+		Ordine ordine = ordineRepo.findById(req.getId())
 				.orElseThrow(() -> new AcademyException(msgS.getMessaggio("ordine-non-trovato")));
 
-		// Converto lo stato richiesto in enum valido
-		StatoOrdine statoRichiesto;
-		try {
-			statoRichiesto = StatoOrdine.valueOf(nuovoStato.toUpperCase());
-		} catch (IllegalArgumentException e) {
-			throw new AcademyException(msgS.getMessaggio("stato-ordine-non-valido"));
-		}
+		StatoOrdine statoRichiesto = req.getStatoOrdine();
+		StatoOrdine statoCorrente = ordine.getStatoOrdine();
 
 		// Controllo la validità della transizione usando l'helper dell'enum
-		StatoOrdine statoCorrente = ordine.getStatoOrdine();
 		if (!statoCorrente.isTransizioneValidaVerso(statoRichiesto)) {
 			throw new AcademyException(msgS.getMessaggio("transizione-stato-non-valida"));
 		}
@@ -171,7 +165,7 @@ public class OrdineImpl implements OrdineService {
 		// Salvo l'ordine aggiornato
 		ordineRepo.save(ordine);
 
-		log.debug("Stato ordine aggiornato con successo. ID: {}, Nuovo Stato: {}", ordineId, statoRichiesto);
+		log.debug("Stato ordine aggiornato con successo. ID: {}, Nuovo Stato: {}", req.getId(), statoRichiesto);
 	}
 
 	@Override
