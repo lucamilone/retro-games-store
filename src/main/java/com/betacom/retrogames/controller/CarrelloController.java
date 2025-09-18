@@ -1,6 +1,7 @@
 package com.betacom.retrogames.controller;
 
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import com.betacom.retrogames.response.ResponseBase;
 import com.betacom.retrogames.response.ResponseObject;
 import com.betacom.retrogames.service.interfaces.CarrelloService;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/retro-games/carrelli")
 public class CarrelloController {
