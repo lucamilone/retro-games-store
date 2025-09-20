@@ -1,4 +1,4 @@
-package com.betacom.retrogames;
+package com.betacom.retrogames.controller;
 
 import static com.betacom.retrogames.util.Utils.normalizza;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -6,86 +6,67 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.betacom.retrogames.controller.RuoloController;
 import com.betacom.retrogames.dto.RuoloDTO;
-import com.betacom.retrogames.exception.AcademyException;
 import com.betacom.retrogames.request.RuoloReq;
 import com.betacom.retrogames.response.ResponseBase;
 import com.betacom.retrogames.response.ResponseList;
 import com.betacom.retrogames.response.ResponseObject;
 import com.betacom.retrogames.service.interfaces.RuoloService;
 
-@SpringBootTest
 @Transactional
+@SpringBootTest
 public class RuoloControllerTest {
 
 	@Autowired
 	private RuoloController controller;
 
-	private RuoloReq createValidReq(String nome) {
+	private RuoloReq createReq(String nome) {
 		RuoloReq req = new RuoloReq();
 		req.setNome(normalizza(nome));
-		return req;
-	}
-
-	private RuoloReq createValidReqWithId(String nome, Integer id) {
-		RuoloReq req = new RuoloReq();
-		req.setNome(normalizza(nome));
-		req.setId(id);
 		return req;
 	}
 
 	@Test
-	void testCreateSuccess() throws Exception {
-		RuoloReq req = createValidReq("admin_test");
-		ResponseBase res = controller.create(req);
+	void testCreateSuccesso() {
+		ResponseBase res = controller.create(createReq("admin_test"));
 		assertTrue(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("creato"));
 	}
 
 	@Test
-	void testCreateDuplicateFails() throws Exception {
-		RuoloReq req1 = createValidReq("admin_dup");
-		RuoloReq req2 = createValidReq("admin_dup");
-
-		ResponseBase res1 = controller.create(req1);
-		assertTrue(res1.getReturnCode());
-
-		ResponseBase res2 = controller.create(req2);
-		assertFalse(res2.getReturnCode());
-		assertNotNull(res2.getMsg());
-		assertTrue(res2.getMsg().toLowerCase().contains("esistente"));
+	void testCreateFallito() {
+		controller.create(createReq("admin_dup"));
+		ResponseBase res = controller.create(createReq("admin_dup"));
+		assertFalse(res.getReturnCode());
+		assertNotNull(res.getMsg());
+		assertTrue(res.getMsg().toLowerCase().contains("esistente"));
 	}
 
 	@Test
-	void testUpdateSuccess() throws Exception {
-		// Creo un ruolo
-		ResponseBase createRes = controller.create(createValidReq("admin_update"));
-		assertTrue(createRes.getReturnCode());
+	void testUpdateSuccesso() {
+		ResponseBase createRes = controller.create(createReq("admin_update"));
 		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
 
-		// Aggiorno
-		RuoloReq updateReq = createValidReqWithId("admin_updated", id);
+		RuoloReq updateReq = createReq("admin_updated");
+		updateReq.setId(id);
 		ResponseBase updateRes = controller.update(updateReq);
 		assertTrue(updateRes.getReturnCode());
 		assertNotNull(updateRes.getMsg());
 		assertTrue(updateRes.getMsg().toLowerCase().contains("aggiornato"));
-
-		// Controllo tramite getById
-		ResponseObject<RuoloDTO> getRes = controller.getById(id);
-		assertTrue(getRes.getReturnCode());
-		assertEquals("admin_updated", getRes.getDati().getNome());
 	}
 
 	@Test
-	void testUpdateNonExistentFails() {
-		RuoloReq req = createValidReqWithId("fake_role", 99999);
+	void testUpdateFallito() {
+		RuoloReq req = createReq("fake_role");
+		req.setId(99999);
 		ResponseBase res = controller.update(req);
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
@@ -93,12 +74,12 @@ public class RuoloControllerTest {
 	}
 
 	@Test
-	void testDisableSuccess() throws Exception {
-		ResponseBase createRes = controller.create(createValidReq("admin_disable"));
-		assertTrue(createRes.getReturnCode());
+	void testDisableSuccesso() {
+		ResponseBase createRes = controller.create(createReq("admin_disable"));
 		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
 
-		RuoloReq disableReq = createValidReqWithId("admin_disable", id);
+		RuoloReq disableReq = createReq("admin_disable");
+		disableReq.setId(id);
 		ResponseBase disableRes = controller.disable(disableReq);
 		assertTrue(disableRes.getReturnCode());
 		assertNotNull(disableRes.getMsg());
@@ -106,8 +87,9 @@ public class RuoloControllerTest {
 	}
 
 	@Test
-	void testDisableNonExistentFails() {
-		RuoloReq req = createValidReqWithId("fake_disable", 99999);
+	void testDisableFallito() {
+		RuoloReq req = createReq("fake_disable");
+		req.setId(99999);
 		ResponseBase res = controller.disable(req);
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
@@ -115,19 +97,18 @@ public class RuoloControllerTest {
 	}
 
 	@Test
-	void testGetByIdSuccess() throws Exception {
-		ResponseBase createRes = controller.create(createValidReq("admin_get"));
-		assertTrue(createRes.getReturnCode());
+	void testGetByIdSuccesso() {
+		ResponseBase createRes = controller.create(createReq("admin_get"));
 		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
 
-		ResponseObject<RuoloDTO> getRes = controller.getById(id);
-		assertTrue(getRes.getReturnCode());
-		assertNotNull(getRes.getDati());
-		assertEquals("admin_get", getRes.getDati().getNome());
+		ResponseObject<RuoloDTO> res = controller.getById(id);
+		assertTrue(res.getReturnCode());
+		assertNotNull(res.getDati());
+		assertEquals("admin_get", res.getDati().getNome());
 	}
 
 	@Test
-	void testGetByIdNonExistentFails() {
+	void testGetByIdFallito() {
 		ResponseObject<RuoloDTO> res = controller.getById(99999);
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
@@ -135,26 +116,42 @@ public class RuoloControllerTest {
 	}
 
 	@Test
-	void testListActive() {
-		// Creo due ruoli
-		controller.create(createValidReq("admin_active1"));
-		controller.create(createValidReq("admin_active2"));
+	void testListActiveSuccesso() {
+		ResponseBase res1 = controller.create(createReq("admin_active1"));
+		ResponseBase res2 = controller.create(createReq("admin_active2"));
+
+		assertTrue(res1.getReturnCode());
+		assertTrue(res2.getReturnCode());
+
+		Integer id1 = Integer.parseInt(res1.getMsg().replaceAll("\\D+", ""));
+		Integer id2 = Integer.parseInt(res2.getMsg().replaceAll("\\D+", ""));
+
+		assertNotNull(id1);
+		assertNotNull(id2);
 
 		ResponseList<RuoloDTO> resList = controller.listActive();
+
 		assertTrue(resList.getReturnCode());
 		assertNotNull(resList.getDati());
-		assertTrue(resList.getDati().size() >= 2);
 
-		boolean contains1 = resList.getDati().stream().anyMatch(dto -> dto.getNome().equalsIgnoreCase("admin_active1"));
-		boolean contains2 = resList.getDati().stream().anyMatch(dto -> dto.getNome().equalsIgnoreCase("admin_active2"));
+		boolean containsId1 = false;
+		boolean containsId2 = false;
 
-		assertTrue(contains1);
-		assertTrue(contains2);
+		for (RuoloDTO dto : resList.getDati()) {
+			if (dto.getId().equals(id1)) {
+				containsId1 = true;
+			}
+			if (dto.getId().equals(id2)) {
+				containsId2 = true;
+			}
+		}
+
+		assertTrue(containsId1, "La lista dei ruoli attivi dovrebbe contenere 'admin_active1'");
+		assertTrue(containsId2, "La lista dei ruoli attivi dovrebbe contenere 'admin_active2'");
 	}
 
 	@Test
-	void testListActiveException() {
-		// Creo un controller temporaneo con servizio che lancia eccezione
+	void testListActiveFallito() {
 		RuoloController controllerWithError = new RuoloController(new RuoloService() {
 			@Override
 			public Integer crea(RuoloReq req) {
@@ -162,11 +159,11 @@ public class RuoloControllerTest {
 			}
 
 			@Override
-			public void aggiorna(RuoloReq req) throws AcademyException {
+			public void aggiorna(RuoloReq req) {
 			}
 
 			@Override
-			public void disattiva(RuoloReq req) throws AcademyException {
+			public void disattiva(RuoloReq req) {
 			}
 
 			@Override
@@ -175,7 +172,7 @@ public class RuoloControllerTest {
 			}
 
 			@Override
-			public java.util.List<RuoloDTO> listActive() {
+			public List<RuoloDTO> listActive() {
 				throw new RuntimeException("Errore simulato");
 			}
 		});

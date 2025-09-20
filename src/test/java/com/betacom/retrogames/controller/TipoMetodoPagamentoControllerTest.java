@@ -1,4 +1,4 @@
-package com.betacom.retrogames;
+package com.betacom.retrogames.controller;
 
 import static com.betacom.retrogames.util.Utils.normalizza;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,46 +12,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.betacom.retrogames.controller.TipoMetodoPagamentoController;
 import com.betacom.retrogames.dto.TipoMetodoPagamentoDTO;
 import com.betacom.retrogames.request.TipoMetodoPagamentoReq;
 import com.betacom.retrogames.response.ResponseBase;
+import com.betacom.retrogames.response.ResponseList;
 import com.betacom.retrogames.response.ResponseObject;
 import com.betacom.retrogames.service.interfaces.TipoMetodoPagamentoService;
 
-@SpringBootTest
 @Transactional
-class TipoMetodoPagamentoControllerTest {
+@SpringBootTest
+public class TipoMetodoPagamentoControllerTest {
 
 	@Autowired
 	private TipoMetodoPagamentoController controller;
 
-	private TipoMetodoPagamentoReq createValidReq(String nome) {
+	private TipoMetodoPagamentoReq createReq(String nome) {
 		TipoMetodoPagamentoReq req = new TipoMetodoPagamentoReq();
 		req.setNome(normalizza(nome));
-		return req;
-	}
-
-	private TipoMetodoPagamentoReq createValidReqWithId(String nome, Integer id) {
-		TipoMetodoPagamentoReq req = new TipoMetodoPagamentoReq();
-		req.setNome(normalizza(nome));
-		req.setId(id);
 		return req;
 	}
 
 	@Test
-	void testCreateSuccess() {
-		TipoMetodoPagamentoReq req = createValidReq("Pagamento OK");
+	void testCreateSuccesso() {
+		TipoMetodoPagamentoReq req = createReq("Pagamento OK");
 		ResponseBase res = controller.create(req);
 		assertTrue(res.getReturnCode());
 		assertNotNull(res.getMsg());
-		assertTrue(res.getMsg().contains("creato"));
+		assertTrue(res.getMsg().toLowerCase().contains("creato"));
 	}
 
 	@Test
-	void testCreateDuplicateNameFails() {
-		TipoMetodoPagamentoReq req1 = createValidReq("Pagamento Duplicato");
-		TipoMetodoPagamentoReq req2 = createValidReq("Pagamento Duplicato");
+	void testCreateFallito() {
+		TipoMetodoPagamentoReq req1 = createReq("Pagamento Duplicato");
+		TipoMetodoPagamentoReq req2 = createReq("Pagamento Duplicato");
 
 		ResponseBase res1 = controller.create(req1);
 		assertTrue(res1.getReturnCode());
@@ -59,18 +52,18 @@ class TipoMetodoPagamentoControllerTest {
 		ResponseBase res2 = controller.create(req2);
 		assertFalse(res2.getReturnCode());
 		assertNotNull(res2.getMsg());
-		assertTrue(res2.getMsg().contains("esistente"));
+		assertTrue(res2.getMsg().toLowerCase().contains("esistente"));
 	}
 
 	@Test
-	void testUpdateSuccess() {
-		// Creo un tipo
-		ResponseBase createRes = controller.create(createValidReq("Pagamento Aggiorna"));
+	void testUpdateSuccesso() {
+		ResponseBase createRes = controller.create(createReq("Pagamento Aggiorna"));
 		assertTrue(createRes.getReturnCode());
 		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
 
-		// Aggiorno usando l'ID estratto
-		TipoMetodoPagamentoReq reqUpdate = createValidReqWithId("Pagamento Aggiornato", id);
+		TipoMetodoPagamentoReq reqUpdate = createReq("Pagamento Aggiornato");
+		reqUpdate.setId(id);
+
 		ResponseBase updateRes = controller.update(reqUpdate);
 		assertTrue(updateRes.getReturnCode());
 		assertNotNull(updateRes.getMsg());
@@ -78,98 +71,97 @@ class TipoMetodoPagamentoControllerTest {
 	}
 
 	@Test
-	void testUpdateNonExistentIdFails() {
-		TipoMetodoPagamentoReq req = createValidReqWithId("NonEsistente", 99999);
+	void testUpdateFallito() {
+		TipoMetodoPagamentoReq req = createReq("NonEsistente");
+		req.setId(99999);
 		ResponseBase res = controller.update(req);
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
-		assertTrue(res.getMsg().contains("non-trovato"));
+		assertTrue(res.getMsg().toLowerCase().contains("non-trovato"));
 	}
 
 	@Test
-	void testDisableSuccess() {
-		TipoMetodoPagamentoReq reqCreate = createValidReq("Pagamento Disabilita");
+	void testDisableSuccesso() {
+		TipoMetodoPagamentoReq reqCreate = createReq("Pagamento Disabilita");
 		ResponseBase createRes = controller.create(reqCreate);
 		assertTrue(createRes.getReturnCode());
 
-		TipoMetodoPagamentoReq reqDisable = createValidReqWithId("Pagamento Disabilita", 1);
+		Integer idDisable = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		TipoMetodoPagamentoReq reqDisable = createReq("Pagamento Disabilita");
+		reqDisable.setId(idDisable);
+
 		ResponseBase disableRes = controller.disable(reqDisable);
 		assertTrue(disableRes.getReturnCode());
 		assertNotNull(disableRes.getMsg());
-		assertTrue(disableRes.getMsg().contains("disattivato"));
+		assertTrue(disableRes.getMsg().toLowerCase().contains("disattivato"));
 	}
 
 	@Test
-	void testDisableNonExistentIdFails() {
-		TipoMetodoPagamentoReq req = createValidReqWithId("NonEsistente", 99999);
+	void testDisableFallito() {
+		TipoMetodoPagamentoReq req = createReq("NonEsistente");
+		req.setId(99999);
 		ResponseBase res = controller.disable(req);
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
-		assertTrue(res.getMsg().contains("non-trovato"));
+		assertTrue(res.getMsg().toLowerCase().contains("non-trovato"));
 	}
 
 	@Test
-	void testGetByIdSuccess() {
-		ResponseBase createRes = controller.create(createValidReq("Pagamento Get"));
+	void testGetByIdSuccesso() {
+		ResponseBase createRes = controller.create(createReq("Pagamento Get"));
 		assertTrue(createRes.getReturnCode());
 		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
 
-		ResponseObject<?> res = controller.getById(id);
+		ResponseObject<TipoMetodoPagamentoDTO> res = controller.getById(id);
 		assertTrue(res.getReturnCode());
 		assertNotNull(res.getDati());
 	}
 
 	@Test
-	void testGetByIdNonExistentFails() {
-		ResponseObject<?> res = controller.getById(99999);
+	void testGetByIdFallito() {
+		ResponseObject<TipoMetodoPagamentoDTO> res = controller.getById(99999);
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
-		assertTrue(res.getMsg().contains("non-trovato"));
+		assertTrue(res.getMsg().toLowerCase().contains("non-trovato"));
 	}
 
 	@Test
-	void testListActive() {
-		// Creo due tipi
-		TipoMetodoPagamentoReq req1 = createValidReq("Pagamento Attivo 1");
-		TipoMetodoPagamentoReq req2 = createValidReq("Pagamento Attivo 2");
-
-		ResponseBase res1 = controller.create(req1);
-		ResponseBase res2 = controller.create(req2);
+	void testListActiveSuccesso() {
+		ResponseBase res1 = controller.create(createReq("Pagamento Attivo 1"));
+		ResponseBase res2 = controller.create(createReq("Pagamento Attivo 2"));
 
 		assertTrue(res1.getReturnCode());
 		assertTrue(res2.getReturnCode());
 
-		// Recupero gli ID dai messaggi
 		Integer id1 = Integer.parseInt(res1.getMsg().replaceAll("\\D+", ""));
 		Integer id2 = Integer.parseInt(res2.getMsg().replaceAll("\\D+", ""));
 
 		assertNotNull(id1);
 		assertNotNull(id2);
 
-		// Ora chiamo listActive
-		var resList = controller.listActive();
+		ResponseList<TipoMetodoPagamentoDTO> resList = controller.listActive();
 		assertTrue(resList.getReturnCode());
 		assertNotNull(resList.getDati());
-		assertTrue(resList.getDati().size() >= 2);
 
-		// Controllo che i tipi appena creati siano presenti
-		boolean contains1 = resList.getDati().stream().anyMatch(dto -> dto.getId().equals(id1));
-		boolean contains2 = resList.getDati().stream().anyMatch(dto -> dto.getId().equals(id2));
+		boolean containsId1 = false;
+		boolean containsId2 = false;
+		for (TipoMetodoPagamentoDTO dto : resList.getDati()) {
+			if (dto.getId().equals(id1)) {
+				containsId1 = true;
+			}
+			if (dto.getId().equals(id2)) {
+				containsId2 = true;
+			}
+		}
 
-		assertTrue(contains1, "La lista dei tipi attivi dovrebbe contenere 'Pagamento Attivo 1'");
-		assertTrue(contains2, "La lista dei tipi attivi dovrebbe contenere 'Pagamento Attivo 2'");
+		assertTrue(containsId1, "La lista dei tipi attivi dovrebbe contenere 'Pagamento Attivo 1'");
+		assertTrue(containsId2, "La lista dei tipi attivi dovrebbe contenere 'Pagamento Attivo 2'");
 	}
 
 	@Test
-	void testListActiveException() {
-		// Creo un controller temporaneo con service che lancia eccezione
+	void testListActiveFallito() {
 		TipoMetodoPagamentoController controllerWithError = new TipoMetodoPagamentoController(
 				new TipoMetodoPagamentoService() {
-					@Override
-					public List<TipoMetodoPagamentoDTO> listActive() {
-						throw new RuntimeException("Errore simulato");
-					}
-
 					@Override
 					public Integer crea(TipoMetodoPagamentoReq req) {
 						return null;
@@ -187,12 +179,16 @@ class TipoMetodoPagamentoControllerTest {
 					public TipoMetodoPagamentoDTO getById(Integer id) {
 						return null;
 					}
+
+					@Override
+					public List<TipoMetodoPagamentoDTO> listActive() {
+						throw new RuntimeException("Errore simulato");
+					}
 				});
 
-		var res = controllerWithError.listActive();
-
-		assertFalse(res.getReturnCode()); // ritorna false come atteso
+		ResponseList<TipoMetodoPagamentoDTO> res = controllerWithError.listActive();
+		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
-		assertTrue(res.getMsg().contains("Errore simulato"));
+		assertTrue(res.getMsg().toLowerCase().contains("errore simulato"));
 	}
 }

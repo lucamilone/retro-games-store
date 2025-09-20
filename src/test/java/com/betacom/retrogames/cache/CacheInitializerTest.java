@@ -1,4 +1,4 @@
-package com.betacom.retrogames;
+package com.betacom.retrogames.cache;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -7,15 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.betacom.retrogames.cache.CacheInitializer;
-import com.betacom.retrogames.cache.CacheManager;
 import com.betacom.retrogames.enums.TabellaCostante;
 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @SpringBootTest
-class CacheInitializerTest {
+public class CacheInitializerTest {
 
 	@Autowired
 	private CacheInitializer cacheInitializer;

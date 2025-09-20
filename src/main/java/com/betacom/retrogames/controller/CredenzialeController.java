@@ -85,6 +85,7 @@ public class CredenzialeController {
 		try {
 			res.setDati(credenzialeS.signIn(req));
 			res.setReturnCode(true);
+			res.setMsg("Login effettuato con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());
