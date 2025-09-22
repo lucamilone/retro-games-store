@@ -106,15 +106,29 @@ public class PiattaformaServiceTest {
 		assertEquals(2001, cached.getAnnoUscitaPiattaforma());
 		assertFalse(cached.getAttivo());
 
-		PiattaformaReq reqUpdateSoloAttivo = createReq("PS2 Aggiornata", codice, 2001);
+		PiattaformaReq reqUpdateSoloNome = new PiattaformaReq();
+		reqUpdateSoloNome.setId(id);
+		reqUpdateSoloNome.setNome("SoloNome");
+		piattaformaService.aggiorna(reqUpdateSoloNome);
+		assertEquals("SoloNome", piattaformaService.getById(id).getNome());
+
+		PiattaformaReq reqUpdateSoloCodice = new PiattaformaReq();
+		reqUpdateSoloCodice.setId(id);
+		reqUpdateSoloCodice.setCodice("SoloCodice");
+		piattaformaService.aggiorna(reqUpdateSoloCodice);
+		assertEquals(normalizza("SoloCodice"), piattaformaService.getById(id).getCodice());
+
+		PiattaformaReq reqUpdateSoloAnno = new PiattaformaReq();
+		reqUpdateSoloAnno.setId(id);
+		reqUpdateSoloAnno.setAnnoUscitaPiattaforma(2099);
+		piattaformaService.aggiorna(reqUpdateSoloAnno);
+		assertEquals(2099, piattaformaService.getById(id).getAnnoUscitaPiattaforma());
+
+		PiattaformaReq reqUpdateSoloAttivo = new PiattaformaReq();
 		reqUpdateSoloAttivo.setId(id);
 		reqUpdateSoloAttivo.setAttivo(true);
 		piattaformaService.aggiorna(reqUpdateSoloAttivo);
-
-		PiattaformaDTO dtoFinal = piattaformaService.getById(id);
-		assertEquals("PS2 Aggiornata", dtoFinal.getNome());
-		assertEquals(2001, dtoFinal.getAnnoUscitaPiattaforma());
-		assertTrue(dtoFinal.getAttivo());
+		assertTrue(piattaformaService.getById(id).getAttivo());
 	}
 
 	@Test

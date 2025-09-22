@@ -74,44 +74,33 @@ public class TipoMetodoPagamentoServiceTest {
 
 	@Test
 	void testAggiornaSuccesso() throws AcademyException {
-		String nome = "tipo_test_completo";
+		String nome = "Bonifico";
 		tipoMetodoPagamentoRepo.findByNome(normalizza(nome)).ifPresent(tipoMetodoPagamentoRepo::delete);
 
 		TipoMetodoPagamentoReq reqCreate = createReq(nome);
 		Integer id = tipoMetodoPagamentoService.crea(reqCreate);
 
-		TipoMetodoPagamento tipoDB = tipoMetodoPagamentoRepo.findById(id).get();
+		TipoMetodoPagamento tipo = tipoMetodoPagamentoRepo.findById(id).get();
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO,
-				new CachedTipoMetodoPagamento(tipoDB));
+				new CachedTipoMetodoPagamento(tipo));
 
-		TipoMetodoPagamentoDTO dtoInitial = tipoMetodoPagamentoService.getById(id);
-		assertTrue(dtoInitial.getAttivo());
-		assertEquals(normalizza(nome), dtoInitial.getNome());
+		TipoMetodoPagamentoReq reqUpdateAttivo = new TipoMetodoPagamentoReq();
+		reqUpdateAttivo.setId(id);
+		reqUpdateAttivo.setAttivo(false);
+		tipoMetodoPagamentoService.aggiorna(reqUpdateAttivo);
 
-		String nomeAggiornato = "tipo_test_aggiornato";
-		TipoMetodoPagamentoReq reqUpdate = createReq(nomeAggiornato);
-		reqUpdate.setId(id);
-		reqUpdate.setAttivo(false);
-		tipoMetodoPagamentoService.aggiorna(reqUpdate);
+		TipoMetodoPagamentoDTO dto1 = tipoMetodoPagamentoService.getById(id);
+		assertEquals(normalizza(nome), dto1.getNome());
+		assertFalse(dto1.getAttivo());
 
-		TipoMetodoPagamentoDTO updatedDto = tipoMetodoPagamentoService.getById(id);
-		assertEquals(normalizza(nomeAggiornato), updatedDto.getNome());
-		assertFalse(updatedDto.getAttivo());
+		TipoMetodoPagamentoReq reqUpdateNome = new TipoMetodoPagamentoReq();
+		reqUpdateNome.setId(id);
+		reqUpdateNome.setNome("Bonifico Aggiornato");
+		tipoMetodoPagamentoService.aggiorna(reqUpdateNome);
 
-		CachedTipoMetodoPagamento cached = (CachedTipoMetodoPagamento) cacheManager
-				.getCachedEntryFromTable(TabellaCostante.TIPO_METODO_PAGAMENTO, id);
-		assertNotNull(cached);
-		assertEquals(normalizza(nomeAggiornato), cached.getNome());
-		assertFalse(cached.getAttivo());
-
-		TipoMetodoPagamentoReq reqUpdateSoloAttivo = createReq(nomeAggiornato);
-		reqUpdateSoloAttivo.setId(id);
-		reqUpdateSoloAttivo.setAttivo(true);
-		tipoMetodoPagamentoService.aggiorna(reqUpdateSoloAttivo);
-
-		TipoMetodoPagamentoDTO dtoFinal = tipoMetodoPagamentoService.getById(id);
-		assertEquals(normalizza(nomeAggiornato), dtoFinal.getNome());
-		assertTrue(dtoFinal.getAttivo());
+		TipoMetodoPagamentoDTO dto2 = tipoMetodoPagamentoService.getById(id);
+		assertEquals(normalizza("Bonifico Aggiornato"), dto2.getNome());
+		assertFalse(dto2.getAttivo());
 	}
 
 	@Test
