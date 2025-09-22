@@ -2,6 +2,7 @@ package com.betacom.retrogames.service.implementations;
 
 import static com.betacom.retrogames.util.Utils.normalizza;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -121,7 +122,6 @@ public class ProdottoImpl implements ProdottoService {
 					.orElseThrow(() -> new AcademyException(msgS.getMessaggio("categoria-non-trovata")));
 
 			prodotto.setCategoria(categoria);
-
 			validatePiattaforme(req, prodotto, categoria);
 		}
 
@@ -204,9 +204,9 @@ public class ProdottoImpl implements ProdottoService {
 			if (req.getPiattaformaId() == null || req.getPiattaformaId().isEmpty()) {
 				throw new AcademyException(msgS.getMessaggio("piattaforma-videogioco-obbligatoria"));
 			}
-			prodotto.setPiattaforme(checkCachedPiattaforme(req));
+			prodotto.setPiattaforme(new HashSet<>(checkCachedPiattaforme(req)));
 		} else {
-			prodotto.setPiattaforme(Set.of()); // Set vuoto se non è un videogioco
+			prodotto.setPiattaforme(new HashSet<>()); // Set vuoto se non è un videogioco
 		}
 	}
 
