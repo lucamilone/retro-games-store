@@ -53,9 +53,10 @@ public class PiattaformaServiceTest {
 		piattaformaRepo.findByCodice(normalizza(codice)).ifPresent(piattaformaRepo::delete);
 
 		PiattaformaReq req = createReq(nome, codice, 1994);
-		Integer id = piattaformaService.crea(req);
+		PiattaformaDTO dtoCreated = piattaformaService.crea(req);
 
-		assertNotNull(id);
+		assertNotNull(dtoCreated);
+		Integer id = dtoCreated.getId();
 
 		PiattaformaDTO dto = piattaformaService.getById(id);
 		assertEquals(nome, dto.getNome());
@@ -83,7 +84,8 @@ public class PiattaformaServiceTest {
 		piattaformaRepo.findByCodice(normalizza(codice)).ifPresent(piattaformaRepo::delete);
 
 		PiattaformaReq reqCreate = createReq("PS2", codice, 2000);
-		Integer id = piattaformaService.crea(reqCreate);
+		PiattaformaDTO dtoCreated = piattaformaService.crea(reqCreate);
+		Integer id = dtoCreated.getId();
 
 		Piattaforma piattaformaDB = piattaformaRepo.findById(id).get();
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.PIATTAFORMA, new CachedPiattaforma(piattaformaDB));
@@ -179,7 +181,8 @@ public class PiattaformaServiceTest {
 		piattaformaRepo.findByCodice(normalizza(codice)).ifPresent(piattaformaRepo::delete);
 
 		PiattaformaReq reqCreate = createReq(nome, codice, 2001);
-		Integer id = piattaformaService.crea(reqCreate);
+		PiattaformaDTO dtoCreated = piattaformaService.crea(reqCreate);
+		Integer id = dtoCreated.getId();
 
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.PIATTAFORMA, id);
 		assertFalse(cacheManager.isRecordCached(TabellaCostante.PIATTAFORMA, id));

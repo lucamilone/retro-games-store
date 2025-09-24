@@ -32,13 +32,13 @@ public class AccountController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) AccountReq req) {
-		ResponseBase res = new ResponseBase();
+	public ResponseObject<AccountDTO> create(@Validated(OnCreate.class) @RequestBody(required = true) AccountReq req) {
+		ResponseObject<AccountDTO> res = new ResponseObject<>();
 
 		try {
-			Integer id = accountS.crea(req);
+			res.setDati(accountS.crea(req));
 			res.setReturnCode(true);
-			res.setMsg("Account creato con successo. ID: " + id);
+			res.setMsg("Account creato con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

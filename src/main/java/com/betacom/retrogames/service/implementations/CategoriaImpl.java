@@ -42,7 +42,7 @@ public class CategoriaImpl implements CategoriaService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(CategoriaReq req) throws AcademyException {
+	public CategoriaDTO crea(CategoriaReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già una categoria con lo stesso nome
@@ -64,8 +64,7 @@ public class CategoriaImpl implements CategoriaService {
 
 		log.debug("Categoria creata con successo. ID: {}", saved.getId());
 
-		// Restituisce l'id generato
-		return saved.getId();
+		return categoriaMapper.toDto(saved);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

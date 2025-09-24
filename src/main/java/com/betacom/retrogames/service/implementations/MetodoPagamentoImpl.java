@@ -48,7 +48,7 @@ public class MetodoPagamentoImpl implements MetodoPagamentoService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(MetodoPagamentoReq req) throws AcademyException {
+	public MetodoPagamentoDTO crea(MetodoPagamentoReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico l'esistenza dell'account
@@ -98,8 +98,7 @@ public class MetodoPagamentoImpl implements MetodoPagamentoService {
 
 		log.debug("Metodo di pagamento creato con successo. ID: {}", metodoPagamento.getId());
 
-		// Restituisco l'id generato
-		return metodoPagamento.getId();
+		return metodoPagamentoMapper.toDto(metodoPagamento);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

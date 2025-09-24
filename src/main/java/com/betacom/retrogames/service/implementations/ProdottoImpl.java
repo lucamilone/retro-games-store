@@ -53,7 +53,7 @@ public class ProdottoImpl implements ProdottoService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(ProdottoReq req) throws AcademyException {
+	public ProdottoDTO crea(ProdottoReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già un prodotto con lo stesso SKU
@@ -90,8 +90,7 @@ public class ProdottoImpl implements ProdottoService {
 
 		log.debug("Prodotto creato con successo. ID: {}", prodotto.getId());
 
-		// Restituisco l'id generato
-		return prodotto.getId();
+		return prodottoMapper.toDto(prodotto);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

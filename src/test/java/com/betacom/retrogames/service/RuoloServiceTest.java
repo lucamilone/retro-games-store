@@ -49,11 +49,10 @@ public class RuoloServiceTest {
 		ruoloRepo.findByNome(normalizza(nomeRuolo)).ifPresent(ruoloRepo::delete);
 
 		RuoloReq req = createReq(nomeRuolo);
-		Integer id = ruoloService.crea(req);
+		RuoloDTO dto = ruoloService.crea(req);
 
-		assertNotNull(id);
-		RuoloDTO dto = ruoloService.getById(id);
-		assertEquals(nomeRuolo, dto.getNome());
+		assertNotNull(dto);
+		assertEquals(normalizza(nomeRuolo), dto.getNome());
 		assertTrue(dto.getAttivo());
 	}
 
@@ -77,7 +76,8 @@ public class RuoloServiceTest {
 		ruoloRepo.findByNome(normalizza(nomeRuolo)).ifPresent(ruoloRepo::delete);
 
 		RuoloReq reqCreate = createReq(nomeRuolo);
-		Integer id = ruoloService.crea(reqCreate);
+		RuoloDTO createdDto = ruoloService.crea(reqCreate);
+		Integer id = createdDto.getId();
 
 		Ruolo ruoloDB = ruoloRepo.findById(id).get();
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.RUOLO, new CachedRuolo(ruoloDB));
@@ -150,7 +150,8 @@ public class RuoloServiceTest {
 		ruoloRepo.findByNome(normalizza(nomeRuolo)).ifPresent(ruoloRepo::delete);
 
 		RuoloReq reqCreate = createReq(nomeRuolo);
-		Integer id = ruoloService.crea(reqCreate);
+		RuoloDTO createdDto = ruoloService.crea(reqCreate);
+		Integer id = createdDto.getId();
 
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.RUOLO, id);
 		assertFalse(cacheManager.isRecordCached(TabellaCostante.RUOLO, id));

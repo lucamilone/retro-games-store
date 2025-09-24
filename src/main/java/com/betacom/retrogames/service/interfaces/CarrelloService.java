@@ -15,7 +15,7 @@ public interface CarrelloService {
 	* Questo metodo viene tipicamente chiamato dal servizio di registrazione dell'account.
 	*
 	* @param req   	   AccountId a cui associare il nuovo carrello
-	* @return id del carrello appena creato
+	* @return ID del carrello appena creato
 	* @throws AcademyException se l'account non esiste
 	*/
 	Integer creaPerAccount(CarrelloReq req) throws AcademyException;
@@ -32,7 +32,7 @@ public interface CarrelloService {
 	* Recupera il carrello associato a un account specifico.
 	*
 	* @param accountId 		   ID dell'account
-	* @return carrello sotto forma di DTO
+	* @return CarrelloDTO contenente tutti i dati rilevanti
 	* @throws AcademyException se il carrello non esiste o si verifica un errore nel recupero
 	*/
 	CarrelloDTO getCarrelloByAccount(Integer accountId) throws AcademyException;

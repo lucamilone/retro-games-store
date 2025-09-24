@@ -35,10 +35,11 @@ public class CategoriaControllerTest {
 
 	@Test
 	void testCreateSuccesso() {
-		ResponseBase res = controller.create(createReq("categoria_test"));
+		ResponseObject<CategoriaDTO> res = controller.create(createReq("categoria_test"));
 		assertTrue(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("creata"));
+		assertNotNull(res.getDati());
 	}
 
 	@Test
@@ -52,8 +53,10 @@ public class CategoriaControllerTest {
 
 	@Test
 	void testUpdateSuccesso() {
-		ResponseBase createRes = controller.create(createReq("categoria_update"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<CategoriaDTO> createRes = controller.create(createReq("categoria_update"));
+		assertTrue(createRes.getReturnCode());
+		assertNotNull(createRes.getDati());
+		Integer id = createRes.getDati().getId();
 
 		CategoriaReq updateReq = createReq("categoria_updated");
 		updateReq.setId(id);
@@ -75,8 +78,10 @@ public class CategoriaControllerTest {
 
 	@Test
 	void testDisableSuccesso() {
-		ResponseBase createRes = controller.create(createReq("categoria_disable"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<CategoriaDTO> createRes = controller.create(createReq("categoria_disable"));
+		assertTrue(createRes.getReturnCode());
+		assertNotNull(createRes.getDati());
+		Integer id = createRes.getDati().getId();
 
 		CategoriaReq disableReq = createReq("categoria_disable");
 		disableReq.setId(id);
@@ -98,8 +103,10 @@ public class CategoriaControllerTest {
 
 	@Test
 	void testGetByIdSuccesso() {
-		ResponseBase createRes = controller.create(createReq("categoria_get"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<CategoriaDTO> createRes = controller.create(createReq("categoria_get"));
+		assertTrue(createRes.getReturnCode());
+		assertNotNull(createRes.getDati());
+		Integer id = createRes.getDati().getId();
 
 		ResponseObject<CategoriaDTO> res = controller.getById(id);
 		assertTrue(res.getReturnCode());
@@ -117,14 +124,14 @@ public class CategoriaControllerTest {
 
 	@Test
 	void testListActiveSuccesso() {
-		ResponseBase res1 = controller.create(createReq("categoria_active1"));
-		ResponseBase res2 = controller.create(createReq("categoria_active2"));
+		ResponseObject<CategoriaDTO> res1 = controller.create(createReq("categoria_active1"));
+		ResponseObject<CategoriaDTO> res2 = controller.create(createReq("categoria_active2"));
 
 		assertTrue(res1.getReturnCode());
 		assertTrue(res2.getReturnCode());
 
-		Integer id1 = Integer.parseInt(res1.getMsg().replaceAll("\\D+", ""));
-		Integer id2 = Integer.parseInt(res2.getMsg().replaceAll("\\D+", ""));
+		Integer id1 = res1.getDati().getId();
+		Integer id2 = res2.getDati().getId();
 
 		ResponseList<CategoriaDTO> resList = controller.listActive();
 
@@ -151,7 +158,7 @@ public class CategoriaControllerTest {
 	void testListActiveFallito() {
 		CategoriaController controllerWithError = new CategoriaController(new CategoriaService() {
 			@Override
-			public Integer crea(CategoriaReq req) {
+			public CategoriaDTO crea(CategoriaReq req) {
 				return null;
 			}
 

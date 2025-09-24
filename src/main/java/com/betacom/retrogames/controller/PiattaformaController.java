@@ -32,13 +32,14 @@ public class PiattaformaController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) PiattaformaReq req) {
-		ResponseBase res = new ResponseBase();
+	public ResponseObject<PiattaformaDTO> create(
+			@Validated(OnCreate.class) @RequestBody(required = true) PiattaformaReq req) {
+		ResponseObject<PiattaformaDTO> res = new ResponseObject<>();
 
 		try {
-			Integer id = piattaformaS.crea(req);
+			res.setDati(piattaformaS.crea(req));
 			res.setReturnCode(true);
-			res.setMsg("Piattaforma creata con successo. ID: " + id);
+			res.setMsg("Piattaforma creata con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

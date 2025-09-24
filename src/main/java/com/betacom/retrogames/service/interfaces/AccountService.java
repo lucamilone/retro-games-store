@@ -17,10 +17,10 @@ public interface AccountService {
 	* Esegue controlli di validità come email/username univoci e formato password.
 	*
 	* @param req 			   Dati dell'account da registrare
-	* @return ID generato dell'account creato
+	* @return AccountDTO contenente tutti i dati rilevanti
 	* @throws AcademyException se i dati non sono validi o l'account esiste già
 	*/
-	Integer crea(AccountReq req) throws AcademyException;
+	AccountDTO crea(AccountReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna i dati personali dell'account (nome, cognome, indirizzo).

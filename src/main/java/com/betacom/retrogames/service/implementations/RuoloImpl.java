@@ -42,7 +42,7 @@ public class RuoloImpl implements RuoloService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(RuoloReq req) throws AcademyException {
+	public RuoloDTO crea(RuoloReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già un ruolo con lo stesso nome
@@ -64,8 +64,7 @@ public class RuoloImpl implements RuoloService {
 
 		log.debug("Ruolo creato con successo. ID: {}", saved.getId());
 
-		// Restituisce l'id generato
-		return saved.getId();
+		return ruoloMapper.toDto(ruolo);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

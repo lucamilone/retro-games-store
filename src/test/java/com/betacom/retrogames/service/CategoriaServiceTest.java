@@ -50,13 +50,16 @@ public class CategoriaServiceTest {
 		categoriaRepo.findByNome(normalizza(nome)).ifPresent(categoriaRepo::delete);
 
 		CategoriaReq req = createReq(nome);
-		Integer id = categoriaService.crea(req);
+		CategoriaDTO dto = categoriaService.crea(req);
 
+		assertNotNull(dto);
+
+		Integer id = dto.getId();
 		assertNotNull(id);
 
-		CategoriaDTO dto = categoriaService.getById(id);
-		assertEquals(normalizza(nome), dto.getNome());
-		assertTrue(dto.getAttivo());
+		CategoriaDTO fetchedDto = categoriaService.getById(id);
+		assertEquals(normalizza(nome), fetchedDto.getNome());
+		assertTrue(fetchedDto.getAttivo());
 	}
 
 	@Test
@@ -78,7 +81,8 @@ public class CategoriaServiceTest {
 		categoriaRepo.findByNome(normalizza(nome)).ifPresent(categoriaRepo::delete);
 
 		CategoriaReq reqCreate = createReq(nome);
-		Integer id = categoriaService.crea(reqCreate);
+		CategoriaDTO createdDto = categoriaService.crea(reqCreate); // Now returns DTO
+		Integer id = createdDto.getId();
 
 		CachedCategoria cached = (CachedCategoria) cacheManager.getCachedEntryFromTable(TabellaCostante.CATEGORIA, id);
 		assertNotNull(cached);
@@ -106,6 +110,27 @@ public class CategoriaServiceTest {
 		CategoriaDTO dtoFinal = categoriaService.getById(id);
 		assertEquals(normalizza("RPG Aggiornato"), dtoFinal.getNome());
 		assertTrue(dtoFinal.getAttivo());
+	}
+
+	@Test
+	void testAggiornaAttivoNull() throws Exception {
+		Categoria categoria = new Categoria();
+		categoria.setNome("CategoriaTest2");
+		categoria.setAttivo(true);
+		categoria = categoriaRepo.save(categoria);
+
+		CachedCategoria cached = new CachedCategoria(categoria);
+		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.CATEGORIA, cached);
+
+		CategoriaReq req = createReq("CategoriaTest2 Aggiornato");
+		req.setId(categoria.getId());
+		req.setAttivo(null);
+
+		categoriaService.aggiorna(req);
+
+		Categoria aggiornata = categoriaRepo.findById(categoria.getId()).orElseThrow();
+		assertEquals(true, aggiornata.getAttivo());
+		assertEquals(normalizza("CategoriaTest2 Aggiornato"), aggiornata.getNome());
 	}
 
 	@Test
@@ -153,7 +178,8 @@ public class CategoriaServiceTest {
 		categoriaRepo.findByNome(normalizza(nome)).ifPresent(categoriaRepo::delete);
 
 		CategoriaReq reqCreate = createReq(nome);
-		Integer id = categoriaService.crea(reqCreate);
+		CategoriaDTO createdDto = categoriaService.crea(reqCreate); // Now returns DTO
+		Integer id = createdDto.getId();
 
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.CATEGORIA, id);
 		assertFalse(cacheManager.isRecordCached(TabellaCostante.CATEGORIA, id));

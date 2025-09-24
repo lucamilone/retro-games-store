@@ -33,7 +33,7 @@ public class CredenzialeServiceTest {
 
 	private CredenzialeReq createReq(String email, String password) {
 		CredenzialeReq req = new CredenzialeReq();
-		req.setEmail(email);
+		req.setEmail(normalizza(email));
 		req.setPassword(password);
 		req.setAttivo(true);
 		return req;
@@ -45,10 +45,10 @@ public class CredenzialeServiceTest {
 		credenzialeRepo.findByEmail(normalizza(email)).ifPresent(credenzialeRepo::delete);
 
 		CredenzialeReq req = createReq(email, "pass123");
-		Integer id = credenzialeService.crea(req);
+		CredenzialeDTO dto = credenzialeService.crea(req);
 
-		assertNotNull(id);
-		CredenzialeDTO dto = credenzialeService.getById(id);
+		assertNotNull(dto);
+		assertNotNull(dto.getId());
 		assertEquals(normalizza(email), dto.getEmail());
 		assertTrue(dto.getAttivo());
 	}
@@ -73,7 +73,8 @@ public class CredenzialeServiceTest {
 		String emailEsistente = "exist@example.com";
 		credenzialeRepo.findByEmail(normalizza(emailEsistente)).ifPresent(credenzialeRepo::delete);
 
-		Integer id = credenzialeService.crea(createReq(emailOriginale, "pass123"));
+		CredenzialeDTO dtoCreato = credenzialeService.crea(createReq(emailOriginale, "pass123"));
+		Integer id = dtoCreato.getId();
 
 		Credenziale c2 = new Credenziale();
 		c2.setEmail(normalizza(emailEsistente));
@@ -89,7 +90,7 @@ public class CredenzialeServiceTest {
 		CredenzialeDTO dto = credenzialeService.getById(id);
 		assertEquals(normalizza("nuova@example.com"), dto.getEmail());
 
-		reqUpdate.setEmail(emailEsistente);
+		reqUpdate.setEmail(normalizza(emailEsistente));
 		AcademyException exception = assertThrows(AcademyException.class,
 				() -> credenzialeService.aggiornaEmail(reqUpdate));
 		assertTrue(exception.getMessage().contains("email-esistente"));
@@ -109,7 +110,8 @@ public class CredenzialeServiceTest {
 		String email = "passupdate@example.com";
 		credenzialeRepo.findByEmail(normalizza(email)).ifPresent(credenzialeRepo::delete);
 
-		Integer id = credenzialeService.crea(createReq(email, "oldpass"));
+		CredenzialeDTO dtoCreato = credenzialeService.crea(createReq(email, "oldpass"));
+		Integer id = dtoCreato.getId();
 
 		CredenzialeReq reqUpdate = new CredenzialeReq();
 		reqUpdate.setId(id);
@@ -139,7 +141,8 @@ public class CredenzialeServiceTest {
 		String email = "disable@example.com";
 		credenzialeRepo.findByEmail(normalizza(email)).ifPresent(credenzialeRepo::delete);
 
-		Integer id = credenzialeService.crea(createReq(email, "pass123"));
+		CredenzialeDTO dtoCreato = credenzialeService.crea(createReq(email, "pass123"));
+		Integer id = dtoCreato.getId();
 
 		CredenzialeReq req = new CredenzialeReq();
 		req.setId(id);
@@ -166,7 +169,8 @@ public class CredenzialeServiceTest {
 		String email = "enable@example.com";
 		credenzialeRepo.findByEmail(normalizza(email)).ifPresent(credenzialeRepo::delete);
 
-		Integer id = credenzialeService.crea(createReq(email, "pass123"));
+		CredenzialeDTO dtoCreato = credenzialeService.crea(createReq(email, "pass123"));
+		Integer id = dtoCreato.getId();
 
 		CredenzialeReq req = new CredenzialeReq();
 		req.setId(id);
@@ -220,7 +224,8 @@ public class CredenzialeServiceTest {
 		String email = "inactive@example.com";
 		credenzialeRepo.findByEmail(normalizza(email)).ifPresent(credenzialeRepo::delete);
 
-		Integer id = credenzialeService.crea(createReq(email, "pass123"));
+		CredenzialeDTO dtoCreato = credenzialeService.crea(createReq(email, "pass123"));
+		Integer id = dtoCreato.getId();
 
 		CredenzialeReq reqDisattiva = new CredenzialeReq();
 		reqDisattiva.setId(id);

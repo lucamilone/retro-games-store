@@ -17,10 +17,10 @@ public interface OrdineService {
 	 * Imposta automaticamente lo stato iniziale e valida pagamento e indirizzo.
 	 *
 	 * @param req 				Dati necessari per creare l'ordine: righe, pagamento, indirizzo, accountId
-	 * @return ID generato dell'ordine creato
+	 * @return OrdineDTO contenente tutti i dati rilevanti
 	 * @throws AcademyException se i dati non sono validi o il checkout fallisce
 	 */
-	Integer crea(OrdineReq req) throws AcademyException;
+	OrdineDTO crea(OrdineReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna un ordine esistente.

@@ -50,11 +50,10 @@ public class TipoMetodoPagamentoServiceTest {
 		tipoMetodoPagamentoRepo.findByNome(normalizza(nome)).ifPresent(tipoMetodoPagamentoRepo::delete);
 
 		TipoMetodoPagamentoReq req = createReq(nome);
-		Integer id = tipoMetodoPagamentoService.crea(req);
+		TipoMetodoPagamentoDTO dto = tipoMetodoPagamentoService.crea(req);
 
-		assertNotNull(id);
-
-		TipoMetodoPagamentoDTO dto = tipoMetodoPagamentoService.getById(id);
+		assertNotNull(dto);
+		assertNotNull(dto.getId());
 		assertEquals(normalizza(nome), dto.getNome());
 		assertTrue(dto.getAttivo());
 	}
@@ -78,7 +77,8 @@ public class TipoMetodoPagamentoServiceTest {
 		tipoMetodoPagamentoRepo.findByNome(normalizza(nome)).ifPresent(tipoMetodoPagamentoRepo::delete);
 
 		TipoMetodoPagamentoReq reqCreate = createReq(nome);
-		Integer id = tipoMetodoPagamentoService.crea(reqCreate);
+		TipoMetodoPagamentoDTO createdDto = tipoMetodoPagamentoService.crea(reqCreate);
+		Integer id = createdDto.getId();
 
 		TipoMetodoPagamento tipo = tipoMetodoPagamentoRepo.findById(id).get();
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO,
@@ -151,7 +151,8 @@ public class TipoMetodoPagamentoServiceTest {
 		tipoMetodoPagamentoRepo.findByNome(normalizza(nome)).ifPresent(tipoMetodoPagamentoRepo::delete);
 
 		TipoMetodoPagamentoReq reqCreate = createReq(nome);
-		Integer id = tipoMetodoPagamentoService.crea(reqCreate);
+		TipoMetodoPagamentoDTO createdDto = tipoMetodoPagamentoService.crea(reqCreate);
+		Integer id = createdDto.getId();
 
 		cacheManager.removeRecordFromCachedTable(TabellaCostante.TIPO_METODO_PAGAMENTO, id);
 		assertFalse(cacheManager.isRecordCached(TabellaCostante.TIPO_METODO_PAGAMENTO, id));

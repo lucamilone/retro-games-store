@@ -16,10 +16,10 @@ public interface ProdottoService {
 	 * Crea un nuovo prodotto nel catalogo.
 	 *
 	 * @param req 				Dati del prodotto da creare
-	 * @return ID generato del prodotto creato
+	 * @return ProdottoDTO contenente tutti i dati rilevanti
 	 * @throws AcademyException se dati non validi o SKU già esistente
 	 */
-	Integer crea(ProdottoReq req) throws AcademyException;
+	ProdottoDTO crea(ProdottoReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna le informazioni di un prodotto esistente.

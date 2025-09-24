@@ -59,7 +59,7 @@ public class OrdineImpl implements OrdineService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(OrdineReq req) throws AcademyException {
+	public OrdineDTO crea(OrdineReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico l'esistenza dell'account
@@ -104,8 +104,7 @@ public class OrdineImpl implements OrdineService {
 		carrelloReq.setId(carrello.getId());
 		carrelloS.svuotaCarrello(carrelloReq);
 
-		// Restituisco l'id generato
-		return ordine.getId();
+		return ordineMapper.toDto(ordine);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

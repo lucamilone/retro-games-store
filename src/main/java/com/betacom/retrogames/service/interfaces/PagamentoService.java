@@ -17,10 +17,10 @@ public interface PagamentoService {
 	 * Tipicamente chiamato durante il checkout.
 	 *
 	 * @param req  				Richiesta contenente ordineId, metodo di pagamento e totale
-	 * @return ID generato del pagamento
+	 * @return PagamentoDTO contenente tutti i dati rilevanti
 	 * @throws AcademyException se i dati non sono validi o il pagamento non può essere creato
 	 */
-	Integer crea(PagamentoReq req) throws AcademyException;
+	PagamentoDTO crea(PagamentoReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna lo stato di un pagamento o altri dati modificabili.

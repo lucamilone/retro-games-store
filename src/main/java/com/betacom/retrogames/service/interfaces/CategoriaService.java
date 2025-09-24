@@ -16,10 +16,10 @@ public interface CategoriaService {
 	 * Aggiunge una nuova categoria.
 	 *
 	 * @param req 				Dati della categoria da creare
-	 * @return id della categoria creata
+	 * @return CategoriaDTO contenente tutti i dati rilevanti
 	 * @throws AcademyException se i dati non sono validi o la categoria esiste già
 	 */
-	Integer crea(CategoriaReq req) throws AcademyException;
+	CategoriaDTO crea(CategoriaReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna una categoria esistente.

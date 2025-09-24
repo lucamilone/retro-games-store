@@ -18,10 +18,10 @@ public interface CredenzialeService {
 	 * Viene chiamato tipicamente durante la registrazione dell'account.
 	 *
 	 * @param req				Dati della credenziale (email + password)
-	 * @return ID generato della credenziale creata
+	 * @return CredenzialeDTO contenente tutti i dati rilevanti
 	 * @throws AcademyException se email già esistente o dati non validi
 	 */
-	Integer crea(CredenzialeReq req) throws AcademyException;
+	CredenzialeDTO crea(CredenzialeReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna solo l'email di una credenziale esistente.

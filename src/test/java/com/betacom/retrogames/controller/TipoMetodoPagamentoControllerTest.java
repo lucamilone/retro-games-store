@@ -3,6 +3,7 @@ package com.betacom.retrogames.controller;
 import static com.betacom.retrogames.util.Utils.normalizza;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -35,10 +36,12 @@ public class TipoMetodoPagamentoControllerTest {
 	@Test
 	void testCreateSuccesso() {
 		TipoMetodoPagamentoReq req = createReq("Pagamento OK");
-		ResponseBase res = controller.create(req);
+		ResponseObject<TipoMetodoPagamentoDTO> res = controller.create(req);
 		assertTrue(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("creato"));
+		assertNotNull(res.getDati());
+		assertNotNull(res.getDati().getId());
 	}
 
 	@Test
@@ -46,20 +49,22 @@ public class TipoMetodoPagamentoControllerTest {
 		TipoMetodoPagamentoReq req1 = createReq("Pagamento Duplicato");
 		TipoMetodoPagamentoReq req2 = createReq("Pagamento Duplicato");
 
-		ResponseBase res1 = controller.create(req1);
+		ResponseObject<TipoMetodoPagamentoDTO> res1 = controller.create(req1);
 		assertTrue(res1.getReturnCode());
+		assertNotNull(res1.getDati());
 
-		ResponseBase res2 = controller.create(req2);
+		ResponseObject<TipoMetodoPagamentoDTO> res2 = controller.create(req2);
 		assertFalse(res2.getReturnCode());
 		assertNotNull(res2.getMsg());
 		assertTrue(res2.getMsg().toLowerCase().contains("esistente"));
+		assertNull(res2.getDati());
 	}
 
 	@Test
 	void testUpdateSuccesso() {
-		ResponseBase createRes = controller.create(createReq("Pagamento Aggiorna"));
+		ResponseObject<TipoMetodoPagamentoDTO> createRes = controller.create(createReq("Pagamento Aggiorna"));
 		assertTrue(createRes.getReturnCode());
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		Integer id = createRes.getDati().getId();
 
 		TipoMetodoPagamentoReq reqUpdate = createReq("Pagamento Aggiornato");
 		reqUpdate.setId(id);
@@ -83,10 +88,10 @@ public class TipoMetodoPagamentoControllerTest {
 	@Test
 	void testDisableSuccesso() {
 		TipoMetodoPagamentoReq reqCreate = createReq("Pagamento Disabilita");
-		ResponseBase createRes = controller.create(reqCreate);
+		ResponseObject<TipoMetodoPagamentoDTO> createRes = controller.create(reqCreate);
 		assertTrue(createRes.getReturnCode());
 
-		Integer idDisable = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		Integer idDisable = createRes.getDati().getId();
 		TipoMetodoPagamentoReq reqDisable = createReq("Pagamento Disabilita");
 		reqDisable.setId(idDisable);
 
@@ -108,9 +113,9 @@ public class TipoMetodoPagamentoControllerTest {
 
 	@Test
 	void testGetByIdSuccesso() {
-		ResponseBase createRes = controller.create(createReq("Pagamento Get"));
+		ResponseObject<TipoMetodoPagamentoDTO> createRes = controller.create(createReq("Pagamento Get"));
 		assertTrue(createRes.getReturnCode());
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		Integer id = createRes.getDati().getId();
 
 		ResponseObject<TipoMetodoPagamentoDTO> res = controller.getById(id);
 		assertTrue(res.getReturnCode());
@@ -127,14 +132,14 @@ public class TipoMetodoPagamentoControllerTest {
 
 	@Test
 	void testListActiveSuccesso() {
-		ResponseBase res1 = controller.create(createReq("Pagamento Attivo 1"));
-		ResponseBase res2 = controller.create(createReq("Pagamento Attivo 2"));
+		ResponseObject<TipoMetodoPagamentoDTO> res1 = controller.create(createReq("Pagamento Attivo 1"));
+		ResponseObject<TipoMetodoPagamentoDTO> res2 = controller.create(createReq("Pagamento Attivo 2"));
 
 		assertTrue(res1.getReturnCode());
 		assertTrue(res2.getReturnCode());
 
-		Integer id1 = Integer.parseInt(res1.getMsg().replaceAll("\\D+", ""));
-		Integer id2 = Integer.parseInt(res2.getMsg().replaceAll("\\D+", ""));
+		Integer id1 = res1.getDati().getId();
+		Integer id2 = res2.getDati().getId();
 
 		assertNotNull(id1);
 		assertNotNull(id2);
@@ -163,7 +168,7 @@ public class TipoMetodoPagamentoControllerTest {
 		TipoMetodoPagamentoController controllerWithError = new TipoMetodoPagamentoController(
 				new TipoMetodoPagamentoService() {
 					@Override
-					public Integer crea(TipoMetodoPagamentoReq req) {
+					public TipoMetodoPagamentoDTO crea(TipoMetodoPagamentoReq req) {
 						return null;
 					}
 

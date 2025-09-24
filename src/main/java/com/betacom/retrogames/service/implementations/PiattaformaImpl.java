@@ -42,7 +42,7 @@ public class PiattaformaImpl implements PiattaformaService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(PiattaformaReq req) throws AcademyException {
+	public PiattaformaDTO crea(PiattaformaReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già una piattaforma con lo stesso codice
@@ -66,8 +66,7 @@ public class PiattaformaImpl implements PiattaformaService {
 
 		log.debug("Piattaforma creata con successo. ID: {}", saved.getId());
 
-		// Restituisce l'id generato
-		return saved.getId();
+		return piattaformaMapper.toDto(piattaforma);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

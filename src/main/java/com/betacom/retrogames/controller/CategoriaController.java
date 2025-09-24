@@ -32,13 +32,14 @@ public class CategoriaController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) CategoriaReq req) {
-		ResponseBase res = new ResponseBase();
+	public ResponseObject<CategoriaDTO> create(
+			@Validated(OnCreate.class) @RequestBody(required = true) CategoriaReq req) {
+		ResponseObject<CategoriaDTO> res = new ResponseObject<>();
 
 		try {
-			Integer id = categoriaS.crea(req);
+			res.setDati(categoriaS.crea(req));
 			res.setReturnCode(true);
-			res.setMsg("Categoria creata con successo. ID: " + id);
+			res.setMsg("Categoria creata con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

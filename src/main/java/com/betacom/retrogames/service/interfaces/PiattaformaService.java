@@ -16,10 +16,10 @@ public interface PiattaformaService {
 	 * Crea una nuova piattaforma.
 	 *
 	 * @param req 				Dati della piattaforma da aggiungere
-	 * @return ID generato della piattaforma creata
+	 * @return PiattaformaDTO contenente tutti i dati rilevanti
 	 * @throws AcademyException se i dati non sono validi o la piattaforma esiste già
 	 */
-	Integer crea(PiattaformaReq req) throws AcademyException;
+	PiattaformaDTO crea(PiattaformaReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna una piattaforma esistente.

@@ -32,13 +32,14 @@ public class TipoMetodoPagamentoController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) TipoMetodoPagamentoReq req) {
-		ResponseBase res = new ResponseBase();
+	public ResponseObject<TipoMetodoPagamentoDTO> create(
+			@Validated(OnCreate.class) @RequestBody(required = true) TipoMetodoPagamentoReq req) {
+		ResponseObject<TipoMetodoPagamentoDTO> res = new ResponseObject<>();
 
 		try {
-			Integer id = tipoS.crea(req);
+			res.setDati(tipoS.crea(req));
 			res.setReturnCode(true);
-			res.setMsg("Tipo metodo pagamento creato con successo. ID: " + id);
+			res.setMsg("Tipo metodo pagamento creato con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

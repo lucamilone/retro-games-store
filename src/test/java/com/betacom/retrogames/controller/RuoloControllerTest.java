@@ -35,16 +35,18 @@ public class RuoloControllerTest {
 
 	@Test
 	void testCreateSuccesso() {
-		ResponseBase res = controller.create(createReq("admin_test"));
+		ResponseObject<RuoloDTO> res = controller.create(createReq("admin_test"));
 		assertTrue(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("creato"));
+		assertNotNull(res.getDati());
+		assertEquals("admin_test", res.getDati().getNome());
 	}
 
 	@Test
 	void testCreateFallito() {
 		controller.create(createReq("admin_dup"));
-		ResponseBase res = controller.create(createReq("admin_dup"));
+		ResponseObject<RuoloDTO> res = controller.create(createReq("admin_dup"));
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("esistente"));
@@ -52,8 +54,8 @@ public class RuoloControllerTest {
 
 	@Test
 	void testUpdateSuccesso() {
-		ResponseBase createRes = controller.create(createReq("admin_update"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<RuoloDTO> createRes = controller.create(createReq("admin_update"));
+		Integer id = createRes.getDati().getId();
 
 		RuoloReq updateReq = createReq("admin_updated");
 		updateReq.setId(id);
@@ -75,8 +77,8 @@ public class RuoloControllerTest {
 
 	@Test
 	void testDisableSuccesso() {
-		ResponseBase createRes = controller.create(createReq("admin_disable"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<RuoloDTO> createRes = controller.create(createReq("admin_disable"));
+		Integer id = createRes.getDati().getId();
 
 		RuoloReq disableReq = createReq("admin_disable");
 		disableReq.setId(id);
@@ -98,8 +100,8 @@ public class RuoloControllerTest {
 
 	@Test
 	void testGetByIdSuccesso() {
-		ResponseBase createRes = controller.create(createReq("admin_get"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<RuoloDTO> createRes = controller.create(createReq("admin_get"));
+		Integer id = createRes.getDati().getId();
 
 		ResponseObject<RuoloDTO> res = controller.getById(id);
 		assertTrue(res.getReturnCode());
@@ -117,14 +119,14 @@ public class RuoloControllerTest {
 
 	@Test
 	void testListActiveSuccesso() {
-		ResponseBase res1 = controller.create(createReq("admin_active1"));
-		ResponseBase res2 = controller.create(createReq("admin_active2"));
+		ResponseObject<RuoloDTO> res1 = controller.create(createReq("admin_active1"));
+		ResponseObject<RuoloDTO> res2 = controller.create(createReq("admin_active2"));
 
 		assertTrue(res1.getReturnCode());
 		assertTrue(res2.getReturnCode());
 
-		Integer id1 = Integer.parseInt(res1.getMsg().replaceAll("\\D+", ""));
-		Integer id2 = Integer.parseInt(res2.getMsg().replaceAll("\\D+", ""));
+		Integer id1 = res1.getDati().getId();
+		Integer id2 = res2.getDati().getId();
 
 		assertNotNull(id1);
 		assertNotNull(id2);
@@ -154,7 +156,7 @@ public class RuoloControllerTest {
 	void testListActiveFallito() {
 		RuoloController controllerWithError = new RuoloController(new RuoloService() {
 			@Override
-			public Integer crea(RuoloReq req) {
+			public RuoloDTO crea(RuoloReq req) {
 				return null;
 			}
 

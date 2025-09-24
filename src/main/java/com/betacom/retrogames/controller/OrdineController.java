@@ -31,13 +31,13 @@ public class OrdineController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) OrdineReq req) {
-		ResponseBase res = new ResponseBase();
+	public ResponseObject<OrdineDTO> create(@Validated(OnCreate.class) @RequestBody(required = true) OrdineReq req) {
+		ResponseObject<OrdineDTO> res = new ResponseObject<>();
 
 		try {
-			Integer id = ordineS.crea(req);
+			res.setDati(ordineS.crea(req));
 			res.setReturnCode(true);
-			res.setMsg("Ordine creato con successo. ID: " + id);
+			res.setMsg("Ordine creato con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

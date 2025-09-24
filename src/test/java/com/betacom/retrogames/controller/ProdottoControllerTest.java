@@ -42,17 +42,18 @@ public class ProdottoControllerTest {
 	@Test
 	void testCreateSuccesso() {
 		Integer categoriaId = 1;
-		ResponseBase res = controller.create(createReq(categoriaId, "SKU1"));
+		ResponseObject<ProdottoDTO> res = controller.create(createReq(categoriaId, "SKU1"));
 		assertTrue(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("creato"));
+		assertNotNull(res.getDati());
 	}
 
 	@Test
 	void testCreateFallito() {
 		Integer categoriaId = 1;
 		controller.create(createReq(categoriaId, "SKU_DUP"));
-		ResponseBase res = controller.create(createReq(categoriaId, "SKU_DUP"));
+		ResponseObject<ProdottoDTO> res = controller.create(createReq(categoriaId, "SKU_DUP"));
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("esistente"));
@@ -61,8 +62,8 @@ public class ProdottoControllerTest {
 	@Test
 	void testUpdateSuccesso() {
 		Integer categoriaId = 1;
-		ResponseBase createRes = controller.create(createReq(categoriaId, "SKU_UPD"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<ProdottoDTO> createRes = controller.create(createReq(categoriaId, "SKU_UPD"));
+		Integer id = createRes.getDati().getId();
 
 		ProdottoReq updateReq = createReq(categoriaId, "SKU_UPD2");
 		updateReq.setId(id);
@@ -85,8 +86,8 @@ public class ProdottoControllerTest {
 	@Test
 	void testDisableSuccesso() {
 		Integer categoriaId = 1;
-		ResponseBase createRes = controller.create(createReq(categoriaId, "SKU_DIS"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<ProdottoDTO> createRes = controller.create(createReq(categoriaId, "SKU_DIS"));
+		Integer id = createRes.getDati().getId();
 
 		ProdottoReq disableReq = createReq(categoriaId, "SKU_DIS");
 		disableReq.setId(id);
@@ -109,8 +110,8 @@ public class ProdottoControllerTest {
 	@Test
 	void testGetByIdSuccesso() {
 		Integer categoriaId = 1;
-		ResponseBase createRes = controller.create(createReq(categoriaId, "SKU_GET"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<ProdottoDTO> createRes = controller.create(createReq(categoriaId, "SKU_GET"));
+		Integer id = createRes.getDati().getId();
 
 		ResponseObject<ProdottoDTO> res = controller.getById(id);
 		assertTrue(res.getReturnCode());
@@ -129,14 +130,14 @@ public class ProdottoControllerTest {
 	@Test
 	void testListActiveSuccesso() {
 		Integer categoriaId = 1;
-		ResponseBase res1 = controller.create(createReq(categoriaId, "SKU_ACTIVE1"));
-		ResponseBase res2 = controller.create(createReq(categoriaId, "SKU_ACTIVE2"));
+		ResponseObject<ProdottoDTO> res1 = controller.create(createReq(categoriaId, "SKU_ACTIVE1"));
+		ResponseObject<ProdottoDTO> res2 = controller.create(createReq(categoriaId, "SKU_ACTIVE2"));
 
 		assertTrue(res1.getReturnCode());
 		assertTrue(res2.getReturnCode());
 
-		Integer id1 = Integer.parseInt(res1.getMsg().replaceAll("\\D+", ""));
-		Integer id2 = Integer.parseInt(res2.getMsg().replaceAll("\\D+", ""));
+		Integer id1 = res1.getDati().getId();
+		Integer id2 = res2.getDati().getId();
 
 		ResponseList<ProdottoDTO> resList = controller.listActive();
 
@@ -163,7 +164,7 @@ public class ProdottoControllerTest {
 	void testListActiveFallito() {
 		ProdottoController controllerWithError = new ProdottoController(new ProdottoService() {
 			@Override
-			public Integer crea(ProdottoReq req) {
+			public ProdottoDTO crea(ProdottoReq req) {
 				return null;
 			}
 

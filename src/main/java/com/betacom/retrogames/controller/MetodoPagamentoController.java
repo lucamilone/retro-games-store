@@ -32,13 +32,14 @@ public class MetodoPagamentoController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) MetodoPagamentoReq req) {
-		ResponseBase res = new ResponseBase();
+	public ResponseObject<MetodoPagamentoDTO> create(
+			@Validated(OnCreate.class) @RequestBody(required = true) MetodoPagamentoReq req) {
+		ResponseObject<MetodoPagamentoDTO> res = new ResponseObject<>();
 
 		try {
-			Integer id = metodoPagamentoS.crea(req);
+			res.setDati(metodoPagamentoS.crea(req));
 			res.setReturnCode(true);
-			res.setMsg("Metodo di pagamento creato con successo. ID: " + id);
+			res.setMsg("Metodo di pagamento creato con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

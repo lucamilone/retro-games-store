@@ -42,7 +42,7 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(TipoMetodoPagamentoReq req) throws AcademyException {
+	public TipoMetodoPagamentoDTO crea(TipoMetodoPagamentoReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già un tipo con lo stesso nome
@@ -64,8 +64,7 @@ public class TipoMetodoPagamentoImpl implements TipoMetodoPagamentoService {
 
 		log.debug("TipoMetodoPagamento creato con successo. ID: {}", saved.getId());
 
-		// Restituisce l'id generato
-		return saved.getId();
+		return tipoMapper.toDto(tipo);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

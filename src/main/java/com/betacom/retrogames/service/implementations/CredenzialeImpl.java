@@ -38,7 +38,7 @@ public class CredenzialeImpl implements CredenzialeService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(CredenzialeReq req) throws AcademyException {
+	public CredenzialeDTO crea(CredenzialeReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico se esiste già una credenziale con la stessa email
@@ -58,8 +58,7 @@ public class CredenzialeImpl implements CredenzialeService {
 
 		log.debug("Credenziale creata con successo. ID: {}", credenziale.getId());
 
-		// Restituisco l'id generato
-		return credenziale.getId();
+		return credenzialeMapper.toDto(credenziale);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

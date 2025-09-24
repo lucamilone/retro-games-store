@@ -32,13 +32,13 @@ public class RuoloController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) RuoloReq req) {
-		ResponseBase res = new ResponseBase();
+	public ResponseObject<RuoloDTO> create(@Validated(OnCreate.class) @RequestBody(required = true) RuoloReq req) {
+		ResponseObject<RuoloDTO> res = new ResponseObject<>();
 
 		try {
-			Integer id = ruoloS.crea(req);
+			res.setDati(ruoloS.crea(req));
 			res.setReturnCode(true);
-			res.setMsg("Ruolo creato con successo. ID: " + id);
+			res.setMsg("Ruolo creato con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

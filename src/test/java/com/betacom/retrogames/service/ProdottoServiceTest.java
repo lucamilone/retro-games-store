@@ -77,30 +77,32 @@ public class ProdottoServiceTest {
 		ProdottoReq reqConImg = createReq(categoria.getId(), skuConImg);
 		reqConImg.setImgUrl("http://example.com/img.png");
 
-		Integer idConImg = prodottoService.crea(reqConImg);
-		assertNotNull(idConImg);
+		ProdottoDTO dtoConImg = prodottoService.crea(reqConImg);
+		assertNotNull(dtoConImg);
+		Integer idConImg = dtoConImg.getId();
 
-		ProdottoDTO dtoConImg = prodottoService.getById(idConImg);
-		assertEquals("Prodotto Test", dtoConImg.getNome());
-		assertEquals(normalizza(skuConImg), dtoConImg.getSku());
-		assertEquals(categoria.getNome(), dtoConImg.getCategoria());
-		assertEquals("http://example.com/img.png", dtoConImg.getImgUrl());
-		assertTrue(dtoConImg.getAttivo());
+		ProdottoDTO dtoFromDbConImg = prodottoService.getById(idConImg);
+		assertEquals("Prodotto Test", dtoFromDbConImg.getNome());
+		assertEquals(normalizza(skuConImg), dtoFromDbConImg.getSku());
+		assertEquals(categoria.getNome(), dtoFromDbConImg.getCategoria());
+		assertEquals("http://example.com/img.png", dtoFromDbConImg.getImgUrl());
+		assertTrue(dtoFromDbConImg.getAttivo());
 
 		String skuSenzaImg = "SKU-TEST-003";
 		cleanupProdottoBySku(skuSenzaImg);
 		ProdottoReq reqSenzaImg = createReq(categoria.getId(), skuSenzaImg);
 		reqSenzaImg.setImgUrl(null);
 
-		Integer idSenzaImg = prodottoService.crea(reqSenzaImg);
-		assertNotNull(idSenzaImg);
+		ProdottoDTO dtoSenzaImg = prodottoService.crea(reqSenzaImg);
+		assertNotNull(dtoSenzaImg);
+		Integer idSenzaImg = dtoSenzaImg.getId();
 
-		ProdottoDTO dtoSenzaImg = prodottoService.getById(idSenzaImg);
-		assertEquals("Prodotto Test", dtoSenzaImg.getNome());
-		assertEquals(normalizza(skuSenzaImg), dtoSenzaImg.getSku());
-		assertEquals(categoria.getNome(), dtoSenzaImg.getCategoria());
-		assertEquals(null, dtoSenzaImg.getImgUrl());
-		assertTrue(dtoSenzaImg.getAttivo());
+		ProdottoDTO dtoFromDbSenzaImg = prodottoService.getById(idSenzaImg);
+		assertEquals("Prodotto Test", dtoFromDbSenzaImg.getNome());
+		assertEquals(normalizza(skuSenzaImg), dtoFromDbSenzaImg.getSku());
+		assertEquals(categoria.getNome(), dtoFromDbSenzaImg.getCategoria());
+		assertEquals(null, dtoFromDbSenzaImg.getImgUrl());
+		assertTrue(dtoFromDbSenzaImg.getAttivo());
 	}
 
 	@Test
@@ -148,8 +150,9 @@ public class ProdottoServiceTest {
 		String skuIniziale = "SKU-TEST-100";
 		prodottoRepo.findBySku(normalizza(skuIniziale)).ifPresent(prodottoRepo::delete);
 		ProdottoReq reqIniziale = createReq(categoria.getId(), skuIniziale);
-		Integer prodottoId = prodottoService.crea(reqIniziale);
-		assertNotNull(prodottoId);
+		ProdottoDTO dtoCreato = prodottoService.crea(reqIniziale);
+		assertNotNull(dtoCreato);
+		Integer prodottoId = dtoCreato.getId();
 
 		ProdottoDTO dtoIniziale = prodottoService.getById(prodottoId);
 		assertEquals("Prodotto Test", dtoIniziale.getNome());
@@ -226,8 +229,9 @@ public class ProdottoServiceTest {
 		String skuValido = "SKU-TEST-200";
 		prodottoRepo.findBySku(normalizza(skuValido)).ifPresent(prodottoRepo::delete);
 		ProdottoReq reqIniziale = createReq(categoria.getId(), skuValido);
-		Integer prodottoId = prodottoService.crea(reqIniziale);
-		assertNotNull(prodottoId);
+		ProdottoDTO dtoCreato = prodottoService.crea(reqIniziale);
+		assertNotNull(dtoCreato);
+		Integer prodottoId = dtoCreato.getId();
 
 		ProdottoReq reqCategoriaInvalida = new ProdottoReq();
 		reqCategoriaInvalida.setId(prodottoId);
@@ -251,8 +255,9 @@ public class ProdottoServiceTest {
 		prodottoRepo.findBySku(normalizza(skuProdotto)).ifPresent(prodottoRepo::delete);
 
 		ProdottoReq reqIniziale = createReq(categoria.getId(), skuProdotto);
-		Integer prodottoId = prodottoService.crea(reqIniziale);
-		assertNotNull(prodottoId);
+		ProdottoDTO dtoCreato = prodottoService.crea(reqIniziale);
+		assertNotNull(dtoCreato);
+		Integer prodottoId = dtoCreato.getId();
 
 		ProdottoReq reqDisattiva = new ProdottoReq();
 		reqDisattiva.setId(prodottoId);
@@ -284,8 +289,9 @@ public class ProdottoServiceTest {
 		prodottoRepo.findBySku(normalizza(skuProdotto)).ifPresent(prodottoRepo::delete);
 
 		ProdottoReq req = createReq(categoria.getId(), skuProdotto);
-		Integer prodottoId = prodottoService.crea(req);
-		assertNotNull(prodottoId);
+		ProdottoDTO dtoCreato = prodottoService.crea(req);
+		assertNotNull(dtoCreato);
+		Integer prodottoId = dtoCreato.getId();
 
 		ProdottoDTO dto = prodottoService.getById(prodottoId);
 		assertEquals("Prodotto Test", dto.getNome());
@@ -309,8 +315,10 @@ public class ProdottoServiceTest {
 
 		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.CATEGORIA, new CachedCategoria(categoria));
 
-		Integer id1 = prodottoService.crea(createReq(categoria.getId(), "SKU-ACTIVE-001"));
-		Integer id2 = prodottoService.crea(createReq(categoria.getId(), "SKU-ACTIVE-002"));
+		ProdottoDTO dto1 = prodottoService.crea(createReq(categoria.getId(), "SKU-ACTIVE-001"));
+		ProdottoDTO dto2 = prodottoService.crea(createReq(categoria.getId(), "SKU-ACTIVE-002"));
+		Integer id1 = dto1.getId();
+		Integer id2 = dto2.getId();
 
 		List<ProdottoDTO> listaAttivi = prodottoService.listActive();
 
@@ -331,7 +339,9 @@ public class ProdottoServiceTest {
 		ProdottoReq req = createReq(categoria.getId(), "SKU-VID-001");
 		req.setPiattaformaId(new HashSet<>(Arrays.asList(1, 2)));
 
-		Integer id = prodottoService.crea(req);
+		ProdottoDTO dtoCreato = prodottoService.crea(req);
+		assertNotNull(dtoCreato);
+		Integer id = dtoCreato.getId();
 		ProdottoDTO dto = prodottoService.getById(id);
 
 		assertEquals(2, dto.getPiattaforme().size());
@@ -381,7 +391,9 @@ public class ProdottoServiceTest {
 		ProdottoReq req = createReq(categoria.getId(), "SKU-ACC-001");
 		req.setPiattaformaId(new HashSet<>(Arrays.asList(1, 2)));
 
-		Integer id = prodottoService.crea(req);
+		ProdottoDTO dtoCreato = prodottoService.crea(req);
+		assertNotNull(dtoCreato);
+		Integer id = dtoCreato.getId();
 		ProdottoDTO dto = prodottoService.getById(id);
 
 		assertTrue(dto.getPiattaforme().isEmpty());
@@ -431,7 +443,9 @@ public class ProdottoServiceTest {
 		ProdottoReq req = createReq(categoria.getId(), "SKU-PLT-SUCCESSO");
 		req.setPiattaformaId(new HashSet<>(Arrays.asList(piattaforma1.getId(), piattaforma2.getId())));
 
-		Integer prodottoId = prodottoService.crea(req);
+		ProdottoDTO dtoCreato = prodottoService.crea(req);
+		assertNotNull(dtoCreato);
+		Integer prodottoId = dtoCreato.getId();
 		ProdottoDTO dto = prodottoService.getById(prodottoId);
 
 		assertEquals(2, dto.getPiattaforme().size());

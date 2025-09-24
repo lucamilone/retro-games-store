@@ -32,13 +32,14 @@ public class ProdottoController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) ProdottoReq req) {
-		ResponseBase res = new ResponseBase();
+	public ResponseObject<ProdottoDTO> create(
+			@Validated(OnCreate.class) @RequestBody(required = true) ProdottoReq req) {
+		ResponseObject<ProdottoDTO> res = new ResponseObject<>();
 
 		try {
-			Integer id = prodottoS.crea(req);
+			res.setDati(prodottoS.crea(req));
 			res.setReturnCode(true);
-			res.setMsg("Prodotto creato con successo. ID: " + id);
+			res.setMsg("Prodotto creato con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

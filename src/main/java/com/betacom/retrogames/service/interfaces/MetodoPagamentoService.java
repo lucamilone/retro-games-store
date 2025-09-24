@@ -16,10 +16,10 @@ public interface MetodoPagamentoService {
 	 * Aggiunge un nuovo metodo di pagamento per un account.
 	 *
 	 * @param req 				Dati del metodo di pagamento
-	 * @return ID del metodo creato
+	 * @return MetodoPagamentoDTO contenente tutti i dati rilevanti
 	 * @throws AcademyException se i dati non sono validi
 	 */
-	Integer crea(MetodoPagamentoReq req) throws AcademyException;
+	MetodoPagamentoDTO crea(MetodoPagamentoReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna un metodo di pagamento esistente.

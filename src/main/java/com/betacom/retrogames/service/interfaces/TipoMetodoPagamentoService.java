@@ -16,10 +16,10 @@ public interface TipoMetodoPagamentoService {
 	 * Crea un nuovo tipo di metodo di pagamento.
 	 *
 	 * @param req 				Dati del tipo di metodo di pagamento da creare
-	 * @return ID del tipo di metodo di pagamento creato
+	 * @return TipoMetodoPagamentoDTO contenente i dati rilevanti
 	 * @throws AcademyException se i dati non sono validi o il tipo esiste già
 	 */
-	Integer crea(TipoMetodoPagamentoReq req) throws AcademyException;
+	TipoMetodoPagamentoDTO crea(TipoMetodoPagamentoReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna un tipo di metodo di pagamento esistente.

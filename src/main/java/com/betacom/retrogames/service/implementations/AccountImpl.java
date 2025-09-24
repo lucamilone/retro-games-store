@@ -59,7 +59,7 @@ public class AccountImpl implements AccountService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(AccountReq req) throws AcademyException {
+	public AccountDTO crea(AccountReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico l'esistenza della credenziale
@@ -87,8 +87,7 @@ public class AccountImpl implements AccountService {
 
 		log.debug("Account creato con successo. ID: {}", account.getId());
 
-		// Restituisco l'id generato
-		return account.getId();
+		return accountMapper.toDto(account);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)

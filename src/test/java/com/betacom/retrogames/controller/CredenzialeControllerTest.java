@@ -37,7 +37,7 @@ public class CredenzialeControllerTest {
 
 	@Test
 	void testCreateSuccesso() {
-		ResponseBase res = controller.create(createReq("user_test@mail.com", "pass123"));
+		ResponseObject<CredenzialeDTO> res = controller.create(createReq("user_test@mail.com", "pass123"));
 		assertTrue(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("creata"));
@@ -46,7 +46,7 @@ public class CredenzialeControllerTest {
 	@Test
 	void testCreateFallito() {
 		controller.create(createReq("user_dup@mail.com", "pass123"));
-		ResponseBase res = controller.create(createReq("user_dup@mail.com", "pass123"));
+		ResponseObject<CredenzialeDTO> res = controller.create(createReq("user_dup@mail.com", "pass123"));
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("esistente"));
@@ -54,8 +54,8 @@ public class CredenzialeControllerTest {
 
 	@Test
 	void testUpdateEmailSuccesso() {
-		ResponseBase createRes = controller.create(createReq("user_update@mail.com", "pass123"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<CredenzialeDTO> createRes = controller.create(createReq("user_update@mail.com", "pass123"));
+		Integer id = createRes.getDati().getId();
 
 		CredenzialeReq updateReq = createReq("user_updated@mail.com", "pass123");
 		updateReq.setId(id);
@@ -77,8 +77,8 @@ public class CredenzialeControllerTest {
 
 	@Test
 	void testUpdatePasswordSuccesso() {
-		ResponseBase createRes = controller.create(createReq("user_pass@mail.com", "oldpass"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<CredenzialeDTO> createRes = controller.create(createReq("user_pass@mail.com", "oldpass"));
+		Integer id = createRes.getDati().getId();
 
 		CredenzialeReq updateReq = createReq("user_pass@mail.com", "newpass");
 		updateReq.setId(id);
@@ -121,8 +121,8 @@ public class CredenzialeControllerTest {
 
 	@Test
 	void testGetByIdSuccesso() {
-		ResponseBase createRes = controller.create(createReq("user_get@mail.com", "pass123"));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<CredenzialeDTO> createRes = controller.create(createReq("user_get@mail.com", "pass123"));
+		Integer id = createRes.getDati().getId();
 
 		ResponseObject<CredenzialeDTO> res = controller.getById(id);
 		assertTrue(res.getReturnCode());
@@ -140,11 +140,11 @@ public class CredenzialeControllerTest {
 
 	@Test
 	void testListActiveSuccesso() {
-		ResponseBase res1 = controller.create(createReq("active1@mail.com", "pass1"));
-		ResponseBase res2 = controller.create(createReq("active2@mail.com", "pass2"));
+		ResponseObject<CredenzialeDTO> res1 = controller.create(createReq("active1@mail.com", "pass1"));
+		ResponseObject<CredenzialeDTO> res2 = controller.create(createReq("active2@mail.com", "pass2"));
 
-		Integer id1 = Integer.parseInt(res1.getMsg().replaceAll("\\D+", ""));
-		Integer id2 = Integer.parseInt(res2.getMsg().replaceAll("\\D+", ""));
+		Integer id1 = res1.getDati().getId();
+		Integer id2 = res2.getDati().getId();
 
 		ResponseList<CredenzialeDTO> resList = controller.listActive();
 		assertTrue(resList.getReturnCode());
@@ -170,7 +170,7 @@ public class CredenzialeControllerTest {
 	void testListActiveFallito() {
 		CredenzialeController controllerWithError = new CredenzialeController(new CredenzialeService() {
 			@Override
-			public Integer crea(CredenzialeReq req) {
+			public CredenzialeDTO crea(CredenzialeReq req) {
 				return null;
 			}
 

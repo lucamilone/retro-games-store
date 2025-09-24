@@ -31,13 +31,14 @@ public class CredenzialeController {
 	}
 
 	@PostMapping("/create")
-	public ResponseBase create(@Validated(OnCreate.class) @RequestBody(required = true) CredenzialeReq req) {
-		ResponseBase res = new ResponseBase();
+	public ResponseObject<CredenzialeDTO> create(
+			@Validated(OnCreate.class) @RequestBody(required = true) CredenzialeReq req) {
+		ResponseObject<CredenzialeDTO> res = new ResponseObject<>();
 
 		try {
-			Integer id = credenzialeS.crea(req);
+			res.setDati(credenzialeS.crea(req));
 			res.setReturnCode(true);
-			res.setMsg("Credenziale creata con successo. ID: " + id);
+			res.setMsg("Credenziale creata con successo");
 		} catch (AcademyException e) {
 			res.setReturnCode(false);
 			res.setMsg(e.getMessage());

@@ -27,7 +27,6 @@ public class PiattaformaControllerTest {
 	@Autowired
 	private PiattaformaController controller;
 
-	// Helper per creare richieste di test
 	private PiattaformaReq createReq(String nome, String codice, Integer annoUscita) {
 		PiattaformaReq req = new PiattaformaReq();
 		req.setNome(nome);
@@ -39,16 +38,16 @@ public class PiattaformaControllerTest {
 
 	@Test
 	void testCreateSuccesso() {
-		ResponseBase res = controller.create(createReq("Mega Drive", "md", 1988));
+		ResponseObject<PiattaformaDTO> res = controller.create(createReq("Mega Drive", "md", 1988));
 		assertTrue(res.getReturnCode());
-		assertNotNull(res.getMsg());
+		assertNotNull(res.getDati());
 		assertTrue(res.getMsg().toLowerCase().contains("creata"));
 	}
 
 	@Test
 	void testCreateFallito() {
 		controller.create(createReq("Super Nintendo", "sn", 1990));
-		ResponseBase res = controller.create(createReq("Super Nintendo", "sn", 1990));
+		ResponseObject<PiattaformaDTO> res = controller.create(createReq("Super Nintendo", "sn", 1990));
 		assertFalse(res.getReturnCode());
 		assertNotNull(res.getMsg());
 		assertTrue(res.getMsg().toLowerCase().contains("esistente"));
@@ -56,8 +55,8 @@ public class PiattaformaControllerTest {
 
 	@Test
 	void testUpdateSuccesso() {
-		ResponseBase createRes = controller.create(createReq("Atari", "at", 1980));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<PiattaformaDTO> createRes = controller.create(createReq("Atari", "at", 1980));
+		Integer id = createRes.getDati().getId();
 
 		PiattaformaReq updateReq = createReq("Atari Updated", "au", 1981);
 		updateReq.setId(id);
@@ -79,8 +78,8 @@ public class PiattaformaControllerTest {
 
 	@Test
 	void testDisableSuccesso() {
-		ResponseBase createRes = controller.create(createReq("Atari Disable", "ad", 1980));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<PiattaformaDTO> createRes = controller.create(createReq("Atari Disable", "ad", 1980));
+		Integer id = createRes.getDati().getId();
 		PiattaformaReq disableReq = createReq("Atari Disable", "ad", 1980);
 		disableReq.setId(id);
 		ResponseBase disableRes = controller.disable(disableReq);
@@ -102,8 +101,8 @@ public class PiattaformaControllerTest {
 
 	@Test
 	void testGetByIdSuccesso() {
-		ResponseBase createRes = controller.create(createReq("Atari Get", "ag", 1980));
-		Integer id = Integer.parseInt(createRes.getMsg().replaceAll("\\D+", ""));
+		ResponseObject<PiattaformaDTO> createRes = controller.create(createReq("Atari Get", "ag", 1980));
+		Integer id = createRes.getDati().getId();
 
 		ResponseObject<PiattaformaDTO> res = controller.getById(id);
 		assertTrue(res.getReturnCode());
@@ -121,14 +120,14 @@ public class PiattaformaControllerTest {
 
 	@Test
 	void testListActiveSuccesso() {
-		ResponseBase res1 = controller.create(createReq("Atari Active1", "aa1", 1980));
-		ResponseBase res2 = controller.create(createReq("Atari Active2", "aa2", 1981));
+		ResponseObject<PiattaformaDTO> res1 = controller.create(createReq("Atari Active1", "aa1", 1980));
+		ResponseObject<PiattaformaDTO> res2 = controller.create(createReq("Atari Active2", "aa2", 1981));
 
 		assertTrue(res1.getReturnCode());
 		assertTrue(res2.getReturnCode());
 
-		Integer id1 = Integer.parseInt(res1.getMsg().replaceAll("\\D+", ""));
-		Integer id2 = Integer.parseInt(res2.getMsg().replaceAll("\\D+", ""));
+		Integer id1 = res1.getDati().getId();
+		Integer id2 = res2.getDati().getId();
 
 		ResponseList<PiattaformaDTO> resList = controller.listActive();
 
@@ -155,7 +154,7 @@ public class PiattaformaControllerTest {
 	void testListActiveFallito() {
 		PiattaformaController controllerWithError = new PiattaformaController(new PiattaformaService() {
 			@Override
-			public Integer crea(PiattaformaReq req) {
+			public PiattaformaDTO crea(PiattaformaReq req) {
 				return null;
 			}
 

@@ -16,10 +16,10 @@ public interface RuoloService {
 	 * Crea un nuovo ruolo.
 	 *
 	 * @param req 				Dati del ruolo da creare
-	 * @return ID del ruolo creato
+	 * @return RuoloDTO contenente i dati rilevanti
 	 * @throws AcademyException se i dati non sono validi o il ruolo esiste già
 	 */
-	Integer crea(RuoloReq req) throws AcademyException;
+	RuoloDTO crea(RuoloReq req) throws AcademyException;
 
 	/**
 	 * Aggiorna un ruolo esistente.

@@ -43,7 +43,7 @@ public class PagamentoImpl implements PagamentoService {
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
 	@Override
-	public Integer crea(PagamentoReq req) throws AcademyException {
+	public PagamentoDTO crea(PagamentoReq req) throws AcademyException {
 		log.debug("Crea: {}", req);
 
 		// Verifico l'esistenza dell'ordine
@@ -69,7 +69,7 @@ public class PagamentoImpl implements PagamentoService {
 
 		log.debug("Pagamento creato con successo. ID: {}", pagamento.getId());
 
-		return pagamento.getId();
+		return pagamentoMapper.toDto(pagamento);
 	}
 
 	@Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
