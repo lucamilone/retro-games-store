@@ -30,9 +30,9 @@ import com.betacom.retrogames.service.interfaces.MessaggioService;
 import com.betacom.retrogames.service.interfaces.OrdineRigaService;
 import com.betacom.retrogames.service.interfaces.OrdineService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 public class OrdineImpl implements OrdineService {
 	private final OrdineRepository ordineRepo;

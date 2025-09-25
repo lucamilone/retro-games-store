@@ -19,9 +19,9 @@ import com.betacom.retrogames.cache.implementations.CachedPiattaforma;
 import com.betacom.retrogames.cache.interfaces.CacheableEntry;
 import com.betacom.retrogames.enums.TabellaCostante;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Transactional
 @SpringBootTest
 public class CacheManagerTest {

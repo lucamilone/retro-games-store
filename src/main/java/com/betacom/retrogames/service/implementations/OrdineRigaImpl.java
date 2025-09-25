@@ -11,9 +11,9 @@ import com.betacom.retrogames.model.OrdineRiga;
 import com.betacom.retrogames.repository.OrdineRigaRepository;
 import com.betacom.retrogames.service.interfaces.OrdineRigaService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 public class OrdineRigaImpl implements OrdineRigaService {
 	private final OrdineRigaRepository ordineRigaRepo;

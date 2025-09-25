@@ -20,9 +20,9 @@ import com.betacom.retrogames.service.interfaces.CarrelloRigaService;
 import com.betacom.retrogames.service.interfaces.CarrelloService;
 import com.betacom.retrogames.service.interfaces.MessaggioService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 public class CarrelloImpl implements CarrelloService {
 	private final AccountRepository accountRepo;

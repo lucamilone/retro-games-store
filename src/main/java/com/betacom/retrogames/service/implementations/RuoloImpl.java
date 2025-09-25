@@ -22,9 +22,9 @@ import com.betacom.retrogames.request.RuoloReq;
 import com.betacom.retrogames.service.interfaces.MessaggioService;
 import com.betacom.retrogames.service.interfaces.RuoloService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 public class RuoloImpl implements RuoloService {
 	private final CacheManager cacheManager;

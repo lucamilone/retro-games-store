@@ -23,9 +23,9 @@ import com.betacom.retrogames.request.MetodoPagamentoReq;
 import com.betacom.retrogames.service.interfaces.MessaggioService;
 import com.betacom.retrogames.service.interfaces.MetodoPagamentoService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 public class MetodoPagamentoImpl implements MetodoPagamentoService {
 	private final CacheManager cacheManager;

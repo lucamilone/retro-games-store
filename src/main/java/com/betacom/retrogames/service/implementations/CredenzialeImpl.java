@@ -20,9 +20,9 @@ import com.betacom.retrogames.request.CredenzialeReq;
 import com.betacom.retrogames.service.interfaces.CredenzialeService;
 import com.betacom.retrogames.service.interfaces.MessaggioService;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 public class CredenzialeImpl implements CredenzialeService {
 	private final CredenzialeRepository credenzialeRepo;
