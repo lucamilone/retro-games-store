@@ -16,7 +16,7 @@ public class AccountDTO {
 	private String cognome;
 	private IndirizzoDTO indirizzo;
 	private List<MetodoPagamentoDTO> metodiPagamento;
-	private String ruolo;
+	private RuoloDTO ruolo;
 	private CredenzialeDTO credenziale;
 	private CarrelloDTO carrello;
 	private Boolean attivo;
