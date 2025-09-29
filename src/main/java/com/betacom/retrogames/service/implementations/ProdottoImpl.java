@@ -183,9 +183,9 @@ public class ProdottoImpl implements ProdottoService {
 	public List<ProdottoDTO> listByFilter(Integer id, String nome, String categoria, String piattaforma) {
 		log.debug("ListByFilter: id={}, nome={}, categoria={}, piattaforma={}", id, nome, categoria, piattaforma);
 
-		List<Prodotto> prodottiFiltrati = prodottoRepo.searchByFilter(id, nome, categoria, piattaforma);
+		List<Prodotto> prodottiAttiviFiltrati = prodottoRepo.searchByFilter(id, nome, categoria, piattaforma);
 
-		return prodottoMapper.toDtoList(prodottiFiltrati);
+		return prodottoMapper.toDtoList(prodottiAttiviFiltrati);
 	}
 
 	@Override

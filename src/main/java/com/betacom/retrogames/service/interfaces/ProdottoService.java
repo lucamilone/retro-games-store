@@ -48,7 +48,7 @@ public interface ProdottoService {
 	ProdottoDTO getById(Integer id) throws AcademyException;
 
 	/**
-	 * Recupera tutti i prodotti filtrati in base ai parametri forniti.
+	 * Recupera tutti i prodotti attivi filtrati in base ai parametri forniti.
 	 * <p>
 	 * Tutti i parametri sono opzionali: se un parametro è {@code null}, il filtro corrispondente
 	 * non viene applicato.
