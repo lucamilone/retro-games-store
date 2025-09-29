@@ -128,6 +128,73 @@ public class ProdottoControllerTest {
 	}
 
 	@Test
+	void testListByFilterSuccesso() {
+		Integer categoriaId = 1;
+		ProdottoReq req = createReq(categoriaId, "SKU_FILTER");
+		req.setNome("Super Mario");
+		controller.create(req);
+
+		ResponseList<ProdottoDTO> res = controller.listByFilter(null, "Super Mario", null, null);
+		assertTrue(res.getReturnCode());
+		assertNotNull(res.getDati());
+		assertFalse(res.getDati().isEmpty());
+		assertEquals("Super Mario", res.getDati().get(0).getNome());
+	}
+
+	@Test
+	void testListByFilterBranches() {
+		// id == null, nome == null, categoria == null, piattaforma == null
+		ResponseList<ProdottoDTO> res1 = controller.listByFilter(null, null, null, null);
+		assertTrue(res1.getReturnCode());
+
+		// id == 0, nome blank, categoria blank, piattaforma blank
+		ResponseList<ProdottoDTO> res2 = controller.listByFilter(0, "   ", " ", " ");
+		assertTrue(res2.getReturnCode());
+
+		// id != null && id != 0, nome valid, categoria valid, piattaforma valid
+		ResponseList<ProdottoDTO> res3 = controller.listByFilter(5, "Mario", "Console", "Switch");
+		assertTrue(res3.getReturnCode());
+	}
+
+	@Test
+	void testListByFilterFallito() {
+		ProdottoController controllerWithError = new ProdottoController(new ProdottoService() {
+			@Override
+			public ProdottoDTO crea(ProdottoReq req) {
+				return null;
+			}
+
+			@Override
+			public void aggiorna(ProdottoReq req) {
+			}
+
+			@Override
+			public void disattiva(ProdottoReq req) {
+			}
+
+			@Override
+			public ProdottoDTO getById(Integer id) {
+				return null;
+			}
+
+			@Override
+			public List<ProdottoDTO> listByFilter(Integer id, String nome, String categoria, String piattaforma) {
+				throw new RuntimeException("Errore simulato");
+			}
+
+			@Override
+			public List<ProdottoDTO> listActive() {
+				return null;
+			}
+		});
+
+		ResponseList<ProdottoDTO> res = controllerWithError.listByFilter(null, "any", null, null);
+		assertFalse(res.getReturnCode());
+		assertNotNull(res.getMsg());
+		assertTrue(res.getMsg().contains("Errore simulato"));
+	}
+
+	@Test
 	void testListActiveSuccesso() {
 		Integer categoriaId = 1;
 		ResponseObject<ProdottoDTO> res1 = controller.create(createReq(categoriaId, "SKU_ACTIVE1"));
@@ -178,6 +245,11 @@ public class ProdottoControllerTest {
 
 			@Override
 			public ProdottoDTO getById(Integer id) {
+				return null;
+			}
+
+			@Override
+			public List<ProdottoDTO> listByFilter(Integer id, String nome, String categoria, String piattaforma) {
 				return null;
 			}
 

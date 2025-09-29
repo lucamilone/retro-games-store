@@ -33,7 +33,7 @@ public interface ProdottoService {
 	 * Disattiva un prodotto (soft delete), marcandolo come "non attivo".
 	 * Il prodotto non viene rimosso fisicamente dal DB.
 	 *
-	 * @param prodottoId 		Richiesta contenente solo l'ID del prodotto da disattivare
+	 * @param req 				Richiesta contenente solo l'ID del prodotto da disattivare
 	 * @throws AcademyException se prodotto non trovato
 	 */
 	void disattiva(ProdottoReq req) throws AcademyException;
@@ -46,6 +46,22 @@ public interface ProdottoService {
 	 * @throws AcademyException se il prodotto non esiste
 	 */
 	ProdottoDTO getById(Integer id) throws AcademyException;
+
+	/**
+	 * Recupera tutti i prodotti filtrati in base ai parametri forniti.
+	 * <p>
+	 * Tutti i parametri sono opzionali: se un parametro è {@code null}, il filtro corrispondente
+	 * non viene applicato.
+	 * Ricerca case insensitive e "inizia con".
+	 * </p>
+	 *
+	 * @param id          	ID del prodotto
+	 * @param nome        	Nome del prodotto
+	 * @param categoria   	Nome della categoria del prodotto
+	 * @param piattaforma 	Codice della piattaforma associata al prodotto
+	 * @return lista di ProdottoDTO
+	 */
+	List<ProdottoDTO> listByFilter(Integer id, String nome, String categoria, String piattaforma);
 
 	/**
 	 * Recupera tutti i prodotti attivi nel catalogo.

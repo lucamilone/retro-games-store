@@ -307,6 +307,34 @@ public class ProdottoServiceTest {
 	}
 
 	@Test
+	void testListByFilterSuccess() throws AcademyException {
+		Categoria categoria = new Categoria();
+		categoria.setNome("Console");
+		categoria.setAttivo(true);
+		categoria = categoriaRepo.saveAndFlush(categoria);
+
+		cacheManager.addOrUpdateRecordInCachedTable(TabellaCostante.CATEGORIA, new CachedCategoria(categoria));
+
+		String sku1 = "SKU-FILTER-001";
+		cleanupProdottoBySku(sku1);
+
+		ProdottoReq req1 = createReq(categoria.getId(), sku1);
+		req1.setNome(normalizza("Super Mario"));
+		prodottoService.crea(req1);
+		prodottoRepo.flush();
+
+		List<ProdottoDTO> result = prodottoService.listByFilter(null, normalizza("Super Mario"), null, null);
+		assertEquals(1, result.size());
+		assertEquals(normalizza("Super Mario"), normalizza(result.get(0).getNome()));
+	}
+
+	@Test
+	void testListByFilterNoResults() {
+		List<ProdottoDTO> result = prodottoService.listByFilter(null, "NonExistentGame", null, null);
+		assertTrue(result.isEmpty());
+	}
+
+	@Test
 	void testListActiveSuccesso() throws AcademyException {
 		Categoria categoria = new Categoria();
 		categoria.setNome("Console");

@@ -95,6 +95,28 @@ public class ProdottoController {
 		return res;
 	}
 
+	@GetMapping("/list-by-filter")
+	public ResponseList<ProdottoDTO> listByFilter(@RequestParam(required = false) Integer id,
+			@RequestParam(required = false) String nome, @RequestParam(required = false) String categoria,
+			@RequestParam(required = false) String piattaforma) {
+		ResponseList<ProdottoDTO> res = new ResponseList<>();
+
+		id = (id == null || id == 0) ? null : id;
+		nome = (nome == null || nome.isBlank()) ? null : nome.toLowerCase() + "%";
+		categoria = (categoria == null || categoria.isBlank()) ? null : categoria.toLowerCase() + "%";
+		piattaforma = (piattaforma == null || piattaforma.isBlank()) ? null : piattaforma.toLowerCase() + "%";
+
+		try {
+			res.setDati(prodottoS.listByFilter(id, nome, categoria, piattaforma));
+			res.setReturnCode(true);
+		} catch (Exception e) {
+			res.setReturnCode(false);
+			res.setMsg(e.getMessage());
+		}
+
+		return res;
+	}
+
 	@GetMapping("/list-active")
 	public ResponseList<ProdottoDTO> listActive() {
 		ResponseList<ProdottoDTO> res = new ResponseList<>();
