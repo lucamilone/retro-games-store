@@ -180,10 +180,11 @@ public class ProdottoImpl implements ProdottoService {
 	}
 
 	@Override
-	public List<ProdottoDTO> listByFilter(Integer id, String nome, String categoria, String piattaforma) {
-		log.debug("ListByFilter: id={}, nome={}, categoria={}, piattaforma={}", id, nome, categoria, piattaforma);
+	public List<ProdottoDTO> listByFilter(Integer id, String nome, Integer categoriaId, Integer piattaformaId) {
+		log.debug("ListByFilter: id={}, nome={}, categoriaId={}, piattaformaId={}", id, nome, categoriaId,
+				piattaformaId);
 
-		List<Prodotto> prodottiAttiviFiltrati = prodottoRepo.searchByFilter(id, nome, categoria, piattaforma);
+		List<Prodotto> prodottiAttiviFiltrati = prodottoRepo.searchByFilter(id, nome, categoriaId, piattaformaId);
 
 		return prodottoMapper.toDtoList(prodottiAttiviFiltrati);
 	}

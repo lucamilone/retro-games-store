@@ -57,11 +57,11 @@ public interface ProdottoService {
 	 *
 	 * @param id          	ID del prodotto
 	 * @param nome        	Nome del prodotto
-	 * @param categoria   	Nome della categoria del prodotto
-	 * @param piattaforma 	Codice della piattaforma associata al prodotto
+	 * @param categoria   	ID della categoria del prodotto
+	 * @param piattaforma 	ID della piattaforma associata al prodotto
 	 * @return lista di ProdottoDTO
 	 */
-	List<ProdottoDTO> listByFilter(Integer id, String nome, String categoria, String piattaforma);
+	List<ProdottoDTO> listByFilter(Integer id, String nome, Integer categoriaId, Integer piattaformaId);
 
 	/**
 	 * Recupera tutti i prodotti attivi nel catalogo.

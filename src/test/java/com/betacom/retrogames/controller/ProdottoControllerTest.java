@@ -143,16 +143,16 @@ public class ProdottoControllerTest {
 
 	@Test
 	void testListByFilterBranches() {
-		// id == null, nome == null, categoria == null, piattaforma == null
+		// id == null, nome == null, categoriaId == null, piattaformaId == null
 		ResponseList<ProdottoDTO> res1 = controller.listByFilter(null, null, null, null);
 		assertTrue(res1.getReturnCode());
 
-		// id == 0, nome blank, categoria blank, piattaforma blank
-		ResponseList<ProdottoDTO> res2 = controller.listByFilter(0, "   ", " ", " ");
+		// id == 0, nome blank, categoriaId == 0, piattaformaId == 0
+		ResponseList<ProdottoDTO> res2 = controller.listByFilter(0, " ", 0, 0);
 		assertTrue(res2.getReturnCode());
 
-		// id != null && id != 0, nome valid, categoria valid, piattaforma valid
-		ResponseList<ProdottoDTO> res3 = controller.listByFilter(5, "Mario", "Console", "Switch");
+		// id valid, nome valid, categoriaId valid, piattaformaId valid
+		ResponseList<ProdottoDTO> res3 = controller.listByFilter(5, "Mario", 1, 1);
 		assertTrue(res3.getReturnCode());
 	}
 
@@ -178,7 +178,7 @@ public class ProdottoControllerTest {
 			}
 
 			@Override
-			public List<ProdottoDTO> listByFilter(Integer id, String nome, String categoria, String piattaforma) {
+			public List<ProdottoDTO> listByFilter(Integer id, String nome, Integer categoriaId, Integer piattaformaId) {
 				throw new RuntimeException("Errore simulato");
 			}
 
@@ -249,8 +249,8 @@ public class ProdottoControllerTest {
 			}
 
 			@Override
-			public List<ProdottoDTO> listByFilter(Integer id, String nome, String categoria, String piattaforma) {
-				return null;
+			public List<ProdottoDTO> listByFilter(Integer id, String nome, Integer categoriaId, Integer piattaformaId) {
+				throw new RuntimeException("Errore simulato");
 			}
 
 			@Override

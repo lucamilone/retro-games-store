@@ -97,17 +97,17 @@ public class ProdottoController {
 
 	@GetMapping("/list-by-filter")
 	public ResponseList<ProdottoDTO> listByFilter(@RequestParam(required = false) Integer id,
-			@RequestParam(required = false) String nome, @RequestParam(required = false) String categoria,
-			@RequestParam(required = false) String piattaforma) {
+			@RequestParam(required = false) String nome, @RequestParam(required = false) Integer categoriaId,
+			@RequestParam(required = false) Integer piattaformaId) {
 		ResponseList<ProdottoDTO> res = new ResponseList<>();
 
 		id = (id == null || id == 0) ? null : id;
 		nome = (nome == null || nome.isBlank()) ? null : nome.toLowerCase() + "%";
-		categoria = (categoria == null || categoria.isBlank()) ? null : categoria.toLowerCase() + "%";
-		piattaforma = (piattaforma == null || piattaforma.isBlank()) ? null : piattaforma.toLowerCase() + "%";
+		categoriaId = (categoriaId == null || categoriaId == 0) ? null : categoriaId;
+		piattaformaId = (piattaformaId == null || piattaformaId == 0) ? null : piattaformaId;
 
 		try {
-			res.setDati(prodottoS.listByFilter(id, nome, categoria, piattaforma));
+			res.setDati(prodottoS.listByFilter(id, nome, categoriaId, piattaformaId));
 			res.setReturnCode(true);
 		} catch (Exception e) {
 			res.setReturnCode(false);

@@ -19,5 +19,5 @@ public interface ProdottoRepository extends JpaRepository<Prodotto, Integer> {
 
 	@Query(name = "prodotto.selectByFilter")
 	List<Prodotto> searchByFilter(@Param("id") Integer id, @Param("nome") String nome,
-			@Param("categoria") String categoria, @Param("piattaforma") String piattaforma);
+			@Param("categoriaId") Integer categoriaId, @Param("piattaformaId") Integer piattaformaId);
 }
